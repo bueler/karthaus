@@ -27,4 +27,9 @@
 *.mtc0
 *~
 lecture.pdf
-
+exers.pdf
+refs.pdf
+*.slim.m
+pdffigs/*.pdf
+anim/*.png
+ice_bib.bib
