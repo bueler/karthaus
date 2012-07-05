@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.76 [en] (Win98; U) [Netscape]">
+  <title>Bueler's Karthaus materials</title>
+  <meta name="author" content="Ed Bueler">
+  <meta name="description"
+ content="Codes and materials for lectures Numerical modelling of ice sheets
+and ice shelves given at Karthaus summer school, 8--19 September, 2009">
+</head>
+<body>
+<h1>
+<center> <font color="#333399"><font
+ face="Courier New, Courier, monospace">Bueler's Karthaus materials:<br>
+numerical ice sheet modeling<br>
+</font></font></center>
+</h1>
+<div align="center"><small>codes and lectures&nbsp;
+"Numerical modelling of ice sheets and ice shelves"&nbsp; at<br>
+<a href="http://www.phys.uu.nl/%7Ewwwimau/education/summer_school/">Karthaus
+2010
+Summer
+School
+on Ice Sheets and Glaciers in the Climate System,
+14--25 September, 2010</a><br>
+</small></div>
+<span style="font-weight: bold;"><br>
+</span>
+<ul>
+</ul>
+<span style="font-weight: bold;">All
+materials</span>, including Matlab/Octave codes, petsc codes, and
+lecture PDFs
+together:<br>
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; <a href="bueler_karthaus.zip">bueler_karthaus.zip</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<small>(6 Mb)</small><br>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; <a href="bueler_karthaus.tar.gz">bueler_karthaus.tar.gz</a>&nbsp;&nbsp;
+<small>(6 Mb)</small><br>
+<br>
+<br>
+<small><span style="font-style: italic;">The above download is
+recommended one, but here are the PDFs only:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="lecture.pdf">lecture.pdf</a><small>
+(6.5 Mb)</small> &nbsp; &nbsp; <a href="exers.pdf">exers.pdf</a> </small><small><small>(0.2
+Mb) &nbsp;</small></small><small> &nbsp; <a href="refs.pdf">refs.pdf</a></small><small><small>
+(0.1 Mb)<br>
+<br>
+</small></small>
+<ul>
+</ul>
+<h4>individual Matlab/Octave codes:</h4>
+<table
+ style="margin-left: auto; margin-right: auto; text-align: left; width: 695px; height: 202px;"
+ border="0" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>heat and diffusion equation codes</li>
+        <ul>
+          <li><a href="mfiles/heat.m">heat.m</a></li>
+          <li><a href="mfiles/heatadapt.m">heatadapt.m</a></li>
+          <li><a href="mfiles/diffusion.m">diffusion.m</a></li>
+        </ul>
+        <li>SIA codes</li>
+        <ul>
+          <li><a href="mfiles/halfar.m">halfar.m</a></li>
+          <li><a href="mfiles/halfarmovie.m">halfarmovie.m</a><small>&nbsp;&nbsp;
+(depends:
+halfar.m)</small></li>
+          <li><a href="mfiles/siaflat.m">siaflat.m</a><small>&nbsp;&nbsp;
+(depends:
+diffusion.m)</small></li>
+          <li><a href="mfiles/verifysia.m">verifysia.m</a><small>&nbsp;&nbsp;
+(depends:
+halfar.m, siaflat.m, diffusion.m)</small></li>
+          <li><a href="mfiles/roughice.m">roughice.m</a><small>&nbsp;
+&nbsp;
+(depends: siaflat.m, diffusion.m)</small></li>
+          <li><a href="mfiles/getsurface.m">getsurface.m</a><br>
+          </li>
+          <li><a href="mfiles/siageneral.m">siageneral.m</a><small>&nbsp;
+(depends:
+diffusion.m,
+getsurface.m)</small></li>
+        </ul>
+        <li>SSA codes<br>
+        </li>
+        <ul>
+          <li><a href="mfiles/flowline.m">flowline.m</a></li>
+          <li><a href="mfiles/testflowline.m">testflowline.m</a><small>&nbsp;&nbsp;
+(depends:
+flowline.m)</small></li>
+          <li><a href="mfiles/convanalysis.m">convanalysis.m</a><small>&nbsp;&nbsp;
+(depends:
+testflowline.m,
+flowline.m)</small></li>
+          <li><a href="mfiles/ssainit.m">ssainit.m</a></li>
+          <li><a href="mfiles/ssaflowline.m">ssaflowline.m</a><small>&nbsp;&nbsp;
+(depends:
+ssainit.m,
+flowline.m)</small></li>
+          <li><a href="mfiles/exactshelf.m">exactshelf.m</a><br>
+          </li>
+          <li><a href="mfiles/testshelf.m">testshelf.m</a><small>&nbsp;&nbsp;
+(depends:
+exactshelf.m, ssaflowline.m, ssainit.m, flowline.m)</small></li>
+          <li><a href="mfiles/shelfconv.m">shelfconv.m</a><small>&nbsp;&nbsp; (depends:
+testshelf.m, exactshelf.m, ssaflowline.m, ssainit.m, flowline.m)</small></li>
+        </ul>
+        <li>Antarctic ice sheet data and tools:</li>
+        <ul>
+          <li><a href="mfiles/Ant50km.nc">Ant50km.nc</a><small>&nbsp;
+(50km
+gridded
+Antarctic data, sub-sampled from 5km NetCDF at <a
+ href="http://websrv.cs.umt.edu/isis/index.php/Present_Day_Antarctica">SeaRISE
+assessment
+present
+day
+Antarctic data page</a>)</small></li>
+          <li><a href="mfiles/netcdf.m">netcdf.m</a><small>&nbsp;
+(NetCDF
+--&gt; Matlab conversion; see <a href="mfiles/netcdf_license.txt">netcdf_license.txt</a>
+and <a href="http://www.mathworks.com/matlabcentral/fileexchange/15177">http://www.mathworks.com/matlabcentral/fileexchange/15177</a>)</small></li>
+          <li><a href="mfiles/buildant.m">buildant.m</a><small>&nbsp;&nbsp;
+(depends:
+netcdf.m, Ant50km.nc)</small></li>
+          <li><a href="mfiles/ant.m">ant.m</a><small>&nbsp; (depends:
+buildant.m,
+siageneral.m, diffusion.m, netcdf.m, Ant50km.nc)</small></li>
+        </ul>
+        <li>miscellaneous utilities:</li>
+        <ul>
+          <li><a href="mfiles/checkscales.m">checkscales.m</a></li>
+        </ul>
+      </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<hr width="100%">&nbsp;<small><a
+ href="http://www.cs.uaf.edu/cgi-bin/doc-info.prl">doc info</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+email&nbsp;
+<a href="mailto:elbueler@alaska.edu">elbueler@alaska.edu</a>&nbsp; with
+questions and
+comments. &nbsp;&nbsp;&nbsp;&nbsp; Copyright 2009--2010 <a
+ href="http://www.dms.uaf.edu/%7Ebueler/">Ed Bueler</a>.<br>
+</small><br>
+</body>
+</html>

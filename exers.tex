@@ -1,0 +1,246 @@
+% Copyright 2009--2010  Ed Bueler
+
+\documentclass[11pt,final]{amsart}
+\addtolength{\topmargin}{-0.15in}
+\addtolength{\oddsidemargin}{-.55in}
+\addtolength{\evensidemargin}{-.55in}
+\addtolength{\textwidth}{1.2in}
+\addtolength{\textheight}{0.3in}
+
+\renewcommand{\baselinestretch}{1.05}
+
+\usepackage{bm,url,xspace}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{amssymb,amsmath}
+\usepackage[final,pdftex]{graphicx}
+\usepackage[pdftex]{hyperref}
+
+\newcommand{\ddt}[1]{\ensuremath{\frac{\partial #1}{\partial t}}}
+\newcommand{\ddx}[1]{\ensuremath{\frac{\partial #1}{\partial x}}}
+\newcommand{\ddy}[1]{\ensuremath{\frac{\partial #1}{\partial y}}}
+\newcommand{\pp}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\RR}{\mathbb{R}}
+
+\newcommand{\bbF}{\mathbf{F}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bw}{\mathbf{w}}
+
+\newcommand{\grad}{\nabla}
+\newcommand{\Div}{\nabla\cdot}
+\newcommand{\strainrate}{D}
+\newcommand{\devstress}{\tau}
+
+\newcommand{\exer}[2]{\medskip\noindent \textbf{#1.}\quad #2}
+\newcommand{\mname}[1]{\href{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1}{\texttt{#1}}}
+
+\newcommand{\Matlab}{\textsc{Matlab}\xspace}
+\newcommand{\Octave}{\textsc{Octave}\xspace}
+
+
+\begin{document}
+
+\title{Exercises to accompany \\ ``Numerical modelling of ice sheets and ice shelves''}
+
+\date{\today.  Copyright 2009--2010  Ed Bueler}
+
+\maketitle
+
+
+\section*{Exercises for section ``heat analogy \& numerics''}
+
+\exer{I.1}{On the slide titled ``compare to heat equation'' there is a note saying ``where $\tilde \mu$ is a material constant proportional to $\Delta x^{-2}$''.  Explain why this constant has this proportionality.}
+
+\exer{I.2}{Fill in the details on the slides titled ``finding similarity solution of heat equation'', to derive the Green's function of the heat equation.}
+
+\exer{I.3}{Assume $u$ has continuous second derivatives.  Show
+  $$u_x(t,x) = \frac{u(t,x+\Delta x) - u(t,x-\Delta x)}{2\Delta x} + O(\Delta x^2).$$
+}
+\exer{I.4}{This is an easy exercise in \Matlab/\Octave colon notation, motivated by the slide which displays the code \mname{heat.m}:
+\renewcommand{\labelenumi}{(\alph{enumi})}
+\begin{enumerate}
+\item Give colon notation for the list of numbers $4,7,\dots,100$.  Give colon notation that extracts columns $4,7,\dots,100$ of a $100 \times 100$ arbitrary matrix $A$ to form a $100 \times 33$ matrix $B$.
+\item Rewrite \mname{heat.m} \emph{without} any colon notation.
+\end{enumerate}}
+
+\exer{I.5}{\emph{This extended exercise concerns the numerical treatment of ``$\Div\left(D\,\grad\right)$''.} 
+\renewcommand{\labelenumi}{(\alph{enumi})}
+\begin{enumerate}
+\item Show that if $D=D(x,y)$ and $u=u(x,y)$ then $\Div \left(D\, \grad u\right) = D \grad^2 u + \grad D \cdot \grad u$.
+\item Write down the obvious $O(\Delta t)+O(\Delta x^2)$ explicit finite difference method for the equation $u_t = D_0 u_{xx} + E_0 u_x$, assuming $D_0>0$ and $E_0$ are constant.  (\emph{You will need to use a centered approximation for $u_x$.})
+\item The explicit method for the heat equation is solved for the unknown $u_j^{n+1}$.  Do the same for your explicit method from part (b). 
+\item Stability for your method will occur if the right hand side from part (c) has all positive coefficients.  If $|E_0| \gg D_0$, what does this say about $\Delta t$?
+\item Why we keep ``$\Div\left(D\,\grad\right)$'' in that form?  How is this related to staggered grid?
+\end{enumerate}
+}
+
+
+\bigskip
+\section*{Exercises for section ``shallow ice sheets''}
+
+\exer{II.1}{Is P.~Halfar male or female, and what does the ``P.'' stand for?}
+
+\exer{II.2}{The simplest model of earth deformation is to assume \emph{instantaneous pointwise isostasy}, which says that the bed is depressed by a fixed fraction $0<f<1$ of the ice thickness.  Include this effect in the SIA model which, namely equation (1) in the lecture.  Also include it in the Halfar solution, and plot the results.}
+
+\exer{II.3}{Nye [2000] derives the Halfar solution differently from how I have done it here.  Read, and explain the principles behind, Nye's nicer version.}
+
+\exer{II.4}{Find and read [Mahaffy, 1976].  It sets a standard for a quality application of a model for flowing ice.}
+
+\exer{II.5}{On the slided titled ``verifying our SIA code \texttt{siaflat.m}'' we see that the numerical error in ice thickness near the grounded margin of an ice sheet is much larger than elsewhere.  Why?  How general is this situation?}
+
+\exer{II.6}{On the slide titled ``kinematic and mass continuity equations 2'' we show that (3) \& (4) $\implies$ (5).  Now show that (4) \& (5) $\implies$ (3).  That is, get the surface kinematical equation from the mass continuity and basal kinematical equations.}
+
+\exer{II.7}{
+\renewcommand{\labelenumi}{(\alph{enumi})}
+\begin{enumerate}
+\item Show $h^*_{x^*} = (\ell/d) h_x$ in the scalings given on the slides titled ``scaling the variables''.
+\item On the slide titled ``finally get to the SIA'' we have ``$\tau_{13} = - (h - z) h_x$.''  Re-dimensionalize it.  That is, put stars on and then go back to the original variables.
+\end{enumerate}
+}
+
+
+\bigskip
+\section*{Exercises for section ``Shallow shelves and streams''}
+
+\exer{III.1}{\renewcommand{\labelenumi}{(\alph{enumi})}
+\begin{enumerate}
+\item Find one reference on, and one actual code for solving, tridiagonal systems. \emph{Now throw them away}.  A decent matrix solver will recognize the sparsity pattern and act accordingly, so you don't have to.
+\item What sparse structure will the SSA matrix have in two spatial variables is we use a finite difference method and square grid cells?
+\end{enumerate}}
+
+\exer{III.2}{What is going on in \mname{flowline.m} (slide titled ``solving the inner linear problem 4'') with the lines about the ``\texttt{scale}'' variable?  What happens if these lines are commented out?}
+
+\exer{III.3}{On the slide titled ``the full monty, with a grounding line'' we display a reasonably complete continuum model for an ice stream crossing the grounding line and flowing into an ice shelf.  (In the flowline case.) \renewcommand{\labelenumi}{(\alph{enumi})}
+\begin{enumerate}
+\item Modify \mname{ssaflowline.m} to include the term ``$- C|u|^{m-1}u$'', first in the $m=1$ case of linear till.  (The MISMIP project can supply a value of $C$.)  Does this term modify the matrix or the right hand side, in the matrix problem solved by \mname{flowline.m}?
+\item Run the example on an ice stream geometry of your choice.
+\end{enumerate}}
+
+
+
+% some slides that are too much for lecture but should be in exercises:
+
+\begin{comment}
+
+\subsection{derivation of SSA}
+
+\begin{frame}{derivation of SSA from Stokes; plane flow case}
+
+\begin{itemize}
+\item following appendix A of Schoof [2006]\nocite{SchoofStream}
+\item starting point is the same set of $n=3$ plane flow Stokes equations as used in the derivation of the SIA
+\item recall the equations, including upper surface boundary conditions, but with flow law in ``viscosity form''; $B=A^{-1/3}$:
+\small
+\begin{align*}
+u_x + w_z &= 0 \\
+p_x &= \tau_{11,x} + \tau_{13,z} \\
+p_z &= \tau_{13,x} - \tau_{11,z} - \rho g \\
+\tau_{11} &= B d^{-2/3} u_x \\
+\tau_{13} &= B d^{-2/3} \frac{1}{2}\left(u_z + w_x\right) \\
+\tau_{13}\big|_h &= (\tau_{11}\big|_h - p\big|_h) h_x \\
+p|_h + \tau_{11}|_h + \tau_{13}|_h h_x &= 0
+\end{align*}
+\normalsize
+\item (mass continuity equation not considered in this derivation)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{derivation of SSA from Stokes 2}
+
+\begin{itemize}
+\item merely \emph{different scalings} and \emph{different basal boundary conditions} from SIA derivation
+\item ice shelf (and not ice stream) case here
+\item the basal boundary experiences no \emph{traction} from ocean water, in an ice shelf, but there is significant \emph{pressure}
+\item ice shelves are floating so $\rho H = - \rho_w b$
+\item the basal stress condition is, therefore,
+	$$\sigma_{ij} n_j = \rho g H n_i$$
+where $\textbf{n}$ is normal to base
+\item using $\mathbf{n} = (-b_x,0,1)$, get two basal conditions
+\begin{align*}
+\tau_{13}\big|_b &= (\tau_{11}\big|_b + \rho g H - p\big|_b) b_x \\
+p|_b + \tau_{11}|_b + \tau_{13}|_b b_x &= \rho g H
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{derivation of SSA from Stokes 3}
+
+%\mu = d case where \delta=1
+\begin{itemize}
+\item scalings of variables similar to SIA:
+\begin{align*}
+x &= \ell\, x^* &         u &= [u] u^* \\
+z &= d\, z^*    &         w &= \eps [u] w^* \\
+h &= d\, h^*    & \tau_{11} &= [\tau] \tau_{11}^* \\
+H &= d\, H^*    & \tau_{13} &= \eps [\tau] \tau_{13}^* \\
+b &= d\, b^*  & p - \rho g (h-z) &= [\tau] p^*
+\end{align*}
+\item \dots but note that scalings of pressure $p$ and stress components $\tau_{11},\tau_{13}$ different from SIA case
+\item scale relations:
+  \begin{align*}
+  \eps &= \frac{d}{\ell}           & [\tau] &= \rho g d  &
+  \frac{[u]}{\ell} &= [A] [\tau]^3
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{derivation of SSA from Stokes 4}
+
+\begin{itemize}
+\item re-written Stokes equations, in new non-dimensional coordinates, but without stars on variables:
+\begin{align*}
+u_x + w_z &= 0 \\
+p_x &\stackrel{\ast}{=} \tau_{11,x} + \tau_{13,z} - h_x \\
+p_z &= -\tau_{11,z} + \eps^2 \tau_{13,x} \\
+\tau_{11} &= d^{-2/3} u_x \\
+u_z &\stackrel{\ast\ast}{=} 2 \eps^2 (\tau_{13} - w_x) \\
+\tau_{13}\big|_h &\stackrel{\dagger}{=} (\tau_{11}\big|_h - p\big|_h) h_x \\
+p|_h + \tau_{11}|_h &= -\eps^2 h_x \\
+\tau_{13}\big|_b &\stackrel{\dagger}{=} (\tau_{11}\big|_b - p\big|_b) b_x \\
+p\big|_b + \tau_{11}\big|_b &= - \eps^2 b_x \tau_{13}\big|_b
+\end{align*}
+\item here $d^2 = u_x^2 + \eps^2 (1/4) \left(2 (\tau_{13} - w_x) + w_z\right)^2$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{derivation of SSA from Stokes 5}
+\label{slide:getssa}
+
+\begin{itemize}
+\item to get to SSA equations, first take system of equations on previous page and drop $\eps^2$ terms
+\item then integrate equation $\ast$ from base to surface, use the equations marked $\dagger$ to evaluate $\tau_{13}$ at base and surface, and use Leibniz rule to get
+	$$\left(\int_b^h p\,dz\right)_x \stackrel{\Omega}{=} \left(\int_b^h \tau_{11}\,dz\right)_x - H h_x$$
+\item equation marked $\ast\ast$ shows that $u$ is independent of $z$, but then it follows from expression for $d^2$ and other equations that:
+	$$u,d,\tau_{11}, \text{ and } p \text{ are all independent of } z$$
+\item also $p=-\tau_{11}$, so, from above equation marked $\Omega$,
+	$$\left(2 H \tau_{11}\right)_x - H h_x = 0$$
+\item re-dimensionalize this to get SSA equation for velocity in ice shelf case,
+  $$\left(2 A^{-1/3} H |u_x|^{-2/3} u_x\right)_x - \rho g H h_x = 0$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{exers to go with above derivation}
+\exer{III.n}{Fill in the details on the integrals in the second bullet point on the previous slide.}
+
+\exer{III.n+1}{Do the re-dimensionalization step on the previous slide, the last bullet point.}
+\end{frame}
+
+
+
+\bigskip
+\section*{Exercises for section ``free boundary problems''}
+
+\exer{IV.1}{Modify \mname{plothalfar.m} to show surfaces of $H^{8/3}$ instead of $H$.  Compare to pictures on slide 35.  Relate to the material on free boundary problems below.
+}
+
+\end{comment}
+
+\end{document}
+

@@ -1,0 +1,20 @@
+#  Copyright 2009--2010  Ed Bueler
+
+These files are the electronic form of Bueler's lectures at the 2010 Karthaus
+Summer School on Glaciology.  An earlier version was used in 2009.
+
+The lectures (lecture.pdf, along with the reference list in refs.pdf) are
+supposed to be a self-contained course.  Self-contained, that is, if you don't
+want to do exercises (exers.pdf) or actually run and modify codes.
+
+Working with actual codes is recommended!  See mfiles/ for the Matlab/Octave 
+programs.  The lectures are the major documentation of these programs.  Note
+that there are also help comments (= leading comments) in the Matlab/Octave
+programs.  These help comments contain examples indicating how to run the
+programs.
+
+The directory petsc/ contains a C code using the PETSc library to solve the
+same SSA problem as solved by some of the Matlab/Octave programs.  Wise students
+would only look in petsc/ after becoming reasonably familiar with the
+Matlab/Octave versions.
+

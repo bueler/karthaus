@@ -1,0 +1,40 @@
+The SSA code  ssaflowline.c  solves the same problem solved by the Matlab/Octave
+codes
+   testshelf.m,  ssaflowline.m,  flowline.m
+in directory mfiles/.
+
+See the PDF lecture slides for a bit of high-level
+information on the problem, the Picard iteration solution implemented in the
+Matlab/Octave codes, and superficial ideas about PETSc as a nonlinear solver
+toolbox.  See jacobiannotes.pdf for more.
+
+To build and run in this directory:
+  0)  needs PETSc version 3.1 
+  1)  set PETSC_DIR and PETSC_ARCH, e.g. by
+        $ source set_my_petsc
+      but make sure to edit set_my_petsc to set the correct values
+  2)  build:
+        $ make
+  3)  run with defaults:
+        $ ./ssaflowline
+
+More runs are like the following.
+
+A.  Show the solution at higher resolution:
+        $ ./ssaflowline -da_grid_x 500 -ssa_show -snes_monitor_solution -draw_pause 2
+
+B.  Parallel and higher resolution (if you have 4 cores, but it runs on any machine):
+        $ mpiexec -n 4 ./ssaflowline
+        
+C.  The default for ssaflowline is to use an analytical Jacobian.  Here is the
+    un-preconditioned Jacobian-free ("matrix-free") Newton-Krylov version:
+        $ ./ssaflowline -snes_mf
+
+D.  There are several other options.  The help system is a PETSc-style nerd
+    interface.  To see available options run
+        $ ./ssaflowline -help | less
+    or
+        $ ./ssaflowline -help | grep ssa_
+
+Thanks to Jed Brown for help developing this example.
+

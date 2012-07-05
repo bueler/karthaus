@@ -1,0 +1,11 @@
+# Use this file in bash shell to set your PETSc directory and architecture.
+#
+# *** MAKE SURE TO EDIT THIS TO SET THE CORRECT PETSC_DIR AND PETSC_ARCH ***
+#
+# Note that PETSc versions earlier than 3.1 may not work.
+
+export PETSC_DIR=~/petsc-3.1/
+export PETSC_ARCH=mpich-gcc-dbg   # for performance measurements, do something like
+                                  #   "make PETSC_ARCH=mpich-gcc-opt"
+                                  # to switch to the optimized PETSc
+

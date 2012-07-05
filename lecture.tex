@@ -1,0 +1,188 @@
+% Copyright 2009--2010  Ed Bueler
+
+%\documentclass[10pt,hyperref={pdfpagelabels=false}]{beamer}
+\documentclass[10pt]{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Hannover}
+  % or ...
+
+  \usecolortheme{crane}
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+  
+  \setbeamerfont{frametitle}{size=\large}
+}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+\usepackage{empheq}
+\usepackage{amsmath}
+\usepackage{esint}
+\usepackage{animate}
+\usepackage{xspace}
+\usepackage{verbatim}
+\usepackage{hyperref}
+
+% we can generate a reference list if bibtex is applied to this .tex,
+%   and here's the style:
+\usepackage{natbib}
+
+
+\title[Numerical modelling]{
+Numerical modelling \\ 
+of ice sheets and ice shelves}
+
+\author{Ed Bueler}
+
+\institute{
+Dept of Mathematics and Statistics \\
+and Geophysical Institute \\
+University of Alaska, Fairbanks}
+
+\lecture[1]{Numerical modelling of ice sheets and ice shelves}{lecture-text}
+
+
+\date{September 2010 \\ Karthaus Summer School}
+
+
+% remove this when printing out:
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,hideallsubsections]
+  \end{frame}
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment:
+%\beamerdefaultoverlayspecification{<+->}
+
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bw}{\mathbf{w}}
+
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bbF}{\mathbf{F}}
+\newcommand{\bU}{\mathbf{U}}
+
+\newcommand{\ddt}[1]{\ensuremath{\frac{\partial #1}{\partial t}}}
+\newcommand{\ddx}[1]{\ensuremath{\frac{\partial #1}{\partial x}}}
+\newcommand{\ddy}[1]{\ensuremath{\frac{\partial #1}{\partial y}}}
+\newcommand{\pp}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\renewcommand{\t}[1]{\texttt{#1}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\grad}{\nabla}
+\newcommand{\Div}{\nabla\cdot}
+\newcommand{\strainrate}{D}
+\newcommand{\devstress}{\tau}
+
+\newcommand{\Matlab}{\textsc{Matlab}\xspace}
+\newcommand{\Octave}{\textsc{Octave}\xspace}
+
+\newcommand{\exer}[2]{\medskip\noindent \textbf{#1.}\quad #2}
+\mode<presentation>{
+\newcommand{\slidepage}[1]{slide \pageref{#1}}
+}
+
+\newcommand{\mname}[1]{\href{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1}{\texttt{#1}}}
+
+\newcommand{\txtinput}[1]{ \scriptsize \verbatiminput{#1} }
+
+\newcommand{\txtinputtiny}[1]{ \tiny \verbatiminput{#1} }
+
+\newcommand{\mmessage}[1]{\begin{center}
+\emph{see code} \url{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1.m}
+\end{center}}
+
+\newcommand{\mmess}[1]{\vspace{-0.1in}\begin{center}
+\fbox{\url{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1.m}}
+\end{center}}
+
+
+\newcommand{\minput}[1]{
+\scriptsize \verbatiminput{mfiles/#1.slim.m}
+\vspace{-0.2in}
+\tiny \mmess{#1}
+\normalsize
+}
+
+
+\newcommand{\minputtiny}[1]{
+\tiny \verbatiminput{mfiles/#1.slim.m}
+\vspace{-0.16in}
+\mmess{#1}
+\normalsize
+}
+
+
+\begin{document}
+
+\begin{frame}
+  \maketitle
+\end{frame}
+
+% the major parts are in separate files:
+
+\input{intro.tex}
+
+\input{heatnum.tex}
+
+\input{sia.tex}
+
+\input{ssa.tex}
+
+\input{next.tex}
+
+
+\begin{comment}
+REMEMBER TO THINK ABOUT THESE THINGS:
+* SSA numerics use matrix solution: point out general sparseness and methods?  exercise related to methods?
+* attempt to use Green's function to understand diffusivity of 1D SSA?
+* why is ice sheet modeling a "1 bar subject"?
+* ED: make sure to test codes in Matlab
+* add slide for SIA: "careful with the smoothness of the bed ... because you are differentiating it"   show equation   H_t = M + \Div (D \grad H) + \Div(D \grad b)
+* Walt-style props
+   -- bicycle for plastic till analogy
+   -- membrane and grid for free boundary
+   -- silly putty
+\end{comment}
+
+
+% extra slides on free-boundary problems:
+%   put these in when building refs
+%   put these in for actual lecture
+%   do not put these in when printing out
+\input{freebdry.tex}
+
+\begin{frame}{The End}
+
+\begin{center}
+\mode<presentation>{\includegraphics[width=0.7\textwidth]{photos/polarbear}}
+
+\alert{Thanks for bearing with me!}
+\end{center}
+\end{frame}
+
+% bibliography will actually not appear in slides unless bibtex is run
+%   (i.e. not normally)
+
+\newpage
+\bigskip
+
+\small
+\bibliography{ice_bib}
+\bibliographystyle{igs}
+
+
+\end{document}
+
