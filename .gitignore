@@ -29,6 +29,7 @@
 lecture.pdf
 exers.pdf
 refs.pdf
+notes/notes.pdf
 *.slim.m
 pdffigs/*.pdf
 anim/*.png
