@@ -165,98 +165,33 @@ Matlab/Octave codes:
 
 \subsection{ice flow equations}
 
-
-my first goal
-
-\begin{itemize}
-\item my goal is to get to an equation for which I can say:
-
+My first goal in these notes is to get to an equation for which I can say:
 \begin{center}
-\emph{numerically solve just this equation, and you've got a usable model for a flowing ice sheet}
+\emph{numerically solve just this equation, and you've got a usable model for a flowing ice sheet.}
 \end{center}
+To get to my goal I will quickly recall the continuum mechanics of ice flow.  But note that a ``usable'' model is \emph{understood} more than it is \emph{correct}!
 
-\item to get to my goal I will quickly recall the continuum mechanics of ice flow
-\item a ``usable'' model is \emph{understood} more than it is \emph{correct}
-\end{itemize}
+Ice in glaciers is a \emph{fluid}.  Thus we describe fluids primarily by a \emph{velocity field} $\mathbf{u}(t,x,y,z)$.  If the ice fluid were either faster-moving than it actually is (e.g., because gravity was much stronger), or if it was linearly-viscous like liquid water, or both, then ice flow would be a more-familiar, ``typical'' fluid.  In that case we would all use the Navier-Stokes equations as our flow model:
+\begin{align}
+\nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressible} \\
+\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nu \nabla^2 \mathbf{u} + \rho \mathbf{g} &&\text{\emph{force balance}} \label{stokes}
+\end{align}
 
+You say ``\emph{hmmm} \dots \emph{does not sound like glaciology to me!}''  Indeed, is numerical ice flow modeling a part of computational fluid dynamics?  My answer is emphatically ``yes'', and it is clearly a large scale fluid problem like atmosphere and ocean in climate systems.  But it is a weird one!  Consider what makes atmosphere/ocean flow modeling exciting:
+  \begin{center} turbulence \qquad convection \qquad  coriolis force  \qquad salinity variation \qquad chemistry
+  \end{center}
+None of the above list is relevant to ice flow!  So what could be interesting about the flow of slow, cold, stiff, laminar, inert old ice?  Of course, it's \emph{ice dynamics!}
 
-ice in glaciers is a \emph{fluid}
+First we might observe that ice is a slow, shear-thinning fluid.  In terms of equations, ``slow'' implies that$\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$, which is to say that the forces of inertia are negligible.  while ``non-Newtonian'' implies that the viscosity $\nu$ in \eqref{stokes} is not constant.  In face ice is ``shear-thinning'' flow, so that bigger strain rate means smaller viscosity.  Thus the standard ``full'' model is Glen-law ($n=3$) Stokes:
+\begin{align}
+\nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressibleagain} \\
+0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance}} \label{forcebalance} \\
+\mathbf{D}_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{flow law}} \label{flowlaw}
+\end{align}
 
-\begin{itemize}
-\item we describe fluids primarily by a \emph{velocity field} $\mathbf{u}(t,x,y,z)$
-\item if ice fluid were
-  \begin{itemize}
-  \item[$\circ$] faster-moving than it actually is (e.g.: gravity stronger?), and
-  \item[$\circ$] linearly-viscous like liquid water
-  \end{itemize}
-  
-  then ice flow would be a more-familiar, ``typical'' fluid
-\item in that case we would all use the Navier-Stokes equations as our flow model:
-\begin{align*}
-\nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
-\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nu \nabla^2 \mathbf{u} + \rho \mathbf{g} &&\text{\emph{force balance}}
-\end{align*}
-\end{itemize}
+These equations above are true at every instant, and thus geometry, boundary stress, and ice viscosity determine velocity instantaneously.  A time-stepping numerical ice sheet code recomputes the full velocity field at every time step, without requiring velocity from the previous step.  Thus such a model has no memory of previous momentum/velocity, and velocity is a ``diagnostic'' output of an ice flow model.
 
-
-\emph{hmmm} \dots \emph{does not sound like glaciology to me!}
-
-is numerical ice flow modeling a part of computational fluid dynamics?
-
-\begin{itemize}
-\item \alert{yes}
-\item large scale like atmosphere/ocean
-\item \dots but it is a weird one
-\item consider what makes atmosphere/ocean flow modeling exciting:
-  \begin{itemize}
-  \item[$\circ$] turbulence
-  \item[$\circ$] convection
-  \item[$\circ$] coriolis force
-  \item[$\circ$] density/salinity variation
-  \item[$\circ$] chemistry (methane, ozone, \dots)
-  \end{itemize}
-\item none of the above list is relevant to ice flow
-\item so what could be interesting about the flow of slow, cold, stiff, laminar, inert old ice?
-
- \qquad \dots \qquad it's \emph{ice dynamics!}
-\end{itemize}
-
-
-ice is a slow, shear-thinning fluid
-
-\begin{itemize}
-\item our fluid is
-
-  \begin{tabular}{lc}
-  \emph{slow}: & $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$ \\
-  \emph{non-Newtonian}: & viscosity $\nu$ is not constant
-  \end{tabular}
-\item ``shear-thinning'' flow: bigger strain rate means smaller viscosity
-\item the standard ``full'' model is Glen-law ($n=3$) Stokes:
-\begin{align*}
-\nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
-0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance}} \\
-\mathbf{D}_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{flow law}}
-\end{align*}
-\item these equations above are true at every instant, and
-  \begin{quote}
-  \emph{geometry, boundary stress, and ice viscosity determine velocity instantaneously}
-  \end{quote}
-\end{itemize}
-
-
-\begin{itemize}
-\item ``slow'':
-  $$\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0 \qquad \iff \qquad \begin{pmatrix} \text{forces of inertia} \\ \text{are negligible} \end{pmatrix}$$
-\item a time-stepping ice sheet code recomputes the full velocity field at every time step, without requiring velocity from the previous step\footnote{to be a weatherman you've got to know which way the wind blows \dots but don't expect that from a glaciologist}
-\item thus no memory of previous momentum/velocity, so
-  \begin{quote}\emph{velocity is a ``diagnostic'' output of an ice flow model}\end{quote}
-\end{itemize}
-
-plane flow Stokes:
-
-\begin{itemize}
-\item in the $x,z$ plane flow case the Stokes equations say
+Consider now the plane flow case.  In the $x,z$ plane flow case the Stokes equations say
 \begin{empheq}[]{align}
 u_x + w_z &= 0 &&\text{\emph{incompressibility}}\notag \\
 p_x &= \tau_{11,x} + \tau_{13,z} &&\text{\emph{stress balance} ($x$)} \notag \\
@@ -264,12 +199,7 @@ p_z &= \tau_{13,x} - \tau_{11,z} - \rho g &&\text{\emph{stress balance} ($z$)} \
 u_x &= A \tau^2 \tau_{11} &&\text{\emph{flow law} (diagonal)}\notag \\
 u_z + w _x &= 2 A \tau^2 \tau_{13} &&\text{\emph{flow law} (off-diagonal)} \notag
 \end{empheq}
-\item $x,z$ subscripts are partial derivatives
-\item $\tau_{13}$ is a ``vertical'' shear stress
-\item $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are deviatoric longitudinal stresses 
-\item we have five equations in five unknowns ($u,w,p,\tau_{11},\tau_{13}$)
-\item complicated enough \dots what about in a simplified situation?
-\end{itemize}
+Here $x,z$ subscripts are partial derivatives.  Note that $\tau_{13}$ is a ``vertical'' shear stress while $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are deviatoric longitudinal stresses.  We have five equations in five unknowns ($u,w,p,\tau_{11},\tau_{13}$).  This is complicated enough to make many researchers pause before jumping in to a solution method.  So, what about in a simplified situation?
 
 
 \subsection{slab-on-a-slope}

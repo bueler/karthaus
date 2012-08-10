@@ -8,7 +8,7 @@ figures := $(addprefix ../photos/, $(figures))
 
 # link ice_bib.bib needed for bibtex to work  (to file in pism-dev/doc/)
 
-%.pdf: %.tex $(figures) ice_bib.bib
+%.pdf: %.tex ice_bib.bib
 	pdflatex $*
 	bibtex $*
 	pdflatex $*
