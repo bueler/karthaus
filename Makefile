@@ -32,7 +32,7 @@ figures := ice_shelf_edge_hg.jpg polarbear.jpg flowline.png fofv.png \
 epsfigures := diffstencil mahaffystencil sshape heatscaling siascaling \
         stability instability expstencil impstencil cnstencil exp2dstencil \
         initialheat finalheat AofT slab
-svgfigures := coffee heatconduction
+svgfigures := coffee heatconduction Rocket_nozzle_expansion
 minputs := heat heatadapt halfar diffusion siaflat flowline \
 	convanalysis ssaflowline ssainit testshelf verifysia
 texinputs := intro.tex heatnum.tex sia.tex freebdry.tex ssa.tex next.tex
