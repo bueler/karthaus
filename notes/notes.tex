@@ -1,4 +1,4 @@
-\documentclass[titlepage,letterpaper,final,11pt]{scrartcl}
+\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
 
 \usepackage[total={6.0in,8.75in},top=1.2in,left=1.35in]{geometry}
 
@@ -68,7 +68,7 @@ urlcolor=blue     % only if colorlinks=true
 \begin{titlepage}
 
   \begin{center}
-    {\Large\usekomafont{title} Numerical modelling of ice sheets, streams, and shelves}
+    {\Large\usekomafont{title} Numerical modelling \\ of ice sheets, streams, and shelves}
     \vspace{0.5cm}
 
     {\large Ed Bueler}
@@ -80,88 +80,57 @@ urlcolor=blue     % only if colorlinks=true
     
     \includegraphics[width=6.0in]{flowline}
   
-    \tiny \emph{figure modified from} \cite{SchoofMarine1} \normalsize
+    \scriptsize \emph{Illustrates the notation used in this chapter.  Figure modified from \cite{SchoofMarine1}.} \normalsize
     
     \vspace{2.0in}
   \end{center}
 \end{titlepage}
 
 
-\section{preamble}
+\section{Numerical modelling of ice sheets, streams, and shelves}
 
-slogans:
+Numerical models can, if well-constructed, actually help understand the behavior of particular glaciers, ice sheets, and ice shelves.  Their most common use may be so that a researcher to ask: when I put together the incomplete understanding of these processes, does the combination behave as I expect, and why does it behave the way I see?  Numerical models rarely generate new theoretical understandings---a human brain seems to be needed to get new insights from observations---but they can surely can demonstrate flaws in the understanding of glacier processes, or in how processes interact to give overall behavior.
+
+But numerical models should be built with care.  The worst outcome is to have a researcher spend time explaining, through physical argumentation and using observational evidence, some model behavior that is simply an artifact of poor computer programming or numerical analysis.
+
+This chapter has limited goals:
   \begin{enumerate}
-  \item \alert{focus on approximating ice flow}
-  \item \alert{example numerical codes that actually work}
+  \item we focus on approximating ice flow, and
+  \item we provide example numerical codes that actually work.
   \end{enumerate}
+But our scope is limited also.  Among the continuum models covered here are the shallow ice approximation (SIA) in two horizontal dimensions (2D), the shallow shelf approximation (SSA) in 1D, and the mass continuity and surface kinematical equations.  We briefly describe the Stokes equations, but we do not address their numerical solution.  The numerical ideas include finite difference schemes, solving algebraic systems from stress balances, and the verification of numerical codes, but we do not use the finite element or spectral methods.
+
+For more on numerical modelling topics not covered here, see the Notes and References section at the end of this chapter.
+
+Our notation generally consistent with the glaciological literature, and other parts of the present book, but Table \ref{tab:notation} gives a summary.  Coordinates are $t,x,y,z$, with $z$ vertical, positive upward, and subscripts are used for partial derivatives: $u_x = \partial u/\partial x$.
+%consistent with \cite{BLKCB,BBssasliding,Fowler,GreveBlatter2009,SchoofStream,SchoofMarine1}
+
+%FIXME: how many codes are displayed?  how many hidden but needed?
+This chapter is structured around fourteen Matlab/Octave codes, each of which is about one-half of a page.  These are available in \texttt{.zip} and \texttt{.tar.gz} forms online at:\footnote{Or on a USB drive at Karthaus available from memory stick}
+
 \medskip
+  \centerline{\fbox{\url{http://www.dms.uaf.edu/~bueler/karthaus/}}}
 
-scope:
-  \begin{itemize}
-  \item[$\circ$] continuum models
-
-    \begin{itemize}
-    \item shallow ice approximation (SIA) in 2D
-    \item shallow shelf approximation (SSA) in 1D
-    \item mass continuity \& surface kinematical equations
-    \end{itemize}
-
-  \item[$\circ$] numerical ideas
-
-    \begin{itemize}
-    \item finite difference schemes
-    \item solving algebraic systems from stress balances
-    \item verification
-    \end{itemize}
-  \end{itemize}
-
-
-
-\emph{not} \normalsize covered here:
-
-  \begin{itemize}
-  \item Stokes and ``higher order'' flow equations
-  \item thermomechanical coupling or polythermal ice
-  \item subglacial hydrology/processes
-  \item mass balance and snow/firn processes
-  \item constitutive relations other than Glen isotropic
-  \item grounding lines, calving fronts, ocean interaction
-  \item paleo-climate and ``spin-up''
-  \item earth deformation under ice sheet load
-  \item other numerics: FEM, spectral, multigrid, parallel, \dots
-  \item etc.
-  \end{itemize}
-
-  \begin{itemize}
-  \item coordinates $t,x,y,z$  (with $z$ vertical, positive upward)
-  \item subscripts for partial derivatives $u_x = \partial u/\partial x$
-  \item $H=$ ice thickness
-  \item $h=$ ice surface elevation
-  \item $b=$ bedrock surface elevation
-  \item $T=$ ice temperature
-  \item $\mathbf{u}=(u,v,w)=$ ice velocity
-  \item $\rho=$ density of ice
-  \item $\rho_w=$ density of ocean water
-  \item $g=$ acceleration of gravity
-  \item $n=3$ Glen flow law exponent $=3$
-  \item $A=A(T)=$ ice softness in Glen law ($\mathbf{D}_{ij} = A(T) \tau^{n-1} \tau_{ij}$)
-  \item \alert{please ask about notation!}  (stupid questions impossible)
-  \end{itemize}
-
-%notation generally consistent with these references
-\nocite{BLKCB,BBssasliding,Fowler,GreveBlatter2009,SchoofStream,SchoofMarine1}
-
-Matlab/Octave codes:
-
-\begin{itemize}
-\item lectures are structured around 14 ice flow codes
-\item each is $\sim$ 1/2 page of Matlab/Octave code
-\item \texttt{.zip} and \texttt{.tar.gz} forms available from memory stick
-\item online:
-
-\centerline{\fbox{\url{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/}}}
-\end{itemize}
-
+\begin{table}% table1, one column
+\caption{Common notation used in this chapter.}
+\label{tab:notation}
+\begin{tabular}{@{}clll}
+variable  & description  & value & units \\ 
+\hline
+$A$ & $A=A(T)=$ ice softness in the Glen flow law & & $\text{Pa}^{-3}\,\text{s}^{-1}$ \\
+$B$ & ice hardness; $B=A^{-1/n}$ & & $\text{Pa}\,\text{s}^{1/3}$ \\
+$b$ & bedrock elevation & & m \\
+$g$ & gravity & $9.81$ & m s$^{-2}$ \\
+$H$ & ice thickness & & m \\
+$h$ & ice surface elevation & & m \\
+$M$ & climatic mass balance & & m a$^{-1}$ \\
+$n$ & exponent in Glen flow law & $3$ & \\
+$\rho$ & density of ice & $900$ & kg m$^{-3}$ \\
+$\rho_w$ & density of sea water & $1000$ & kg m$^{-3}$ \\
+$T$ & ice temperature & & K \\
+$\mathbf{u}$ & $=(u,v,w)$ ice velocity & & m s$^{-1}$ \\
+\end{tabular}
+\end{table}
 
 \subsection{ice flow equations}
 
@@ -1420,8 +1389,23 @@ shallow hybrid schemes:
 \end{center}
 
 
-%         References
-\clearpage\newpage
+\section{Notes and references}
+
+ covered here:
+
+  \begin{itemize}
+  \item Stokes and ``higher order'' flow equations
+  \item thermomechanical coupling or polythermal ice
+  \item subglacial hydrology/processes
+  \item mass balance and snow/firn processes
+  \item constitutive relations other than Glen isotropic
+  \item grounding lines, calving fronts, ocean interaction
+  \item paleo-climate and ``spin-up''
+  \item earth deformation under ice sheet load
+  \item other numerics: FEM, spectral, multigrid, parallel, \dots
+  \item etc.
+  \end{itemize}
+
 \bibliography{ice_bib}
 \bibliographystyle{siam}
 
