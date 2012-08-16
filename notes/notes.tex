@@ -107,7 +107,9 @@ urlcolor=blue     % only if colorlinks=true
 \end{titlepage}
 
 
-\section{Numerical modelling of ice sheets, streams, and shelves}
+%\section{Numerical modelling of ice sheets, streams, and shelves}
+\setcounter{section}{1}
+\subsection{Introduction}
 
 Numerical models can, if well-constructed, actually help understand the behavior of particular glaciers, ice sheets, and ice shelves.  Their most common use may be so that a researcher to ask: when I put together the incomplete understanding of these processes, does the combination behave as I expect, and why does it behave the way I see?  Numerical models rarely generate new theoretical understandings---a human brain seems to be needed to get new insights from observations---but they can surely can demonstrate flaws in the understanding of glacier processes, or in how processes interact to give overall behavior.
 
@@ -134,27 +136,25 @@ This chapter is structured around fourteen Matlab/Octave codes, each of which is
 \begin{table}% table1, one column
 \caption{Common notation used in this chapter.}
 \label{tab:notation}
-\begin{tabular}{@{}clll}
-variable  & description  & value & units \\ 
+\begin{tabular}{cll}
+variable  & description & SI units \\ 
 \hline
-$A$ & $A=A(T)=$ ice softness in the Glen flow law & & $\text{Pa}^{-3}\,\text{s}^{-1}$ \\
-$B$ & ice hardness; $B=A^{-1/n}$ & & $\text{Pa}\,\text{s}^{1/3}$ \\
-$b$ & bedrock elevation & & m \\
-$g$ & gravity & $9.81$ & m s$^{-2}$ \\
-$H$ & ice thickness & & m \\
-$h$ & ice surface elevation & & m \\
-$M$ & climatic mass balance & & m a$^{-1}$ \\
-$n$ & exponent in Glen flow law & $3$ & \\
-$\rho$ & density of ice & $900$ & kg m$^{-3}$ \\
-$\rho_w$ & density of sea water & $1000$ & kg m$^{-3}$ \\
-$T$ & ice temperature & & K \\
-$\mathbf{u}$ & $=(u,v,w)$ ice velocity & & m s$^{-1}$ \\
+$A$ & $A=A(T)=$ ice softness in the Glen flow law & $\text{Pa}^{-3}\,\text{s}^{-1}$ \\
+$B$ & ice hardness; $B=A^{-1/n}$ & $\text{Pa}\,\text{s}^{1/3}$ \\
+$b$ & bedrock elevation & m \\
+$g$ & gravity & m s$^{-2}$ \\
+$H$ & ice thickness & m \\
+$h$ & ice surface elevation & m \\
+$M$ & climatic mass balance & m a$^{-1}$ \\
+$n$ & exponent in Glen flow law & \\
+$\rho$ & density of ice & kg m$^{-3}$ \\
+$\rho_w$ & density of sea water & kg m$^{-3}$ \\
+$T$ & ice temperature & K \\
+$\mathbf{u}$ & $=(u,v,w)$ ice velocity & m s$^{-1}$ \\
 \end{tabular}
 \end{table}
 
-\subsection{ice flow equations}
-
-My first goal in these notes is to get to an equation for which I can say:
+\subsubsection*{Ice flow equations}  My first goal in these notes is to get to an equation for which I can say:
 \begin{center}
 \emph{numerically solve just this equation, and you've got a usable model for a flowing ice sheet.}
 \end{center}
@@ -191,11 +191,9 @@ u_z + w _x &= 2 A \tau^2 \tau_{13} &&\text{\emph{flow law} (off-diagonal)} \labe
 Here $x,z$ subscripts are partial derivatives.  Note that $\tau_{13}$ is a ``vertical'' shear stress while $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are deviatoric longitudinal stresses.  We have five equations in five unknowns ($u,w,p,\tau_{11},\tau_{13}$).  This is complicated enough to make many researchers pause before jumping in to a solution method.  So, what about in a simplified situation?
 
 
-\subsection{slab-on-a-slope}
-
 \onefig{slab}{Configuration of slab-on-a-slope flow calculation.}
 
-Our first example is both a case in which we actually solve the Stokes equations, and a primary example to motivate the shallow model which follows.  Consider the two-dimensional axes ($x$,$z$) show in Figure \ref{fig:slab}, which are rotated downward at angle $\alpha>0$ so that the gravity vector has components $\mathbf{g} = (g \sin\alpha,- g \cos \alpha)$.  (We will only use rotated coordinates in this one example.)  Equations \eqref{stokespx}, \eqref{stokespz}, which were stated for un-rotated coordinates, are now:
+\subsubsection*{Slab-on-a-slope}  Our first example is both a case in which we actually solve the Stokes equations, and a primary example to motivate the shallow model which follows.  Consider the two-dimensional axes ($x$,$z$) show in Figure \ref{fig:slab}, which are rotated downward at angle $\alpha>0$ so that the gravity vector has components $\mathbf{g} = (g \sin\alpha,- g \cos \alpha)$.  (We will only use rotated coordinates in this one example.)  Equations \eqref{stokespx}, \eqref{stokespz}, which were stated for un-rotated coordinates, are now:
 \begin{align}
 p_x &= \tau_{11,x} + \tau_{13,z} + \rho g \sin\alpha, \label{stokespxrot} \\
 p_z &= \tau_{13,x} - \tau_{11,z} - \rho g \cos\alpha. \label{stokespzrot}
@@ -243,155 +241,91 @@ Note that $\sin \theta \approx \tan\theta = - h_x$.  Combining these with with m
 This equation is the ``SIA'', which we will numerical solve and seek to understand mathematically, next.
 
 
-\section{shallow ice sheets}
-
-slow, non-Newtonian, some basal slip, and shallow
-
-\begin{itemize}
-\item ice sheets have four outstanding properties \emph{as fluids}:
+\subsection{Shallow ice sheets}  Ice sheets ice sheets have four outstanding properties as fluids.  They are
   \begin{enumerate}
-  \item slow
-  \item non-Newtonian
-  \item contact slip (sometimes)
-  \item shallow
+  \item slow,
+  \item non-Newtonian,
+  \item have contact slip (sometimes),
+  \item and they are shallow.
   \end{enumerate}
-\end{itemize}
+In fact, regarding ``shallow'', Figure \ref{fig:green_transect} shows in red the a no-vertical-exaggeration version of a cross section of Greenland at $71^\circ$.  The vertically-exaggerated shape also shown in that Figure is far more familiar in the glaciological literature, but we should remember that these flows are really thin.
 
-regarding ``shallow''
+\onefig{green_transect}{The standard vertically-exaggerated cross section of the Greenland ice sheet $71^\circ$ north latitude.  The version without such exaggeration is in red.}
 
+So what are the equations describing ice sheets?  In fact the slab-on-a-slope example gives us the key equations, next, but additional arguments are needed to show they are general-purpose.  Here we present the equations as an ice sheet geometry-evolution model, and consider how to think about the solutions of these equations.  In the next section we will solve them numerically.  See Notes and References for the general arguments that derive it from the Stokes equations, under the assumptions that slopes are small and the depth to width ratio is also small.
+
+\subsubsection*{The shallow ice approx (SIA)}  This model is the non-sliding, isothermal shallow ice approximation or ``SIA'' for short.  It is a model which applies to small depth-to-width ratio (``shallow'') grounded ice sheets on not-too-rough bed topography, whose flow is not dominated by sliding and/or liquid water at the base or margin.
+
+The SIA uses the formulas from slab-on-a-slope, but we generalize to two horizontal dimensions.  Let $\mathbf{u} = (u,v)$ be the vector horizontal velocity.  Then we have a:
 \begin{itemize}
-\item below in \alert{red} is a no-vertical-exaggeration cross section of Greenland at $71^\circ$
-\small
-\item green and blue: standard vertically-exaggerated cross section
-\item you can scale Stokes equation using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension, \dots (Fowler, 1997)\nocite{Fowler}
-\end{itemize}
-
-
-\subsection{shallow ice approx (SIA)}
-
-flow model I: non-sliding, isothermal shallow ice approximation = (SIA)
-
-a model which applies to
-\begin{itemize}
-\item small depth-to-width ratio (``shallow'') grounded ice sheets
-\item on not-too-rough bed topography,
-\item whose flow is not dominated by sliding and/or liquid water at the base or margin
-\end{itemize}
-
-\twofig{green_transect}{polaris}{Left: FIXME. Right: ``Polaris Glacier,'' northwest Greenland, photo 122 \cite{PostLaChapelle}.}
-
-
-SIA model equations
-
-\begin{itemize}
-\item though the best explanation of the SIA is to use shallowness to simplify the Stokes equations, here we take the simple slogan:
-
-\begin{center}
-\emph{the SIA uses the formulas from slab-on-a-slope}
-\end{center}
 \item shear stress approximation:
 	$$(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$$
-\item let $\mathbf{u} = (u,v)$, the horizontal velocity
-\item we further approximate
+\item and a further approximation of the shear strain rates in planes parallel to the geoid:
 \begin{align*}
 \mathbf{u}_z &\approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) \\
-     &= - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h
+     &= - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h.
 \end{align*}
-\item by integrating vertically, in the non-sliding case,
-    $$\mathbf{u} = - \frac{2 A (\rho g)^n}{n+1} \left[H^{n+1} - (h-z)^{n+1}\right] |\nabla h|^{n-1} \nabla h$$
-\item but mass continuity remains, $H_t = M - \left(\overline{\mathbf{u}} H\right)_x$
 \end{itemize}
+By integrating vertically, in the non-sliding case,
+    $$\mathbf{u} = - \frac{2 A (\rho g)^n}{n+1} \left[H^{n+1} - (h-z)^{n+1}\right] |\nabla h|^{n-1} \nabla h.$$
+Mass continuity also applies:
+    $$H_t = M - \left(\overline{\mathbf{u}} H\right)_x$$
 
-SIA thickness equation
 
-\begin{itemize}
-\item from last slide, we get the non-sliding, isothermal shallow ice approximation for how thickness changes:
+Combining the last two equations and defining a positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$, we get an equation how thickness changes:
 \begin{empheq}[box=\fbox]{equation}
 H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 \end{empheq}
+This is the SIA equation.  To review the notation, ere $H$ is ice thickness, $h$ is ice surface elevation, $b$ is bed elevation ($h=H+b$), $M$ combines surface and basal mass (im)balance (it is accumulation if $M>0$ and ablation if $M<0$).  If we just solve \eqref{sia} numerically then we get a usable model for the Barnes ice cap, for example \cite{Mahaffy}.  It is a particularly simple ice sheet on a very flat bed with minimal evidence for sliding.
 
-\vspace{-2mm}
-  \begin{itemize}
-  \item[$\circ$] where $H$ is ice thickness, $h$ is ice surface elevation, $b$ is bed elevation ($h=H+b$)
-  \item[$\circ$] $M$ combines surface and basal mass (im)balance:
-
-     accumulation if $M>0$, ablation if $M<0$
-  \item[$\circ$] $n$ is the exponent in the Glen flow law
-  \item[$\circ$] $\Gamma = 2 A (\rho g)^n / (n+2)$ is a positive constant
-  \end{itemize}
-\item numerically solve just equation (1), and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976)\nocite{Mahaffy}
-\end{itemize}
-\medskip
-
-\noindent good questions:
+Some good questions about \eqref{sia}:
 \begin{enumerate}
-\item where does equation (1) come from?
+\item where does it come from?
 \item how to solve it numerically?
 \item how to \emph{think} about it?
 \end{enumerate}
+We will address the last two, and leave the first for the Notes and References.
 
 
-\subsection{analogy w heat equation}
+\subsubsection*{Analogy with the heat equation}  An obigatory step in using the SIA \eqref{sia} is to understand that is a continuum model which is analogous to the better known heat equation, and furthermore that all numerical methods for solving \eqref{sia} can be understood as modifications of well-known methods for solving the heat equation.
 
-heat equation
-
-\begin{itemize}
-\item for understanding SIA, recall heat equation
-\item recall Newton's law of cooling
+Recall first that the heat equation comes from simple empirical observations like Newton's law of cooling, the ordinary differential equation
 	$$\frac{dT}{dt} = -K (T-T_{\text{ambient}})$$
-where $T$ is object temperature and $K$ relates to material and geometry of object (e.g.~cup of coffee)
-\item Newton's law for segments of a rod:
+where $T$ is object temperature and $K$ relates to material and geometry of object (e.g.~cup of coffee).  That is, the temperature of an object tends to decay exponentially to the temperature of its surroundings (ambient temperature).  One way to derive the heat equation, which is a partial differential equation is to argue that the segments of a rod also satisfy Newton's law of cooling, but that the ``ambient'' temperature seen by segment $j$ of a rod is the temperature of its neighbors:
 \begin{align*}
 \frac{dT_j}{dt} &= -K \left(T_j - \frac{1}{2} (T_{j-1} + T_{j+1}) \right) \\
-	&= \frac{K}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right) 
+	&= \frac{K}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right).
 \end{align*}
-\item this has limit as segments shrink:
-	$$T_t = D T_{xx}$$
-\item compare: finite difference approximations to derivatives
-\end{itemize}
+As segment lengths shrink to zero we see an approximation of the second derivative with respect to $x$ on the right, a finite difference formula \cite{MortonMayers}, so that the distributed temperature of a rod satisfies
+	$$T_t = D T_{xx}.$$
+This is the one spatial dimension heat equation when material properties are constant.  The constant $D$ is the ``diffusivity''.
 
-
-more complete and 2D version of heat equation
-
-\begin{itemize}
-\item $u(t,x,y)$ is temperature in object at position $x,y$ and time $t$
-\item Fourier rewrote Newton's law as a rule for heat flux: $\mathbf{q} = - k \grad u$
-\item allow an additional heat source $f$
-\item coefficients: $\rho$ is density, $c$ is specific heat, $k$ is conductivity
-\item by conservation of energy get heat equation:
-	$$\rho c u_t = f + \Div (k \grad u)$$
-\end{itemize}
-
-\begin{itemize}
-\item define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F := f/(\rho c)$
-\item for 2D object (e.g.~a plate):
+The more complete 2D version of the heat equation describes the temperature $T(t,x,y)$ at position $x,y$ in an object, at time $t$  Because Fourier rewrote Newton's law as a rule for heat flux ($\mathbf{q} = - k \grad u$), and if we allow an additional heat source $f$, conservation of energy gives us the standard heat equation:
+	$$\rho c u_t = f + \Div (k \grad u).$$
+Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.
+Define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F := f/(\rho c)$.  Then the heat equation is
 \begin{equation}
-u_t = F + \Div (D\, \grad u) \label{heat}
+T_t = F + \Div (D\, \grad T). \label{heat}
 \end{equation}
-\item this is like the SIA model for ice sheets: temperature $u$ solves a \emph{diffusive, time-evolving partial differential equation (PDE)}
-\end{itemize}
 
-analogy: SIA versus heat equation
-
-\begin{itemize}
-\item side-by-side comparison:
+Where is the analogy with the SIA?  Heat equation \eqref{heat} and SIA \eqref{sia} are both diffusive, time-evolving partial differential equations (PDE).  A side-by-side comparison is illuminating:
 \begin{center}
 \begin{tabular}{cc}
-SIA:\, $H(t,x,y)$ is ice thickness & \scriptsize heat: $u(t,x,y)$ is temperature \\
-	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{u_t = F + \Div (D\, \grad u)}
+SIA:\, $H(t,x,y)$ is ice thickness & heat: $T(t,x,y)$ is temperature \\
+	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
 \end{tabular}
 \end{center}
+We identify the diffusivity in the SIA:
+	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
+The non-sliding shallow ice flow \alert{diffuses} the ice sheet.
 
-\item we identify the diffusivity in the SIA:
-	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}$$
-\item \emph{non-sliding shallow ice flow \alert{diffuses} the ice sheet}
-\item some issues with this analogy:
+However, there are some issues with this analogy:
   \begin{itemize}
-  \item[$\circ$]  $D$ depends on solution $H(t,x,y)$
-  \item[$\circ$]  $D\to 0$ at margin, where $H\to 0$
-  \item[$\circ$]  $D\to 0$ at divides/domes, where $|\grad h|\to 0$
+  \item thickness $H$ and surface elevation $h$ are not the same unless the bed is flat,
+  \item $D$ depends on the solution $H(t,x,y)$,
+  \item $D$ goes to zero at margins, where $H\to 0$, and
+  \item $D$ goes to zero at divides and domes, where $|\grad h|\to 0$.
   \end{itemize}
-\end{itemize}
 
 
 \subsection{finite difference numerics}
@@ -785,15 +719,7 @@ here are results from this \emph{toy} Antarctic flow model
 \quad
 \includegraphics[width=2.5in]{antfinal}
 
-final comments on SIA: origin and rigor
 
-where does the ``shallow ice approximation'' come from?:
-
-\begin{itemize}
-\item historically, Fowler and Larson (1978)\nocite{FowlerLarson1978}, Morland and Johnson (1980)\nocite{MorlandJohnson}, and Hutter (1983)\nocite{Hutter} \dots thus recent
-\item logically, by a ``small-parameter argument'', based on a small depth-to-width ratio, from the more complete Stokes model for slow ice flow
-\item more precisely, by using the small aspect ratio \, $\eps = [H]/[L]$ \, of ice sheets to scale the Stokes model to see which terms make small contributions
-\end{itemize}
 
 
 
@@ -1327,36 +1253,13 @@ Stokes equations and solvers:
 Figure 7 in \cite{Maxwelletal2008}:  velocity contour lines ($\text{m}\,\text{a}^{-1}$) for Athabasca Glacier from \textbf{a} Stokes model, \textbf{b} measurements \cite{Raymond1971}
 \end{center}
 
-``higher-order'' schemes:
 
-\begin{itemize}
-\item both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, so \dots is there a \emph{common shallow antecedent model}?
-\item Schoof and Hindmarsh (2009)\nocite{SchoofHindmarsh} answer:  \emph{yes}, the model derived by Blatter (1995)\nocite{Blatter} is an intermediate model
-\item a hierarchy:
-\end{itemize}
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{hierarchy}
-\end{center}
-
-shallow hybrid schemes:
-
-\begin{itemize}
-\item so how about ``gluing together'' SIA and SSA?
-\item there are multiple schemes for hybridization (Pollard and deConto, 2007\nocite{PollardDeConto}; Bueler and Brown, 2009\nocite{BBssasliding}; Goldberg 2011\nocite{Goldberg2011})
-\item shallow hybrids can be used \emph{now} at high spatial resolution and paleoglacial time scales
-\item for example, we can compare observed (left) and 1km grid modeled (middle and right; model=PISM) surface velocity maps for the Greenland ice sheet
-\end{itemize}
-
-\begin{center}
-\includegraphics[width=5.0in]{csurf_insar_pism_1km}
-\end{center}
 
 
 \section{Notes and references}
 
- covered here:
-
+Not covered here:
   \begin{itemize}
   \item Stokes and ``higher order'' flow equations
   \item thermomechanical coupling or polythermal ice
@@ -1369,6 +1272,16 @@ shallow hybrid schemes:
   \item other numerics: FEM, spectral, multigrid, parallel, \dots
   \item etc.
   \end{itemize}
+
+Where does the SIA come from?    Historically, it was derived several authors in the 1970s and 80s \cite{FowlerLarson1978,MorlandJohnson,Hutter} and thus it is recent compared to the Stokes model.  Logically, you scale the Stokes equations using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension \cite{Fowler}; this is a ``small-parameter argument''.  Then you drop the terms that are small, noting that in one such derivation this means dropping only terms of $\eps^2$ and smaller.
+
+The SSA model is derived by \cite{Morland} for ice shelves and \cite{MacAyeal} for ice streams.  It is thoroughly addressed by \cite{WeisGreveHutter}.
+
+There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  In fact, both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, so one might ask whether there a common shallow antecedent model?  Schoof and Hindmarsh \cite{SchoofHindmarsh} show that the model derived by Blatter\nocite{Blatter} and first put to good use by Pattyn \cite{Pattyn03} is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter/Pattyn ``higher-order'' model, and then further small-parameter arguments get either SIA or SSA from Blatter/Pattyn, according to the details of these arguments.
+
+There are also less-precise shallow hybrid schemes which ``glue together'' the SIA and SSA \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used \emph{now} at high spatial resolution and paleoglacial time scales while higher order and Stokes models have computational limitations which restrict either their spatial extent, their spatial resolution, or the duration of model runs.  Questions remain about what is lost in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
+
+
 
 \bibliography{ice_bib}
 \bibliographystyle{siam}
