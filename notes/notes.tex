@@ -25,7 +25,7 @@ urlcolor=blue     % only if colorlinks=true
 /Title (Numerical modelling of ice sheets, streams, and shelves)
 /Author (Ed Bueler)
 /Subject (numerical modelling of glaciers, ice sheets, and ice shelves)
-/Keywords (numerical model, numerical analysis, glacier, ice sheet, ice shelf, shallow models of ice flow)
+/Keywords (numerical modelling, numerical analysis, glacier, ice sheet, ice shelf, shallow models of ice flow)
 }
 
 \newcommand{\ddt}[1]{\ensuremath{\frac{\partial #1}{\partial t}}}
@@ -241,18 +241,13 @@ Note that $\sin \theta \approx \tan\theta = - h_x$.  Combining these with with m
 This equation is the ``SIA'', which we will numerical solve and seek to understand mathematically, next.
 
 
-\subsection{Shallow ice sheets}  Ice sheets ice sheets have four outstanding properties as fluids.  They are
-  \begin{enumerate}
-  \item slow,
-  \item non-Newtonian,
-  \item have contact slip (sometimes),
-  \item and they are shallow.
-  \end{enumerate}
-In fact, regarding ``shallow'', Figure \ref{fig:green_transect} shows in red the a no-vertical-exaggeration version of a cross section of Greenland at $71^\circ$.  The vertically-exaggerated shape also shown in that Figure is far more familiar in the glaciological literature, but we should remember that these flows are really thin.
+\subsection{Shallow ice sheets}  Ice sheets ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and  (\emph{iv}) they sometimes experience contact slip.
+
+Regarding ``shallow'', Figure \ref{fig:green_transect} shows a no-vertical-exaggeration version of a cross section of Greenland at $71^\circ$.  The vertically-exaggerated shape also shown in the Figure is far more familiar in the glaciological literature, but we should remember that these flows are really thin.
 
 \onefig{green_transect}{The standard vertically-exaggerated cross section of the Greenland ice sheet $71^\circ$ north latitude.  The version without such exaggeration is in red.}
 
-So what are the equations describing ice sheets?  In fact the slab-on-a-slope example gives us the key equations, next, but additional arguments are needed to show they are general-purpose.  Here we present the equations as an ice sheet geometry-evolution model, and consider how to think about the solutions of these equations.  In the next section we will solve them numerically.  See Notes and References for the general arguments that derive it from the Stokes equations, under the assumptions that slopes are small and the depth to width ratio is also small.
+So what are the equations describing ice sheets?  The slab-on-a-slope example gives us the key equations.  Additional arguments are needed to actually show they are ``general purpose'' and not just special to a simple slab.  (See Notes and References for the general arguments that derive it from the Stokes equations, under the assumptions that slopes are small and the depth to width ratio is also small.)  The equations form an ice sheet geometry-evolution model.  We consider how to think about the solutions of these equations in this section.  In the next section we will solve them numerically.
 
 \subsubsection*{The shallow ice approx (SIA)}  This model is the non-sliding, isothermal shallow ice approximation or ``SIA'' for short.  It is a model which applies to small depth-to-width ratio (``shallow'') grounded ice sheets on not-too-rough bed topography, whose flow is not dominated by sliding and/or liquid water at the base or margin.
 
