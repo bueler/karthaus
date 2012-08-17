@@ -108,7 +108,10 @@ urlcolor=blue     % only if colorlinks=true
   \end{center}
 \end{titlepage}
 
+%\clearpage\newpage
+%\tableofcontents
 
+\clearpage\newpage
 %\section{Numerical modelling of ice sheets, streams, and shelves}
 \setcounter{section}{1}
 \subsection{Introduction}
@@ -152,7 +155,7 @@ $n$ & exponent in Glen flow law & \\
 $p$ & pressure & Pa \\
 $\rho$ & density of ice & kg m$^{-3}$ \\
 $\rho_w$ & density of sea water & kg m$^{-3}$ \\
-$T$ & ice temperature & K \\
+$T$ & temperature & K \\
 $\tau$ & magnitude of $\tau_{ij}$: \quad $2 \tau^2 = \sum_{ij} \tau_{ij}^2$ & Pa \\
 $\tau_{ij}$ & deviatoric stress tensor & Pa \\
 $Du_{ij}$ & strain rate tensor & s$^{-1}$ \\
@@ -229,7 +232,7 @@ u(z) &= u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' \label{uslab} \\
 
 Do we believe these equations?  Figure \ref{fig:slabvel} compares the velocity from equation \eqref{uslab} to observations of a mountain glacier.  We have done a credible job of capturing the deformation flow velocity, but we do not yet have a model for the sliding velocity $u_0$.  
 
-\twofigsizes{slabvel}{athabasca_deform}{Left: velocity from the slab-on-a-slope example calculation.  Right: velocity measured in a mountain glacier, the Athabasca Glacier in Canada, derived from inclinometry \cite{SavagePaterson}.}{2.7in}{2.3in}
+\twofigsizes{slabvel}{athabasca_deform}{Left: velocity from the slab-on-a-slope example calculation.  Right: velocity measured in a mountain glacier, the Athabasca Glacier in Canada, derived from inclinometry \cite{SavagePaterson}.}{2.4in}{2.0in}
 
 Now that we have calculated the velocity $u=u(t,x,z)$ \dots so what?  The equations so far do not address the change in shape of the glacier or ice sheet.  So we consider another equation, the \emph{mass continuity} equation.  To explain this, suppose our slab has variable thickness $H=H(t,x)$ and define the vertical average of velocity:
 	$$\bar u(x,t) = \frac{1}{H}\int_0^{H} u(t,x,z)\,dz.$$
@@ -286,9 +289,9 @@ Mass continuity in two horizontal dimensions also applies:
 Compare Equation \eqref{masscont1D} in one dimension.
 
 Combining Equations \eqref{siavelocity} and \eqref{masscont} and defining a positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$, we get an equation how thickness changes:
-\begin{empheq}[box=\fbox]{equation}
+\begin{equation}
 H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
-\end{empheq}
+\end{equation}
 This is the SIA equation we will solve numerically.  To review the notation, $H$ is ice thickness, $h$ is ice surface elevation, $b$ is bed elevation ($h=H+b$), and $M$ combines surface and basal mass (im)balance.
 
 Fulfilling an earlier promise, if we just solve \eqref{sia} numerically then we get a usable model for the Barnes ice cap, see for example \cite{Mahaffy}.  It is a particularly simple ice sheet on a very flat bed with minimal evidence for sliding.
@@ -306,66 +309,47 @@ This is the one dimensional heat equation when material properties are constant.
 
 The more complete 2D version of the heat equation describes the temperature $T(t,x,y)$ at position $x,y$ in an object and at time $t$.  Fourier rewrote Newton's law as a rule for heat flux, namely $\mathbf{q} = - k \grad T$.  If we allow an additional heat source $f$, conservation of energy gives us the standard heat equation:
 	$$\rho c T_t = f + \Div (k \grad T).$$
-Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.
-
-Now define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F = f/(\rho c)$.  Then the heat equation is
+Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.  Now define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F = f/(\rho c)$.  Then the heat equation is
 \begin{equation}
 T_t = F + \Div (D\, \grad T). \label{heat}
 \end{equation}
 
-What is the analogy with the SIA?  Heat equation \eqref{heat} and SIA \eqref{sia} are both diffusive, time-evolving partial differential equations (PDE).  A side-by-side comparison is illuminating:
+The SIA equation \eqref{sia} and the heat equation \eqref{heat} are each diffusive, time-evolving partial differential equations (PDE).  A side-by-side comparison is illuminating:
 \begin{center}
 \begin{tabular}{cc}
-SIA:\, $H(t,x,y)$ is ice thickness & heat: $T(t,x,y)$ is temperature \\
+SIA:\, $H$ is ice thickness & \phantom{foo bar} heat: $T$ is temperature\phantom{foo bar}  \\
 	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
 \end{tabular}
 \end{center}
-We identify the diffusivity in the SIA:
+Notice that the number of derivatives (one time and two space derivatives) and the signs are the same in these equations.  Clearly mass balance $M$ is analogous to (scaled) heat sources $F$.  The analogy allows us to identify the diffusivity in the SIA:
 	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
-The non-sliding shallow ice flow \alert{diffuses} the ice sheet.
+The non-sliding shallow ice flow \alert{diffuses} the ice sheet, and when $\Gamma$ or $H$ or $|\grad h|$ are large, the diffusion acts more quickly. 
 
-FIXME from here
-
-However, there are some issues with this analogy:
-  \begin{itemize}
-  \item thickness $H$ and surface elevation $h$ are not the same unless the bed is flat,
-  \item $D$ depends on the solution $H(t,x,y)$,
-  \item $D$ goes to zero at margins, where $H\to 0$, and
-  \item $D$ goes to zero at divides and domes, where $|\grad h|\to 0$.
-  \end{itemize}
+There are, however, some issues with this analogy.  The thickness $H$ and surface elevation $h$ are not the same unless the bed is flat.  The diffusivity $D$ depends on the solution $H$.  Finally, the diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
 
 
-\subsection{finite difference numerics}
+\subsection{Finite difference numerics} 
 
-numerics for heat equation: basic ideas of finite differences
+As noted, numerical schemes for the heat equation are a good starting place for solving the SIA equation \eqref{sia} numerically.  Here we describe only so-called finite difference schemes, with discussion of alternatives left to the Notes and References.
 
-\begin{itemize}
-\item numerical schemes for heat equation are good start for SIA
-\item for differentiable $f(x)$ and any $h$, \emph{Taylor's theorem} says
-	$$f(x+h) = f(x) + f'(x) h + \frac{1}{2} f''(x) h^2 + \frac{1}{3!} f'''(x) h^3 + \dots$$
-\item you can replace ``$h$'' by multiples of $\Delta x$, e.g.:
+Finite difference schemes replace derivatives in the differential equation by arithmetic.  The basic fact is \emph{Taylor's theorem}.  It says that for differentiable $f(x)$ and any real number $\Delta$,
+	$$f(x+\Delta) = f(x) + f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 + \frac{1}{3!} f'''(x) \Delta^3 + \dots$$
+You can replace ``$\Delta$'' by its multiples, for example:
 \begin{align*}
-f(x-\Delta x) &= f(x) - f'(x) \Delta x + \frac{1}{2} f''(x) \Delta x^2 - \frac{1}{3!} f'''(x) \Delta x^3 + \dots \\
-f(x+2\Delta x) &= f(x) + 2 f'(x) \Delta x + 2 f''(x) \Delta x^2 + \frac{4}{3} f'''(x) \Delta x^3 + \dots
+f(x-\Delta) &= f(x) - f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 - \frac{1}{3!} f'''(x) \Delta^3 + \dots \\
+f(x+2\Delta) &= f(x) + 2 f'(x) \Delta + 2 f''(x) \Delta^2 + \frac{4}{3} f'''(x) \Delta^3 + \dots
 \end{align*}
-\item \emph{combine expressions like these to give approximations of derivatives, from values on a grid}
-\end{itemize}
 
-finite differences for partial derivatives
-
-\begin{itemize}
-\item we want partial derivative expressions, for example with $u=u(t,x)$:
+The actual idea in finite differences is to combine expressions like these to give approximations of derivatives, from the values of the unknown quantity at locations on a grid.  Furthermore we want partial derivative expressions, for example with a general function $u=u(t,x)$:
 \begin{align*}
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} + O(\Delta t), \\
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t-\Delta t,x)}{2\Delta t} + O(\Delta t^2), \\
 u_x(t,x) &= \frac{u(t,x+\Delta x) - u(t,x-\Delta x)}{2\Delta x} + O(\Delta x^2), \\
 u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2 u(t,x) + u(t,x-\Delta x)}{\Delta x^2} + O(\Delta x^2)
 \end{align*}
-and so on
-\item sometimes we want a derivative in-between grid points:
+and so on.  Sometimes we want a derivative in-between grid points:
 	$$u_x(t,x+(\Delta x/2)) = \frac{u(t,x+\Delta x) - u(t,x)}{\Delta x} + O(\Delta x^2)$$
-\item ``$+O(h^2)$'' is better than ``$+O(h)$'' if $h$ is a small number
-\end{itemize}
+Note that ``$+O(\Delta^2)$'' is better than ``$+O(\Delta)$'' if $\Delta$ is a small number.
 
 explicit scheme for heat equation
 
@@ -529,7 +513,7 @@ general diffusion equation code
 \end{itemize}
 
 
-\subsection{solutions}
+\subsection{Exact solutions and verification}
 
 exact solution of heat equation
 
@@ -572,11 +556,6 @@ similarity solutions
 \item ``similarity'' variables for 1D heat equation are
 	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad u(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
 \end{itemize}
-
-
-
-
-\subsection{solving the SIA}
 
 similarity solution to SIA
 
@@ -638,6 +617,10 @@ $H$ is continuous \\ but $\grad h$ is singular
 \item degenerate diffusion equations are automatically free boundary problems
 \end{itemize}
 
+\subsection{Numerically solving the SIA}
+
+\subsubsection*{Constructing a numerical scheme}
+
 computing diffusivity in SIA
 
 \begin{itemize}
@@ -659,7 +642,8 @@ SIA implementation: flat bed case
 
 \minput{siaflat}
 
-verification of numerical ice flow codes
+
+\subsubsection*{Verifying the SIA scheme}
 
 \begin{itemize}
 \item how do we make sure an \emph{implemented} numerical scheme is correct?
@@ -698,6 +682,8 @@ maximum abs error            = 109.466
 \end{verbatim}
 
 
+\subsubsection*{Applying the SIA}
+
 demonstrate robustness
 
 see \texttt{roughice.m}, which calls \texttt{siaflat.m} after setting-up the nasty initial state at left:
@@ -705,8 +691,6 @@ see \texttt{roughice.m}, which calls \texttt{siaflat.m} after setting-up the nas
 \includegraphics[width=2.5in]{roughinitial}
 \quad
 \includegraphics[width=2.5in]{roughfinal}
-
-
 
 model the Antarctic ice sheet
 
@@ -728,9 +712,7 @@ here are results from this \emph{toy} Antarctic flow model
 
 
 
-
-
-\section{mass continuity}
+\subsection{Mass continuity and kinematical equations}
 
 the most basic shallow assumption:
 
@@ -817,10 +799,10 @@ standard recipe for ice sheet models:
 
 
 
-\section{shelves and streams}
+\subsection{Shelves and streams}
 
 
-\subsection{shallow shelf approximation (SSA)}
+\subsubsection*{shallow shelf approximation (SSA)}
 
 flow model II: shallow shelf approximation (SSA) stress balance:
   
@@ -902,8 +884,7 @@ flow line model: from stream to shelf:
   2 A^{-1/n} H |u_x|^{1/n - 1} u_x = \frac{1}{2}\rho (1-\rho/\rho_w) g H^2 & \qquad \text{ at } x = x_c
 \end{align*}
 
-
-flotation criterion and grounding line:
+\subsubsection*{flotation criterion and grounding lines}
 
 \begin{itemize}
 \item the inequality ``$\rho H < - \rho_w b$'' is the \alert{flotation criterion}
@@ -920,7 +901,7 @@ flotation criterion and grounding line:
 \end{itemize}
 
 
-\subsection{ice shelf flow line solution}
+\subsubsection*{ice shelf flow line solution}
 
 exact velocity and thickness for steady ice shelf:
 \begin{itemize}
@@ -944,7 +925,7 @@ see \texttt{testshelf.m}
 \end{center}
 
 
-\subsection{numerical SSA}
+\subsubsection*{numerical SSA}
 
 numerically solving the SSA stress balance:
 \begin{itemize}
@@ -1045,6 +1026,8 @@ $$b_{J+1} = -2 \gamma \Delta x W_{J+3/2} + \beta_{J+1} \Delta x^2$$
 
 \minput{flowline}
 
+\subsubsection*{Testing the parts}
+
 testing the ``inner'' linear code
 
 \begin{itemize}
@@ -1059,7 +1042,6 @@ testing the ``inner'' linear code
   \end{itemize}
 \end{itemize}
 
-numerical: SSA:
 
 \minput{ssaflowline}
 
@@ -1071,7 +1053,7 @@ lines below are a convergence analysis of \texttt{testshelf.m}, which calls \tex
   \includegraphics[width=3.0in]{shelfconv}
 \end{center}
 
-realistic ice shelf modeling:
+\subsubsection*{realistic ice shelf modeling}
 
 \begin{itemize}
 \item flow lines are never very realistic
@@ -1108,7 +1090,10 @@ ice shelf modeling in 2D:
   \includegraphics[width=2.5in]{rossscatter}
 \end{center}
 
-numerical solution of stress balances: a summary
+
+\subsection{A summary of numerical solutions}
+
+\subsubsection*{numerical solution of stress balances: a summary}
 
 \begin{itemize}
 \item stress balance equations (e.g.~SSA) determine horizontal velocity from geometry and boundary conditions
@@ -1120,7 +1105,7 @@ numerical solution of stress balances: a summary
 \item general principles: \emph{modularize your code} and \emph{test the parts}
 \end{itemize}
 
-the mass continuity equation: a summary:
+\subsubsection*{numerical solution of the mass continuity equation: a summary}
 
 \begin{itemize}
 \item the \emph{mass continuity equation} is
@@ -1136,9 +1121,9 @@ the mass continuity equation: a summary:
 \end{itemize}
 
 
-\section{next steps}
+\subsection{Next steps}
 
-\subsection{practicalities}
+\subsubsection*{practicalities}
 
 technical skills for numerical ice sheet modeling:
 
@@ -1169,7 +1154,7 @@ technical skills for numerical ice sheet modeling:
 \end{itemize}
 
 
-\subsection{some omitted models}
+\subsubsection*{some omitted models}
 
 thermomechanical coupling:
 
@@ -1254,17 +1239,9 @@ Stokes equations and solvers:
 \item much of the success so far is at a smaller scale
 \end{itemize}
 
-\begin{center}
-\includegraphics[width=3.0in]{athabasca}
-
-Figure 7 in \cite{Maxwelletal2008}:  velocity contour lines ($\text{m}\,\text{a}^{-1}$) for Athabasca Glacier from \textbf{a} Stokes model, \textbf{b} measurements \cite{Raymond1971}
-\end{center}
 
 
-
-
-
-\section{Notes and references}
+\subsection{Notes and references}
 
 Not covered here:
   \begin{itemize}
