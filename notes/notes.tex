@@ -45,9 +45,6 @@ urlcolor=blue     % only if colorlinks=true
 \fbox{\url{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/#1.m}}
 \end{center}}
 
-%\newcommand{\minput}[1]{\small\verbatiminput{../mfiles/#1.slim.m}
-%\tiny\mmess{#1}\normalsize}
-
 \newcommand{\minput}[1]{
 \bigskip
 \begin{quote}
@@ -366,40 +363,25 @@ To get a simple, computable formula, let $\nu = D \Delta t / (\Delta x)^2$ and s
 
 How accurate is \eqref{heat1Dfd}?  The conclusion we can draw from the above construction of is that the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t,\Delta x^2)$ (``consistency'').  With care about the smoothness of boundary conditions, and using the mathematical theory of the heat equation itself, the well-established theory of finite difference schemes shows that the difference between $T_j^n$ and $T(t_n,x_j)$ is also $O(\Delta t,\Delta x^2)$ (``convergence'').  But this latter fact is less automatic.  On the one hand the PDE must be well understood.  On the other hand, the scheme \eqref{heat1Dfd} must be stable, which we address below.  In fact, the main theorem of the field of numerical PDEs is ``consistency plus stability implies convergence''.  But we leave such theory for other reading.  % FIXME: cite \cite{MortonMayers}
 
-FIXME explicit scheme in two space dimensions
-
-recall heat equation in 2D: $u_t = D(u_{xx} + u_{yy})$
-
-in two spatial variables we write $u_{jk}^n \approx u(t_n,x_j,y_k)$
-
-the 2D explicit scheme is
+Even for the first Matlab/Octave implementation, we will go directly to the heat equation in two spatial dimensions, namely \eqref{heat}.  Note that in two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$.  The 2D explicit scheme is
 \begin{equation}
-	FIXME \frac{u_{jk}^{n+1} - u_{jk}^n}{\Delta t} = D\,\left(\frac{u_{j+1,k}^n - 2 u_{jk}^n + u_{j-1,k}^n}{\Delta x^2} + \frac{u_{j,k+1}^n - 2 u_{jk}^n + u_{j,k-1}^n}{\Delta y^2}\right)  \label{heat2dexplicit}
+	\frac{T_{jk}^{n+1} - T_{jk}^n}{\Delta t} = D\,\left(\frac{T_{j+1,k}^n - 2\, T_{jk}^n + T_{j-1,k}^n}{\Delta x^2} + \frac{T_{j,k+1}^n - 2\, T_{jk}^n + T_{j,k-1}^n}{\Delta y^2}\right). \label{heat2dexplicit}
 \end{equation}
+The stencil for the spatial derivative approximation is shown in Figure \ref{fig:expstencil}, right.
 
 \twofig{expstencil}{exp2dstencil}{Left: time-space stencil for the explicit scheme \eqref{heat1Dfd} for the 1D heat equation.  Right: two spatial dimension stencil for scheme \eqref{heat2dexplicit}.}
 
-implementation
+Scheme \eqref{heat2dexplicit} has the implementation \texttt{heat.m} in Matlab/Octave.  It numerical solves PDE \eqref{heat} on the square $-1 < x < 1$, $-1 < y < 1$ using a gaussian initial condition: $T(0,x,y) = e^{-30 r^2}$.  It also uses ``colon notation'' to remove loops over spatial variables.  For example,
+\begin{Verbatim}
+>>  heat(1.0,30,30,0.001,20)}
+\end{Verbatim}
+approximates $T$ on a $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$.  The result is shown in Figure \ref{fig:initialheat}, right.  This is the look of success.
 
 \minput{heat}
 
-\begin{itemize}
-\item solves $u_t = D(u_{xx} + u_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
-\item uses gaussian initial condition: $u_0(x,y) = e^{-30 r^2}$
-\item uses ``colon notation'' to remove loops over spatial variables
-\item \texttt{>>  heat(1.0,30,30,0.001,20)}
-
-approximates $u$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$
-\end{itemize}
 
 
-the look of success
-
-\begin{itemize}
-\item solving $u_t = u_{xx} + u_{yy}$ on $30\times 30$ grid
-\end{itemize}
-
-the look of instability
+FIXME from here:  the look of instability
 
 \begin{itemize}
 \item both figures are from solving $u_t = u_{xx} + u_{yy}$ on the same space grid, but with slightly different time steps
@@ -432,9 +414,9 @@ avoid the instability
 \end{center}
 \end{itemize}
 
-\textsl{adaptive} implementation: guaranteed stability
+\textsl{adaptive} implementation: guaranteed stability: FIXME $u \to T$
 
-\mmess{heatadapt}
+\minput{heatadapt}
 
 \begin{itemize}
 \item same as \texttt{heat.m} except
