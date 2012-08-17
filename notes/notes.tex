@@ -231,45 +231,42 @@ Do we believe these equations?  Figure \ref{fig:slabvel} compares the velocity f
 
 \twofigsizes{slabvel}{athabasca_deform}{Left: velocity from the slab-on-a-slope example calculation.  Right: velocity measured in a mountain glacier, the Athabasca Glacier in Canada, derived from inclinometry \cite{SavagePaterson}.}{2.7in}{2.3in}
 
-Now that we have calculated the velocity $u=u(t,x,z)$ \dots so what?  The equations so far do not conside the change in shape of the glacier or ice sheet.  So we consider another equation, the \emph{mass continuity} equation.  To explain this, suppose our slab has variable thickness $H(t,x)$ and define the vertical average of velocity:
+Now that we have calculated the velocity $u=u(t,x,z)$ \dots so what?  The equations so far do not address the change in shape of the glacier or ice sheet.  So we consider another equation, the \emph{mass continuity} equation.  To explain this, suppose our slab has variable thickness $H=H(t,x)$ and define the vertical average of velocity:
 	$$\bar u(x,t) = \frac{1}{H}\int_0^{H} u(t,x,z)\,dz.$$
-This is the rate of input into the side of the ice shown in Figure \ref{fig:slabmasscontfig}.
+The product $\bar u\, H$ is the rate of flow input into the side of the area in Figure \ref{fig:slabmasscontfig}.
 
 Now, how does the ice area $A$ in the figure change?\footnote{In three-dimensions it would be ``How does the ice volume change?''}  We compute
 	$$\frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2$$
-Assuming width $dx=x_2-x_2$ is small, $A\approx dx\, H$, we divide by $dx$ and get
+If the width $dx=x_2-x_2$ is small then $A\approx dx\, H$.  So we divide by $dx$ and get
 \begin{equation}
 H_t = M - \left(\bar u H\right)_x \label{masscont1D}
 \end{equation}
-This mass continuity equation describes the change in the ice thickness in terms of surface mass balance and the spatial derivatives of the vertical integral of the ice velocity.
+This mass continuity equation describes the change in the ice thickness in terms of surface mass balance and also the ice velocity.
 
 \onefig{slabmasscontfig}{The mass continuity equation \eqref{masscont1D} follows from considering the changing area of ice $A$ in a flow line.  Ice can be added at the top by mass balance $M$.  A difference of flow into left and right sides can also change the area.}
 
 
-\subsection{Shallow ice sheets}  Our slab-on-a-slope example now gives us a rough explanation of the shallow ice approximation (SIA) which we will use quite generally.  Indeed, from the slab-on-slope velocity formula \eqref{uslab} in the $u_0=0$ case (non-sliding case) we get
+\subsection{Shallow ice sheets}  Our slab-on-a-slope example now gives us a rough explanation of the shallow ice approximation (SIA) which we will use more generally.  From the slab-on-slope velocity formula \eqref{uslab} in the $u_0=0$ case (non-sliding case) we get
 \begin{align*}
 \bar u H &= \int_0^H \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)\,dz \\
 	&= \frac{1}{2} A (\rho g \sin\theta)^3  \left(\frac{4}{5} H^5\right) \\
 	&= \frac{2}{5} A (\rho g \sin\theta)^3 H^5
 \end{align*}
-Note that $\sin \theta \approx \tan\theta = - h_x$.  Combining these with with mass continuity \eqref{masscont1D} gives
-  $$H_t = M + \left(\frac{2}{5} (\rho g)^5 A H^5 |h_x|^2 h_x\right)_x.$$
-This equation is ``the'' SIA equation.  It determines the evolution of ice sheets in terms of 
-mass balance, ice softness, and bed elevation; note $h=H+b$.  
+Note that $\sin \theta \approx \tan\theta = - h_x$.  Combining these with mass continuity \eqref{masscont1D} gives
+\begin{equation}
+  H_t = M + \left(\frac{2}{5} (\rho g)^5 A H^5 |h_x|^2 h_x\right)_x. \label{sia1D}
+\end{equation}
+This equation is ``the'' SIA equation.  Note $h=H+b$.  Equation \eqref{sia1D} determines the evolution of ice sheets in terms of mass balance, ice softness, and bed elevation.
 
-Additional arguments are needed to actually show that the SIA is ``general purpose'' and not just special to a simple slab.  See Notes and References for these general arguments that derive the SIA model, next, from the Stokes equations, under the assumptions that slopes are small and the depth to width ratio is also small.
+Additional arguments are needed to actually show that the SIA is ``general purpose'' and not just special to a simple slab.  See Notes and References for these general arguments that derive the SIA model from the Stokes equations, under the assumptions that slopes are small and the depth to width ratio is also small.
 
-We will numerically solve the SIA equation in the next section.  First we seek to understand it a bit better.
+We will numerically solve the SIA equation in the next section.  First we seek to understand it a bit better, and state it in two horizontal dimensions.
 
-\subsubsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and  (\emph{iv}) they sometimes experience contact slip.  Regarding ``shallow'', Figure \ref{fig:green_transect} shows a no-vertical-exaggeration version of a cross section of Greenland at $71^\circ$.  The vertically-exaggerated shape also shown in the Figure is far more familiar in the glaciological literature, but we should remember that these flows are really thin.
+\subsubsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they sometimes experience contact slip.  Regarding ``shallow'', Figure \ref{fig:green_transect} shows a no-vertical-exaggeration version of a cross section of Greenland at $71^\circ$.  The vertically-exaggerated shape also shown in the Figure is far more familiar in the glaciological literature, but remember that these flows are thin.
 
-\onefig{green_transect}{The standard vertically-exaggerated cross section of the Greenland ice sheet $71^\circ$ north latitude.  The version without such exaggeration is in red.}
-
-
+\onefig{green_transect}{The standard vertically-exaggerated cross section of the Greenland ice sheet $71^\circ$ north latitude is shown by the vertical axis labels, and the green and blue curves.  The version without such exaggeration is in red.}
 
 The first ice flow model we consider is the non-sliding, isothermal shallow ice approximation or ``SIA'' for short.  It applies to small depth-to-width ratio (``shallow'') grounded ice sheets on not-too-rough bed topography, whose flow is not dominated by sliding and/or liquid water at the base or margin.
-
-The main equations of the SIA determine the horizontal velocity, and then form an ice sheet geometry-evolution model.  We consider how to think about the solutions of these equations in this section.  In the next section we will solve them numerically.
 
 The SIA uses the formulas from slab-on-a-slope, but we generalize to two horizontal dimensions.  Let $\mathbf{u} = (u,v)$ be the vector horizontal velocity.  The SIA has a shear stress approximation
 	$$(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h.$$
@@ -278,49 +275,45 @@ Further approximation of the shear strain rates in planes parallel to the geoid 
 \mathbf{u}_z &\approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) \\
      &= - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h.
 \end{align*}
-By integrating vertically, in the non-sliding case,
-    $$\mathbf{u} = - \frac{2 A (\rho g)^n}{n+1} \left[H^{n+1} - (h-z)^{n+1}\right] |\nabla h|^{n-1} \nabla h.$$
-Mass continuity also applies:
-    $$H_t = M - \left(\overline{\mathbf{u}} H\right)_x$$
+By integrating vertically, in the non-sliding case, we get
+\begin{equation}
+\mathbf{u} = - \frac{2 A (\rho g)^n}{n+1} \left[H^{n+1} - (h-z)^{n+1}\right] |\nabla h|^{n-1} \nabla h.  \label{siavelocity}
+\end{equation}
+Mass continuity in two horizontal dimensions also applies:
+\begin{equation}
+    H_t = M - \Div\left(\bar{\mathbf{u}} H\right)  \label{masscont}
+\end{equation}
+Compare Equation \eqref{masscont1D} in one dimension.
 
-
-Combining the last two equations and defining a positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$, we get an equation how thickness changes:
+Combining Equations \eqref{siavelocity} and \eqref{masscont} and defining a positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$, we get an equation how thickness changes:
 \begin{empheq}[box=\fbox]{equation}
 H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 \end{empheq}
-This is the SIA equation.  To review the notation, ere $H$ is ice thickness, $h$ is ice surface elevation, $b$ is bed elevation ($h=H+b$), $M$ combines surface and basal mass (im)balance (it is accumulation if $M>0$ and ablation if $M<0$).  If we just solve \eqref{sia} numerically then we get a usable model for the Barnes ice cap, for example \cite{Mahaffy}.  It is a particularly simple ice sheet on a very flat bed with minimal evidence for sliding.
+This is the SIA equation we will solve numerically.  To review the notation, $H$ is ice thickness, $h$ is ice surface elevation, $b$ is bed elevation ($h=H+b$), and $M$ combines surface and basal mass (im)balance.
 
-Some good questions about \eqref{sia}:
-\begin{enumerate}
-\item where does it come from?
-\item how to solve it numerically?
-\item how to \emph{think} about it?
-\end{enumerate}
-We will address the last two, and leave the first for the Notes and References.
+Fulfilling an earlier promise, if we just solve \eqref{sia} numerically then we get a usable model for the Barnes ice cap, see for example \cite{Mahaffy}.  It is a particularly simple ice sheet on a very flat bed with minimal evidence for sliding.
 
 
-\subsubsection*{Analogy with the heat equation}  An obigatory step in using the SIA \eqref{sia} is to understand that is a continuum model which is analogous to the better known heat equation, and furthermore that all numerical methods for solving \eqref{sia} can be understood as modifications of well-known methods for solving the heat equation.
+\subsubsection*{Analogy with the heat equation}  An obligatory step to applying the SIA model is to understand that Equation \eqref{sia} is analogous to the better known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
 
 Recall first that the heat equation comes from simple empirical observations like Newton's law of cooling, the ordinary differential equation
 	$$\frac{dT}{dt} = -K (T-T_{\text{ambient}})$$
-where $T$ is object temperature and $K$ relates to material and geometry of object (e.g.~cup of coffee).  That is, the temperature of an object tends to decay exponentially to the temperature of its surroundings (ambient temperature).  One way to derive the heat equation, which is a partial differential equation is to argue that the segments of a rod also satisfy Newton's law of cooling, but that the ``ambient'' temperature seen by segment $j$ of a rod is the temperature of its neighbors:
-\begin{align*}
-\frac{dT_j}{dt} &= -K \left(T_j - \frac{1}{2} (T_{j-1} + T_{j+1}) \right) \\
-	&= \frac{K}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right).
-\end{align*}
+where $T$ is object temperature and $K$ relates to material and geometric properties of an object (e.g.~a cup of coffee).  That is, the temperature of an object tends to decay exponentially to the temperature of its surroundings (``ambient temperature'').  One way to derive the heat equation, which is a partial differential equation, is to argue that the segments of a rod also satisfy Newton's law of cooling.  They experience ambient temperatures which are the average temperature of the segment's neighbors:
+   $$\frac{dT_j}{dt} = -K \left(T_j - \frac{1}{2} (T_{j-1} + T_{j+1}) \right) = \frac{K}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right).$$
 As segment lengths shrink to zero we see an approximation of the second derivative with respect to $x$ on the right, a finite difference formula \cite{MortonMayers}, so that the distributed temperature of a rod satisfies
 	$$T_t = D T_{xx}.$$
-This is the one spatial dimension heat equation when material properties are constant.  The constant $D$ is the ``diffusivity''.
+This is the one dimensional heat equation when material properties are constant.  The constant $D$ is the ``diffusivity''.
 
-The more complete 2D version of the heat equation describes the temperature $T(t,x,y)$ at position $x,y$ in an object, at time $t$  Because Fourier rewrote Newton's law as a rule for heat flux ($\mathbf{q} = - k \grad u$), and if we allow an additional heat source $f$, conservation of energy gives us the standard heat equation:
-	$$\rho c u_t = f + \Div (k \grad u).$$
+The more complete 2D version of the heat equation describes the temperature $T(t,x,y)$ at position $x,y$ in an object and at time $t$.  Fourier rewrote Newton's law as a rule for heat flux, namely $\mathbf{q} = - k \grad T$.  If we allow an additional heat source $f$, conservation of energy gives us the standard heat equation:
+	$$\rho c T_t = f + \Div (k \grad T).$$
 Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.
-Define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F := f/(\rho c)$.  Then the heat equation is
+
+Now define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F = f/(\rho c)$.  Then the heat equation is
 \begin{equation}
 T_t = F + \Div (D\, \grad T). \label{heat}
 \end{equation}
 
-Where is the analogy with the SIA?  Heat equation \eqref{heat} and SIA \eqref{sia} are both diffusive, time-evolving partial differential equations (PDE).  A side-by-side comparison is illuminating:
+What is the analogy with the SIA?  Heat equation \eqref{heat} and SIA \eqref{sia} are both diffusive, time-evolving partial differential equations (PDE).  A side-by-side comparison is illuminating:
 \begin{center}
 \begin{tabular}{cc}
 SIA:\, $H(t,x,y)$ is ice thickness & heat: $T(t,x,y)$ is temperature \\
@@ -330,6 +323,8 @@ SIA:\, $H(t,x,y)$ is ice thickness & heat: $T(t,x,y)$ is temperature \\
 We identify the diffusivity in the SIA:
 	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
 The non-sliding shallow ice flow \alert{diffuses} the ice sheet.
+
+FIXME from here
 
 However, there are some issues with this analogy:
   \begin{itemize}
