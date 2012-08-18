@@ -436,33 +436,24 @@ is an implicit scheme for Equation \eqref{heat1D}.  When written as a formula fo
 
 But implicit schemes are a bit harder to implement.  The values of the unknown (i.e.~$T$) at time step $t_{n+1}$ are generally treated as a vector of unknowns in a large system of equations.  This system must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a highly nonlinear diffusion (heat) equation---the system of equations may be hard to solve.  For these notes we stick with the adaptive explicit idea, and it works fine.  More generally there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.\footnote{Computer scientist Donald Knuth has advice for ice sheet modellers, among other people: ``We should forget about small efficiencies \dots: premature optimization is the root of all evil.''}
 
-\subsubsection*{Numerical solution of diffusion equations}
+\subsubsection*{Numerical solution of diffusion equations}  Recall we are trying to numerically model ice flows, not heat.  In fact, we had an analogy
+    $$\text{SIA} \leftrightarrow \text{heat eqn}$$
+where the heat equation had form $T_t = F + \Div \left(D(x,y) \grad T\right)$.  A more common name for this general heat equation is ``diffusion equation''.  Finally, we had identified formula for the SIA's diffusivity $D$, in terms of ice thickness and surface slope.
 
-variable diffusivity and time steps
-
-\begin{itemize}
-  \item recall the analogy: \qquad (SIA) $\leftrightarrow$ (heat eqn)
-  \item the SIA has a diffusivity which varies in space, so consider a more general heat equation:
-  		$$u_t = F + \Div \left(D(x,y) \grad u\right)$$
-  \item the explicit method is conditionally stable with the same time step restriction if we evaluate diffusivity $D(x,y)$ at \alert{staggered} grid points:
+So here we consider numerically solving a diffusion equation in which the diffusivity $D$ varies in space: $D=D(x,y)$, because the previous code \texttt{heatadapt.m} assumes $D$ is constant.  An adaptive explicit method for the diffusion equation \eqref{heat} is conditionally stable, with the same time step restriction as for constant $D$, if we evaluate diffusivity $D(x,y)$ at \alert{staggered} grid points:
 \begin{align*}
 \Div \left(D(x,y) \grad u\right) &\approx \frac{D_{j+1/2,k}(u_{j+1,k} - u_{j,k}) - D_{j-1/2,k}(u_{j,k} - u_{j-1,k})}{\Delta x^2} \\
 	&\qquad + \frac{D_{j,k+1/2}(u_{j,k+1} - u_{j,k}) - D_{j,k-1/2}(u_{j,k} - u_{j,k-1})}{\Delta y^2}
 \end{align*}
-\end{itemize}
+Figure \ref{fig:diffstencil} shows the stencil for this diffusion equation approximation.
 
 \twofig{diffstencil}{mahaffystencil}{Spatial stencils for staggered grid evaluation in general diffusion equations (left) and how the staggered-grid diffusivity is evaluated in the Mahaffy choice (right).  In both stencils the diamonds show where the major variables are evaluated (i.e.~$T$ for the heat equation and $h$ for the SIA), while triangles are where $D$ is evaluated or computed.  In the Mahaffy stencil the rectangles show where both $H$ and $h$ are used.}
 
-general diffusion equation code
+Code \texttt{diffusion.m} solves the general diffusion equation $T_t = F + \Div \left(D(x,y) \grad T\right)$.  The user supplies the diffusivity $D(x,y)$ on the staggered grid, plus the initial temperatures $T(0,x,y)$ and the heat source $F(x,y)$ on the regular (i.e.~non-staggered) grid.
 
 \minput{diffusion}
 
-\begin{itemize}
-\item solves abstract diffusion equation $u_t = \Div \left(D(x,y)\, \grad u\right)$
-\item user supplies diffusivity on staggered grid
-\end{itemize}
-
-on ``degenerate'' diffusivity
+FIXME:  on ``degenerate'' diffusivity
 
 \begin{itemize}
 \item recall that the SIA is
@@ -1217,7 +1208,7 @@ There are ``higher-order'' approximations of the Stokes equations which are, non
 There are also less-precise shallow hybrid schemes which ``glue together'' the SIA and SSA \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used \emph{now} at high spatial resolution and paleoglacial time scales while higher order and Stokes models have computational limitations which restrict either their spatial extent, their spatial resolution, or the duration of model runs.  Questions remain about what is lost in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
 
 
-
+\small
 \bibliography{ice_bib}
 \bibliographystyle{siam}
 
