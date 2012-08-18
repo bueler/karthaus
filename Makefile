@@ -26,12 +26,11 @@ figures := ice_shelf_edge_hg.jpg polarbear.jpg flowline.png fofv.png \
 	NEgreenlandJoughin.png athabasca_cross.png hierarchy.pdf \
 	joughin.png g3km_3_10_98.png g3km_3_10_98_hist.png \
 	slabfigs.pdf  slabmasscontfig.pdf athabasca_deform.pdf \
-	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf \
-	shelfnumsoln.pdf petscwww.pdf antinitial.pdf antfinal.pdf antvol.pdf \
-	green_transect.pdf initialheat.pdf finalheat.pdf
+	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf shelfnumsoln.pdf \
+	petscwww.pdf antinitial.pdf antfinal.pdf antvol.pdf green_transect.pdf \
+	initialheat.pdf finalheat.pdf stability.pdf instability.pdf
 epsfigures := diffstencil mahaffystencil sshape heatscaling siascaling \
-        stability instability expstencil impstencil cnstencil exp2dstencil \
-        AofT slab
+        expstencil impstencil cnstencil exp2dstencil AofT slab
 svgfigures := coffee heatconduction Rocket_nozzle_expansion
 minputs := heat heatadapt halfar diffusion siaflat flowline \
 	convanalysis ssaflowline ssainit testshelf verifysia
