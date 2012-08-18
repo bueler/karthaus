@@ -352,6 +352,8 @@ u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2\, u(t,x) + u(t,x-\Delta x)}{\Delta x^2}
 Note that ``$+O(\Delta^2)$'' is better, in the sense that the approximation is closer, than ``$+O(\Delta)$'' if $\Delta$ is a small number.  Sometimes we also want a derivative in-between grid points:
 	$$u_x(t,x+(\Delta x/2)) = \frac{u(t,x+\Delta x) - u(t,x)}{\Delta x} + O((\Delta x)^2)$$
 
+\subsubsection*{Explicit scheme for the heat equation}
+
 Now we can state the simplest ``explicit'' scheme for the 1D heat equation, the PDE \eqref{heat1D}.  In terms of the values of the exact solution $T(t,x)$ we would say
 	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2\, T(t,x) + T(t,x-\Delta x)}{\Delta x^2}.$$
 But the finite difference scheme is not just an approximation of the PDE but an actual method for computing numbers on a grid, which we hope are close to the values of the exact solution on the grid.  Let $(t_n,x_j)$ denote the time-space grid points.  Let $T_j^n \approx T(t_n,x_j)$.\footnote{Note the difference between evaluating the exact solution at a grid point, and a value we compute at a grid point!}  Then the finite difference scheme is
@@ -402,6 +404,8 @@ The second run shows instability!  Both runs compute temperature $T$ on the same
 %  nu = 1 * dt / dx^2 = 0.20000
 %>> print -dpdf stable.pdf
 
+\subsubsection*{Stability criteria}
+
 How to avoid the instability?  We need to understand the scheme better---it turns out we have not made an implementation error but we must be careful with the size of spatial and time steps.  Recall that the 1D explicit scheme \eqref{heat1Dfd} has form 
 	$$T_j^{n+1} = \nu T_{j+1}^n + (1 - 2 \nu) T_j^n + \nu T_{j-1}^n$$
 Thus the new value $T_j^{n+1}$ is an \emph{average} of the old values, \emph{if} the middle coefficient is positive!  The other two coefficients are positive because we step forward in time so $\nu= D \Delta t / (\Delta x)^2>0$.\footnote{Running the heat equation backward in time is a bad idea.  Try it and see!}  It is an average in the sense that the coefficients add to one, but a linear combination with coefficients which add to one is not an average if any coefficients are positive.\footnote{We would not accept 13 as an average of 5 and 7, but of course we can write $13 = -3 \times 5 + 4 \times 7$.}  Heuristically, averaging is always stable because averaged wiggles are always smaller than the original wiggles.
@@ -412,36 +416,19 @@ This condition on the size of $\Delta t$ is a \emph{sufficient} stability criter
 
 Applying this same idea to the 2D heat equation \eqref{heat2D} leads to the stability condition that $1-2\nu^x-2\nu^y \ge 0$ where $\nu^x = D \Delta t / (\Delta x^2)$ and $\nu^y = D \Delta t / (\Delta y^2)$.  In the test cases above with $\Delta x=\Delta y$ this condition requires $D \Delta t /(\Delta x^2) \le 0.25$, which explains the result shown in Figure \ref{fig:stability}.
 
+\subsubsection*{Adaptive time stepping and implicit schemes}
 
-\textsl{adaptive} implementation: guaranteed stability: FIXME $u \to T$
+The stability criteria is most easily guaranteed by making each step short enough to satisfy it.  This is an \textsl{adaptive} explicit implementation, and it has guaranteed stability.  It is simple to implement, but if the diffusivity $D$ is very large then it will take short time steps.  To show how easy it is to implement, see \texttt{heatadapt.m} below.  It is the same as \texttt{heat.m} except that the time step is chosen from the stability criterion.  It will never show the instability as seen in Figure \ref{fig:stability}; try it and see!
 
 \minput{heatadapt}
 
-\begin{itemize}
-\item same as \texttt{heat.m} except
+There is an alternative stability fix, however, ``implicitness.''  For example, the finite difference scheme
+   $$\frac{T_j^{n+1} - T_j^n}{\Delta t} = D\,\frac{T_{j+1}^{n+1} - 2\, T_j^{n+1} + T_{j-1}^{n+1}}{\Delta x^2}$$
+is an implicit scheme for Equation \eqref{heat1D}.  When written as a formula for $T_j^{n+1}$ there are only positive coefficients, so no stability criterion needs to be satisfied for the scheme to be an average.  Implicit schemes for the heat equation are stable for \emph{any} positive time step $\Delta t>0$ (``unconditionally stable'').  A well-know example implicit scheme is \emph{Crank-Nicolson}.  It is unconditionally stable for the heat equation and it has smaller error too; the error is $O((\Delta t)^2,(\Delta x)^2)$.
 
-\begin{center}
-\emph{choose time step from stability criterion}
-\end{center}
-\end{itemize}
+But implicit schemes are a bit harder to implement.  The values at time step $t_{n+1}$ are generally treated as a vector of unknowns in a large system of equations.  This system of equations must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a kind of nonlinear heat equation---the system of equations may be hard to solve.  For the purposes in these notes we stick with the adaptive explicit idea, and it works fine.  More generally, there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.\footnote{Computer scientist Donald Knuth has advice for ice sheet modellers, among other people: ``We should forget about small efficiencies \dots: premature optimization is the root of all evil.''}
 
-alternative instability fix: implicitness
-
-\begin{itemize}
-\item explicit scheme is only ``conditionally stable'', but there are methods which are stable for \emph{any} positive time step $\Delta t$
-\end{itemize}
-
-\begin{itemize}
-\item an implicit scheme is \emph{Crank-Nicolson} $\longrightarrow$
-\item Crank-Nicolson has smaller error too: $O(\Delta t^2,\Delta x^2)$
-\end{itemize}
-
-\begin{itemize}
-\item \emph{but} you have to solve linear systems of equations to take each time step
-\item \scriptsize Donald Knuth has advice for ice sheet modelers: \begin{quote}
-\emph{We should forget about small efficiencies \dots: premature optimization is the root of all evil}.
-\end{quote}
-\end{itemize}
+\subsubsection*{Numerical solution of diffusion equations}
 
 variable diffusivity and time steps
 
@@ -456,20 +443,7 @@ variable diffusivity and time steps
 \end{align*}
 \end{itemize}
 
-\begin{center}
-\includegraphics[width=1.8in]{cnstencil}
-\quad
-\includegraphics[width=1.8in]{diffstencil}
-\quad
-\includegraphics[width=1.8in]{mahaffystencil}
-\end{center}
-
-in stencil at right:
-\begin{itemize}
-\item[] diamonds: $u$
-\item[] triangles: $D$
-\end{itemize}
-
+\twofig{diffstencil}{mahaffystencil}{Spatial stencils for staggered grid evaluation in general diffusion equations (left) and how the staggered-grid diffusivity is evaluated in the Mahaffy choice (right).  In both stencils the diamonds show where the major variables are evaluated (i.e.~$T$ for the heat equation and $h$ for the SIA), while triangles are where $D$ is evaluated or computed.  In the Mahaffy stencil the rectangles show where both $H$ and $h$ are used.}
 
 general diffusion equation code
 
@@ -594,7 +568,7 @@ computing diffusivity in SIA
 
 \begin{itemize}
 \item for numerical stability we compute $D = \Gamma H^{n+2} |\grad h|^{n-1}$ on the staggered grid
-\item various schemes proposed \small (Mahaffy, 1976\nocite{Mahaffy}; van der Veen 1999\nocite{vanderVeen}; Hindmarsh and Payne 1996\nocite{HindmarshPayne})
+\item various schemes proposed (Mahaffy, 1976\nocite{Mahaffy}; van der Veen 1999\nocite{vanderVeen}; Hindmarsh and Payne 1996\nocite{HindmarshPayne})
 \item all schemes involve
   \begin{itemize}
   \item[$\circ$] averaging $H$
