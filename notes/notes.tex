@@ -454,91 +454,6 @@ general diffusion equation code
 \item user supplies diffusivity on staggered grid
 \end{itemize}
 
-
-\subsection{Exact solutions and verification}
-
-exact solution of heat equation
-
-\begin{itemize}
-\item before getting to ice flow, one more heat equation topic \dots
-\item the simple heat equation in 1D with constant diffusivity $D>0$ is:
-	$$u_t = D u_{xx}$$
-\item many \emph{exact} solutions to the heat equation are known, but I'll show the ``Green's function''
-\item \dots also known as ``fundamental solution'' or ``heat kernel''
-\item it starts at time $t=0$ with a ``delta function'' of heat at the origin $x=0$ and then it spreads out over time
-\item we find it by a method which generalizes to the SIA
-\end{itemize}
-
-Green's function of heat equation
-
-\begin{itemize}
-\item the solution is ``self-similar'' over time
-\item as time goes it changes shape by
-  \begin{itemize}
-  \item[$\circ$] shrinking the output (vertical) axis and
-  \item[$\circ$] lengthening the input (horizontal) axis
-  \end{itemize}
-\item \dots but otherwise it is the same shape
-\item the integral over $x$ is independent of time
-\end{itemize}
-
-\begin{center}
-\includegraphics[width=2.5in]{heatscaling}
-\quad
-\includegraphics[width=2.5in]{brownian}
-
-\emph{increasing time} $\to$ \qquad FIXME: parbox {\emph{historical note}:  in 1905 Einstein saw that the average distance traveled by particles in thermal motion scales like $\sqrt{t}$, so $s = t^{-1/2}x$ is an invariant}
-\end{center}
-
-similarity solutions
-
-\begin{itemize}
-\item Green's function of heat equation in 1D is
-	$$u(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
-\item ``similarity'' variables for 1D heat equation are
-	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad u(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
-\end{itemize}
-
-similarity solution to SIA
-
-\begin{itemize}
-\item jump forward to 1981
-\item P.~Halfar found the similarity solution of the SIA in the case of flat bed and no surface mass balance \nocite{Halfar81,Halfar83}
-\item Halfar's 2D solution for Glen flow law with $n=3$ has scalings
-   $$H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r$$
-\item \dots so the diffusion of ice really slows down as the shape flattens out!
-\end{itemize}
-
-Halfar solution to the SIA: the movie
-
-%\animategraphics[autoplay,loop,height=7.0cm]{4}{anim/halfar}{0}{26}
-
-frames from $t=4$ months to $t = 10^6$ years, equal spaced in \emph{exponential} time
-
-Halfar solution to the SIA: the formula
-
-\begin{itemize}
-\item for $n=3$ the solution formula is:
-  $$H(t,r) = H_0 \left(\frac{t_0}{t}\right)^{1/9} \left[1 - \left(\left(\frac{t_0}{t}\right)^{1/18} \frac{r}{R_0}\right)^{4/3}\right]^{3/7}$$
-\item the ``characteristic time'' is
-  $$t_0 = \frac{1}{18 \Gamma} \left(\frac{7}{4}\right)^3 \frac{R_0^4}{H_0^{7}}$$
-if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
-\item you choose $H_0$ and $R_0$ and then determine $t_0$
-\item it is a simple formula to use for verification!
-\end{itemize}
-
-is the Halfar solution \emph{good for any modeling}?
-
-\begin{itemize}
-\item John Nye and others (2000)\nocite{NyeIcarus2000} compared the long-time consequences of different flow laws for the South Mars Polar Cap
-\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters
-\item \dots by comparing the long-time behavior of the corresponding Halfar solutions
-\item conclusions:
-  \begin{quote}
-  \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
-  \end{quote}
-\end{itemize}
-
 on ``degenerate'' diffusivity
 
 \begin{itemize}
@@ -586,15 +501,100 @@ SIA implementation: flat bed case
 \minput{siaflat}
 
 
-\subsubsection*{Verifying the SIA scheme}
+\subsection{Exact solutions and verification}
 
-\begin{itemize}
-\item how do we make sure an \emph{implemented} numerical scheme is correct?
+how do we make sure an \emph{implemented} numerical scheme is correct?
   \begin{itemize}
   \item[$\circ$] \emph{technique} 1: don't make any mistakes
   \item[$\circ$] \emph{technique} 2: compare your model with others, and hope that the outliers are the ones with errors
   \item[$\circ$] \emph{technique} 3: build-in a comparison to an exact solution, and actually measure the numerical error \alert{$=$ verification}
   \end{itemize}
+  
+\subsubsection*{Exact solution of heat equation}
+
+\begin{itemize}
+\item before getting to ice flow, one more heat equation topic \dots
+\item the simple heat equation in 1D with constant diffusivity $D>0$ is:
+	$$u_t = D u_{xx}$$
+\item many \emph{exact} solutions to the heat equation are known, but I'll show the ``Green's function''
+\item \dots also known as ``fundamental solution'' or ``heat kernel''
+\item it starts at time $t=0$ with a ``delta function'' of heat at the origin $x=0$ and then it spreads out over time
+\item we find it by a method which generalizes to the SIA
+\end{itemize}
+
+Green's function of heat equation
+
+\begin{itemize}
+\item the solution is ``self-similar'' over time
+\item as time goes it changes shape by
+  \begin{itemize}
+  \item[$\circ$] shrinking the output (vertical) axis and
+  \item[$\circ$] lengthening the input (horizontal) axis
+  \end{itemize}
+\item \dots but otherwise it is the same shape
+\item the integral over $x$ is independent of time
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=2.5in]{heatscaling}
+\quad
+\includegraphics[width=2.5in]{brownian}
+
+\emph{increasing time} $\to$ \qquad FIXME: parbox {\emph{historical note}:  in 1905 Einstein saw that the average distance traveled by particles in thermal motion scales like $\sqrt{t}$, so $s = t^{-1/2}x$ is an invariant}
+\end{center}
+
+similarity solutions
+
+\begin{itemize}
+\item Green's function of heat equation in 1D is
+	$$u(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
+\item ``similarity'' variables for 1D heat equation are
+	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad u(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
+\end{itemize}
+
+\subsubsection*{An exact ``similarity'' solution to the SIA}
+
+\begin{itemize}
+\item jump forward to 1981
+\item P.~Halfar found the similarity solution of the SIA in the case of flat bed and no surface mass balance \nocite{Halfar81,Halfar83}
+\item Halfar's 2D solution for Glen flow law with $n=3$ has scalings
+   $$H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r$$
+\item \dots so the diffusion of ice really slows down as the shape flattens out!
+\end{itemize}
+
+Halfar solution to the SIA: the movie
+
+%\animategraphics[autoplay,loop,height=7.0cm]{4}{anim/halfar}{0}{26}
+
+frames from $t=4$ months to $t = 10^6$ years, equal spaced in \emph{exponential} time
+
+Halfar solution to the SIA: the formula
+
+\begin{itemize}
+\item for $n=3$ the solution formula is:
+  $$H(t,r) = H_0 \left(\frac{t_0}{t}\right)^{1/9} \left[1 - \left(\left(\frac{t_0}{t}\right)^{1/18} \frac{r}{R_0}\right)^{4/3}\right]^{3/7}$$
+\item the ``characteristic time'' is
+  $$t_0 = \frac{1}{18 \Gamma} \left(\frac{7}{4}\right)^3 \frac{R_0^4}{H_0^{7}}$$
+if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
+\item you choose $H_0$ and $R_0$ and then determine $t_0$
+\item it is a simple formula to use for verification!
+\end{itemize}
+
+is the Halfar solution \emph{good for any modeling}?
+
+\begin{itemize}
+\item John Nye and others (2000)\nocite{NyeIcarus2000} compared the long-time consequences of different flow laws for the South Mars Polar Cap
+\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters
+\item \dots by comparing the long-time behavior of the corresponding Halfar solutions
+\item conclusions:
+  \begin{quote}
+  \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
+  \end{quote}
+\end{itemize}
+
+\subsubsection*{Verifying the SIA scheme}
+
+\begin{itemize}
 \item where to get exact solutions for ice flow models?
   \begin{itemize}
   \item[$\circ$] textbook: Greve and Blatter (2009)\nocite{GreveBlatter2009}
@@ -625,7 +625,7 @@ maximum abs error            = 109.466
 \end{verbatim}
 
 
-\subsubsection*{Applying the SIA}
+\subsection{Applying our numerical ice sheet model}
 
 demonstrate robustness
 
