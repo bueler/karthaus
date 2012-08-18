@@ -449,7 +449,7 @@ Figure \ref{fig:diffstencil} shows the stencil for this diffusion equation appro
 
 \twofig{diffstencil}{mahaffystencil}{Spatial stencils for staggered grid evaluation in general diffusion equations (left) and how the staggered-grid diffusivity is evaluated in the Mahaffy choice (right).  In both stencils the diamonds show where the major variables are evaluated (i.e.~$T$ for the heat equation and $h$ for the SIA), while triangles are where $D$ is evaluated or computed.  In the Mahaffy stencil the rectangles show where both $H$ and $h$ are used.}
 
-Code \texttt{diffusion.m} solves the general diffusion equation $T_t = F + \Div \left(D(x,y) \grad T\right)$.  The user supplies the diffusivity $D(x,y)$ on the staggered grid, plus the initial temperatures $T(0,x,y)$ and the heat source $F(x,y)$ on the regular (i.e.~non-staggered) grid.
+Code \texttt{diffusion.m} solves the general diffusion equation $T_t = F + \Div \left(D(x,y) \grad T\right)$.  The user supplies the diffusivity $D(x,y)$ on the staggered grid, and the initial temperature $T(0,x,y)$ and heat source $F(x,y)$ on the regular (i.e.~non-staggered) grid.
 
 \minput{diffusion}
 
