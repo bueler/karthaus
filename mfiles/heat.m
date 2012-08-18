@@ -3,7 +3,8 @@ function T = heat(D,J,K,dt,N)
 %   T_t = D (T_xx + T_yy)
 % on -1 < x < 1, -1 < y < 1, for 0 < t < N * dt
 % Uses fixed time steps; compare HEATADAPT.  Uses a specific
-% gaussian initial condition.  Usage:
+% gaussian initial condition.
+% Usage:
 %   T = heat(D,J,K,dt,N)
 % where
 %   T   = approximate solution at tf = N * dt
