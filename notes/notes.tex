@@ -314,7 +314,7 @@ T_t = F + \Div (D\, \grad T). \label{heat}
 \end{equation}
 Figure \ref{fig:initialheat} shows a solution of the heat equation, where the initial condition is a localized ``hot spot''.  Solutions of the heat equation involve the spreading, in all directions, of local heat maxima, that is, diffusion.
 
-\twofigsizes{initialheat}{finalheat}{Left: initial condition $T(0,x,y)$.   Right: solution $T(t,x,y)$ at $t=0.02$.  (In fact these pictures are computed numerically.)}{2.8in}{2.8in}
+\twofigsizes{initialheat}{finalheat}{Left: Initial condition $T(0,x,y)$.   Right: Solution $T(t,x,y)$ at $t=0.02$.  (The right picture is computed numerically by \texttt{heat.m} below.)}{2.8in}{2.8in}
 
 The SIA equation \eqref{sia} and the heat equation \eqref{heat} are each diffusive, time-evolving partial differential equations (PDE).  A side-by-side comparison is illuminating:
 \begin{center}
@@ -364,7 +364,11 @@ The scheme is ``explicit'' because we have been able to solve it, in form \eqref
 
 How accurate is \eqref{heat1Dfd}?  The above construction tells us that the difference between the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t,\Delta x^2)$ (``consistency'').  With care about the smoothness of boundary conditions, and using the mathematical theory of the heat equation itself, the well-established theory of finite difference schemes shows that the difference between $T_j^n$ and $T(t_n,x_j)$ is also $O(\Delta t,\Delta x^2)$ (``convergence'').  But this latter fact, which is what we want, is less automatic than the former.  To get convergence, the PDE must be well understood and the scheme \eqref{heat1Dfd} must be stable, which we address below.  The main theorem of the field of numerical PDEs is ``consistency plus stability implies convergence''.  We leave such theory for the reader to pursue elsewhere; see Notes and References.  % FIXME: cite \cite{MortonMayers}
 
-For the first Matlab/Octave implementation we go directly to the heat equation in two spatial dimensions, Equation \eqref{heat}, but with $D$ constant and $F=0$.  In two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$.  The 2D explicit scheme is
+For the first Matlab/Octave implementation we go directly to the heat equation in two spatial dimensions, Equation \eqref{heat}, but with $D$ constant and $F=0$, so the PDE is
+\begin{equation}
+T_t = D (T_{xx}+T_{yy}).\label{heat2D}
+\end{equation}
+In two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$.  The 2D explicit scheme is
 \begin{equation}
 	\frac{T_{jk}^{n+1} - T_{jk}^n}{\Delta t} = D\,\left(\frac{T_{j+1,k}^n - 2\, T_{jk}^n + T_{j-1,k}^n}{\Delta x^2} + \frac{T_{j,k+1}^n - 2\, T_{jk}^n + T_{j,k-1}^n}{\Delta y^2}\right). \label{heat2dexplicit}
 \end{equation}
@@ -372,24 +376,22 @@ The stencil for the right-hand spatial derivative approximation is in Figure \re
 
 \twofig{expstencil}{exp2dstencil}{Left: time-space stencil for the explicit scheme \eqref{heat1Dfd} for the 1D heat equation.  Right: two spatial dimension stencil for scheme \eqref{heat2dexplicit}.}
 
-Scheme \eqref{heat2dexplicit} has the implementation \texttt{heat.m} in Matlab/Octave, given below.  It numerical solves PDE \eqref{heat} on the square $-1 < x < 1$, $-1 < y < 1$ using a gaussian initial condition: $T(0,x,y) = e^{-30 r^2}$.  Zero boundary values are used.  The code uses ``colon notation'' to remove loops over spatial variables.
-
-\minput{heat}
-
-To run it, for example, do
+Scheme \eqref{heat2dexplicit} has the implementation \texttt{heat.m} in Matlab/Octave, given below.  It numerical solves PDE \eqref{heat} on the square $-1 < x < 1$, $-1 < y < 1$ using a gaussian initial condition: $T(0,x,y) = e^{-30 r^2}$.  Zero boundary values are used.  The code uses ``colon notation'' to remove loops over spatial variables.  To run it, for example, do
 \begin{Verbatim}
 >>  heat(1.0,30,30,0.001,20);
 \end{Verbatim}
-This approximates $T$ on a $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$.  The result is shown in Figure \ref{fig:initialheat}, right.  This is the look of success.
+This approximates $T$ on a $30\times 30$ spatial grid, with diffusivity $D=1$ and $N=20$ steps of $\Delta t = 0.001$.  The result is shown in Figure \ref{fig:initialheat}, right.  This is the look of success.
 
 Very similar runs seem to fail, however.  Compare the results from, these calls, shown in Figure \ref{fig:stability}:
 \begin{Verbatim}
 >> heat(1.0,40,40,0.0005,100);
 >> heat(1.0,40,40,0.001,50);
 \end{Verbatim}
-The second one gives the look of instability.  Both figures compute $T$ on the same spatial grid ($40\times 40$), for the same final time $t_f=0.05$, but with slightly different time steps.
+The second run shows instability!  Both runs compute temperature $T$ on the same spatial grid, and they have the same final time, but they have slightly different time steps.
 
-\twofig{stability}{instability}{Everything in these two runs is the same, except left has $\Delta t=0.0005$, $D\Delta t\Delta x^2= 0.2$ and right has $\Delta t=0.001$, $D\Delta t/\Delta x^2= 0.4$.}
+\minput{heat}
+
+\twofig{stability}{instability}{Numerically-computed temperature at time $t_f=0.05$ on $40\times 40$ grids.  Everything in these two runs is the same, except the left figure has $\Delta t=0.0005$, $D\Delta t\Delta x^2= 0.2$ and right has $\Delta t=0.001$, $D\Delta t/\Delta x^2= 0.4$.}
 
 %>> heat(1.0,40,40,0.001,50);
 %  doing N = 50 steps of dt = 0.00100 for 0.0 < t < 0.050
@@ -400,23 +402,16 @@ The second one gives the look of instability.  Both figures compute $T$ on the s
 %  nu = 1 * dt / dx^2 = 0.20000
 %>> print -dpdf stable.pdf
 
-How to avoid the instability?
+How to avoid the instability?  We need to understand the scheme better---it turns out we have not made an implementation error but we must be careful with the size of spatial and time steps.  Recall that the 1D explicit scheme \eqref{heat1Dfd} has form 
+	$$T_j^{n+1} = \nu T_{j+1}^n + (1 - 2 \nu) T_j^n + \nu T_{j-1}^n$$
+Thus the new value $T_j^{n+1}$ is an \emph{average} of the old values, \emph{if} the middle coefficient is positive!  The other two coefficients are positive because we step forward in time so $\nu= D \Delta t / (\Delta x)^2>0$.\footnote{Running the heat equation backward in time is a bad idea.  Try it and see!}  It is an average in the sense that the coefficients add to one, but a linear combination with coefficients which add to one is not an average if any coefficients are positive.\footnote{We would not accept 13 as an average of 5 and 7, but of course we can write $13 = -3 \times 5 + 4 \times 7$.}  Heuristically, averaging is always stable because averaged wiggles are always smaller than the original wiggles.
 
-FIXME
+So we ask what would be implied by requiring the middle coefficient to be positive?:
+	$$1 - 2 \nu \ge 0 \quad \iff \quad \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}.$$
+This condition on the size of $\Delta t$ is a \emph{sufficient} stability criterion: it is enough to guarantee stability even though something weaker might do.  In summary, the right-hand result in Figure \ref{fig:stability} was unstable because the time step was too big.
 
-\begin{itemize}
-\item recall 1D explicit scheme had the form 
-	$$u_j^{n+1} = \nu u_{j+1}^n + (1 - 2 \nu) u_j^n + \nu u_{j-1}^n$$
-\item thus the new value $u_j^{n+1}$ is an \emph{average} of the old values, \emph{if the middle coefficient is positive}:
-	$$1 - 2 \nu \ge 0 \quad \iff \quad  \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}$$
-\item averaging is always stable because averaged wiggles are always smaller than the original wiggles
-\item \dots so this condition is a sufficient \emph{stability criterion}
-\item so:
+Applying this same idea to the 2D heat equation \eqref{heat2D} leads to the stability condition that $1-2\nu^x-2\nu^y \ge 0$ where $\nu^x = D \Delta t / (\Delta x^2)$ and $\nu^y = D \Delta t / (\Delta y^2)$.  In the test cases above with $\Delta x=\Delta y$ this condition requires $D \Delta t /(\Delta x^2) \le 0.25$, which explains the result shown in Figure \ref{fig:stability}.
 
-\begin{center}
-\emph{the result was unstable because the time step was too big}
-\end{center}
-\end{itemize}
 
 \textsl{adaptive} implementation: guaranteed stability: FIXME $u \to T$
 
