@@ -57,7 +57,6 @@ for n=1:N
   fprintf('.')
 end
 fprintf('\nSIA solver done\n')
-
 % to plot the diffusivity for the final state:
 %x = linspace(-Lx+dx,Lx-dx,J-1);  y = linspace(-Ly+dy,Ly-dy,K-1);
 %figure(99), surf(x,y,0.25*(Dup+Ddn+Drt+Dlt))

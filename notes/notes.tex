@@ -54,14 +54,17 @@ urlcolor=blue     % only if colorlinks=true
 \end{quote}
 }
 
-%\onefig{name}{caption}
-\newcommand{\onefig}[2]{
+%\onefigsize{name}{caption}{width}
+\newcommand{\onefigsize}[3]{
 \begin{figure}[ht]
 \centering
-\includegraphics[width=3.0in,keepaspectratio=true]{#1}
+\includegraphics[width=#3,keepaspectratio=true]{#1}
 \caption{#2}
 \label{fig:#1}
 \end{figure}}
+
+%\onefig{name}{caption}
+\newcommand{\onefig}[2]{\onefigsize{#1}{#2}{3.0in}}
 
 %\twofigsizes{left-name}{right-name}{caption}{left-width}{right-width}
 \newcommand{\twofigsizes}[5]{
@@ -436,79 +439,61 @@ is an implicit scheme for Equation \eqref{heat1D}.  When written as a formula fo
 
 But implicit schemes are a bit harder to implement.  The values of the unknown (i.e.~$T$) at time step $t_{n+1}$ are generally treated as a vector of unknowns in a large system of equations.  This system must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a highly nonlinear diffusion (heat) equation---the system of equations may be hard to solve.  For these notes we stick with the adaptive explicit idea, and it works fine.  More generally there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.\footnote{Computer scientist Donald Knuth has advice for ice sheet modellers, among other people: ``We should forget about small efficiencies \dots: premature optimization is the root of all evil.''}
 
-\subsubsection*{Numerical solution of diffusion equations}  Recall we are trying to numerically model ice flows, not heat.  In fact, we had an analogy
-    $$\text{SIA} \leftrightarrow \text{heat eqn}$$
-where the heat equation had form $T_t = F + \Div \left(D(x,y) \grad T\right)$.  A more common name for this general heat equation is ``diffusion equation''.  Finally, we had identified formula for the SIA's diffusivity $D$, in terms of ice thickness and surface slope.
+\subsubsection*{Numerical solution of diffusion equations}  Recall we are trying to numerically model ice flows, not heat conduction.  But we have an analogy which says that the SIA is like the heat equation, as both are diffusions.  In fact the heat equation \eqref{heat} has the more common name of ``diffusion equation,'' as the unknown may not be a temperature.  In this section, because we wish to solve the SIA, we construct a numerical scheme for an even more general diffusion which has a ``shift'' inside the gradient, namely
+\begin{equation}
+  T_t = F + \Div \left(D \grad (T + b)\right). \label{gendiffusion}
+\end{equation}
 
-So here we consider numerically solving a diffusion equation in which the diffusivity $D$ varies in space: $D=D(x,y)$, because the previous code \texttt{heatadapt.m} assumes $D$ is constant.  An adaptive explicit method for the diffusion equation \eqref{heat} is conditionally stable, with the same time step restriction as for constant $D$, if we evaluate diffusivity $D(x,y)$ at \alert{staggered} grid points:
+The previous code \texttt{heatadapt.m} assumes $D$ is constant and does not have $F,b$ at all, but now suppose the source term $F(x,y)$, the diffusivity $D(x,y)$, and the ``shift'' $b(x,y)$ all vary in space.    An adaptive explicit method for the diffusion equation is conditionally stable, with the same time step restriction as for the constant $D$ case, as long as we evaluate diffusivity $D(x,y)$ at \emph{staggered} grid points:
 \begin{align*}
-\Div \left(D(x,y) \grad u\right) &\approx \frac{D_{j+1/2,k}(u_{j+1,k} - u_{j,k}) - D_{j-1/2,k}(u_{j,k} - u_{j-1,k})}{\Delta x^2} \\
-	&\qquad + \frac{D_{j,k+1/2}(u_{j,k+1} - u_{j,k}) - D_{j,k-1/2}(u_{j,k} - u_{j,k-1})}{\Delta y^2}
+\Div \left(D \grad X\right) &\approx \frac{D_{j+1/2,k}(X_{j+1,k} - X_{j,k}) - D_{j-1/2,k}(X_{j,k} - X_{j-1,k})}{\Delta x^2} \\
+	&\qquad + \frac{D_{j,k+1/2}(X_{j,k+1} - X_{j,k}) - D_{j,k-1/2}(X_{j,k} - X_{j,k-1})}{\Delta y^2}
 \end{align*}
-Figure \ref{fig:diffstencil} shows the stencil for this diffusion equation approximation.
+where $X=T+b$.  Figure \ref{fig:diffstencil} shows the stencil for this diffusion equation approximation; the staggered grid points are shown with triangles.
 
-\twofig{diffstencil}{mahaffystencil}{Spatial stencils for staggered grid evaluation in general diffusion equations (left) and how the staggered-grid diffusivity is evaluated in the Mahaffy choice (right).  In both stencils the diamonds show where the major variables are evaluated (i.e.~$T$ for the heat equation and $h$ for the SIA), while triangles are where $D$ is evaluated or computed.  In the Mahaffy stencil the rectangles show where both $H$ and $h$ are used.}
+\twofig{diffstencil}{mahaffystencil}{Left:  Spatial stencil for staggered grid evaluation of diffusivity in the diffusion equation \eqref{heat}.  Right: Stencil showing how the staggered-grid diffusivity is evaluated in the Mahaffy choice.  Triangles are the staggered grid locations where $D$ is evaluated (left) or computed (right).}
 
-Code \texttt{diffusion.m} solves the general diffusion equation $T_t = F + \Div \left(D(x,y) \grad T\right)$.  The user supplies the diffusivity $D(x,y)$ on the staggered grid, and the initial temperature $T(0,x,y)$ and heat source $F(x,y)$ on the regular (i.e.~non-staggered) grid.
+Code \texttt{diffusion.m} below solves the general diffusion equation \eqref{gendiffusion}.  The user supplies the diffusivity $D(x,y)$ on the staggered grid, and the initial temperature $T(0,x,y)$, the source term $F(x,y)$, and the ``shift'' $b(x,y)$ on the regular (i.e.~non-staggered) grid.
 
 \minput{diffusion}
-
-FIXME:  on ``degenerate'' diffusivity
-
-\begin{itemize}
-\item recall that the SIA is
-	$$H_t = M + \Div \left(D\, \grad h \right) \quad \text{where} \quad D = \Gamma H^{n+2} |\grad h|^{n-1}$$
-\item thus the diffusivity ``degenerates'', $D \to 0$, when either $H\to 0$ or $\grad h \to 0$
-\item summary:
-\begin{tabular}{l|c|c}
- & why $D\to 0$ & so what? \\ \hline
-domes    & $\grad h \to 0$ & \begin{tabular}{c}
-$H$ and $\grad h$ are continuous \\ but $\grad^2 h$ is singular
-\end{tabular} \\ \hline
-margins  & $H \to 0$       & \begin{tabular}{c}
-$H$ is continuous \\ but $\grad h$ is singular
-\end{tabular}
-\end{tabular}
-\item in terms of numerical error, margin is worse than dome
-\item degenerate diffusion equations are automatically free boundary problems
-\end{itemize}
 
 
 \subsection{Numerically solving the SIA} \label{sec:numericalsia}
 
-\subsubsection*{Constructing a numerical scheme}
+Recall that in the SIA equation \eqref{sia} we have diffusivity $D = \Gamma H^{n+2} |\grad h|^{n-1}$.  This diffusivity ``degenerates'', i.e.~$D \to 0$, when either $H\to 0$ or $\grad h \to 0$.  Degenerate diffusion equations are automatically free boundary problems, and any glaciologist understands that determining the location of the margin, the extent of the ice flow itself, is part of the problem.
+%In more detail, we can say roughly what happens:
+%\begin{tabular}{l|c|c}
+% & why $D\to 0$ & so what? \\ \hline
+%domes    & $\grad h \to 0$ & \begin{tabular}{c}
+%$H$ and $\grad h$ are continuous \\ but $\grad^2 h$ is singular
+%\end{tabular} \\ \hline
+%margins  & $H \to 0$       & \begin{tabular}{c}
+%$H$ is continuous \\ but $\grad h$ is singular
+%\end{tabular}
+%\end{tabular}
+%In terms of the numerical error, the margin is worse than the dome.
+But in practice, as long as we are stepping forward in time and not computing steady states directly, % N&R: cite Jouvet & Bueler
+it suffices to numerically compute new thicknesses and then set them to zero if they come out negative.
 
-computing diffusivity in SIA
+As noted, for numerical stability we compute the diffusivity $D$ on the staggered grid.  Various schemes have been proposed---see Notes and References---
+% \cite{Mahaffy,vanderVeen,HindmarshPayne}
+but all involve averaging $H$ and differencing $h$ in a ``balanced'' way, for better accuracy, onto the staggered grid.  In these notes we use the Mahaffy (1976) choice, with the diffusivity-compuation stencil shown in Figure \ref{fig:diffstencil}.
 
-\begin{itemize}
-\item for numerical stability we compute $D = \Gamma H^{n+2} |\grad h|^{n-1}$ on the staggered grid
-\item various schemes proposed (Mahaffy, 1976\nocite{Mahaffy}; van der Veen 1999\nocite{vanderVeen}; Hindmarsh and Payne 1996\nocite{HindmarshPayne})
-\item all schemes involve
-  \begin{itemize}
-  \item[$\circ$] averaging $H$
-  \item[$\circ$] differencing $h$
-  \item[$\circ$] in a ``balanced'' way, for better accuracy,
-  \end{itemize}
-to get the diffusivity on staggered grid
-
-\item Mahaffy stencil shown in previous figure
-\end{itemize}
-
-
-SIA implementation: flat bed case
+Our SIA implementation in the flat bed, zero surface mass balance case is \texttt{siaflat.m} below.  The general SIA solver, which solves Equation \eqref{sia} including general bed elevation and spatially-variable surface mass balance, is \texttt{siageneral.m} (not shown).
 
 \minput{siaflat}
 
 
 \subsection{Exact solutions and verification}
 
-how do we make sure an \emph{implemented} numerical scheme is correct?
-  \begin{itemize}
-  \item[$\circ$] \emph{technique} 1: don't make any mistakes
-  \item[$\circ$] \emph{technique} 2: compare your model with others, and hope that the outliers are the ones with errors
-  \item[$\circ$] \emph{technique} 3: build-in a comparison to an exact solution, and actually measure the numerical error \alert{$=$ verification}
-  \end{itemize}
-  
+In \texttt{siaflat.m} above, we already have a fairly complicated code.  How do we make sure an \emph{implemented} numerical scheme is correct?  Essentially there are three proposed techniques:
+\begin{enumerate}
+  \item don't make any mistakes, or
+  \item compare your model with others, and hope that the outliers have the errors, or
+  \item build-in a comparison to an exact solution, and measure the numerical error.   \end{enumerate}
+The last one of these is called ``verification.''  % for N&R: cite Roache
+We need to return once again to the PDEs themselves, to get exact solutions to help test our codes.
+
 \subsubsection*{Exact solution of heat equation}
 
 \begin{itemize}
@@ -534,13 +519,7 @@ Green's function of heat equation
 \item the integral over $x$ is independent of time
 \end{itemize}
 
-\begin{center}
-\includegraphics[width=2.5in]{heatscaling}
-\quad
-\includegraphics[width=2.5in]{brownian}
-
-\emph{increasing time} $\to$ \qquad FIXME: parbox {\emph{historical note}:  in 1905 Einstein saw that the average distance traveled by particles in thermal motion scales like $\sqrt{t}$, so $s = t^{-1/2}x$ is an invariant}
-\end{center}
+\onefig{heatscaling}{The Green's function of the heat equation in 1D has the same ``shape'' at each time, but there are time-dependent input- and output-scalings.  It is a ``similarity'' solution.}
 
 similarity solutions
 
@@ -578,6 +557,8 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \item you choose $H_0$ and $R_0$ and then determine $t_0$
 \item it is a simple formula to use for verification!
 \end{itemize}
+
+\onefigsize{siascaling}{FIXME}{5.5in}
 
 is the Halfar solution \emph{good for any modeling}?
 
