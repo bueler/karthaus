@@ -1,29 +1,28 @@
 function [H,dtlist] = siaflat(Lx,Ly,J,K,H0,deltat,tf)
-% SIAFLAT  numerical solution of isothermal n=3 SIA with flat bed and
-%          no accumulation; uses Mahaffy (1976) method to evaluate map-plane
-%          diffusivity
-% equation:
+% SIAFLAT  Numerical solution of isothermal Glen law (n=3)
+% shallow ice approximation (SIA) model with flat bedrock and
+% zero surface mass balance:
 %   H_t = div (D grad H)
-% where
-%   H = ice thickness = ice surface elevation
-%   D = Gamma H^5 |grad H|^2 = solution-dependent (nonlinear) diffusivity
-%   Gamma = 2 A (rho g)^3 / 5
-% form
+% where  H = (ice thickness)  is also the ice surface elevation
+% and  D = Gamma H^5 |grad H|^2  is the solution-dependent
+% (nonlinear) diffusivity.  Note  Gamma = 2 A (rho g)^3 / 5.
+% Uses Mahaffy (1976) method to evaluate map-plane diffusivity.
+% Usage:
 %   [H,dtlist] = siaflat(Lx,Ly,J,K,H0,deltat,tf)
 % where
-%   Lx,Lx = half lengths of rectangle in x,y directions
-%   J,K = number of subintervals in x,y directions
-%   H0 = initial thickness, a (J+1)x(K+1) array
-%   deltat = major time step
-%   tf = final time
-% outputs
-%   H = numerical approx of thickness at final time
+%   H      = numerical approx of thickness at final time
 %   dtlist = list of time steps used adaptively in diffusion.m
-% calls diffusion.m, which does adaptive explicit time-stepping
+%   Lx,Lx  = half lengths of rectangle in x,y directions
+%   J,K    = number of subintervals in x,y directions
+%   H0     = initial thickness, a (J+1)x(K+1) array
+%   deltat = major time step
+%   tf     = final time
+% Example:  See VERIFYSIA and ROUGHICE.
+% Calls:  DIFFUSION, which does adaptive explicit time-stepping
 %   within the major time step
-% example: see verifysia.m
+% Called by:  VERIFYSIA, ROUGHICE
 
-% constants
+% physical constants
 g = 9.81;    rho = 910.0;    secpera = 31556926;
 A = 1.0e-16/secpera;    Gamma  = 2 * A * (rho * g)^3 / 5; % see Bueler et al (2005)
 H = H0;
@@ -33,7 +32,7 @@ N = ceil(tf / deltat);    deltat = tf / N;
 j  = 2:J;    k = 2:K;  % interior indices
 nk = 3:K+1;    sk = 1:K-1;    ej = 3:J+1;    wj = 1:J-1; % north,south,east,west
 
-fprintf('SIA solver calling diffusion(), computing diffusivity by Mahaffy ...\n')
+fprintf('solving SIA for 0.0 < t < %.3f a\n',tf/secpera)
 t = 0;   dtlist = [];
 for n=1:N
   % staggered grid thicknesses
@@ -57,9 +56,8 @@ for n=1:N
   t = t + deltat;    dtlist = [dtlist dtadapt];
   fprintf('.')
 end
-fprintf('\nSIA solver done.\n')
+fprintf('\nSIA solver done\n')
 
 % to plot the diffusivity for the final state:
 %x = linspace(-Lx+dx,Lx-dx,J-1);  y = linspace(-Ly+dy,Ly-dy,K-1);
 %figure(99), surf(x,y,0.25*(Dup+Ddn+Drt+Dlt))
-

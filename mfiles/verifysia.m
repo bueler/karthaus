@@ -1,16 +1,17 @@
 function [avthkerr,maxthkerr] = verifysia(J,dtyears)
-% VERIFYSIA  Compare the Halfar (1983) similarity solution at year t = 20 ka to
-%            the numerical solution using siaflat(), for a run from t = 200 a to
-%            t = 20 ka.  The t = 200 a state of the Halfar solution is used as
-%            the initial value for the run.
-% form:
+% VERIFYSIA  Compare the Halfar (1983) similarity solution at year
+% t = 20 ka to the numerical solution using SIAFLAT, for a run from
+% t = 200 a to t = 20 ka.  The t = 200 a state of the Halfar solution
+% is used as the initial value for the run.
+% Usage:
 %   verifysia(J,dtyears)
 % where:
 %   J = number of grid spaces in x and y directions
 %   dtyears = "major" time step, during which diffusivity does not change;
-%             note that diffusion() is called by siaflat.m and it does its own
-%             adaptive time stepping
-% example:  >> verifysia;
+%     note that diffusion() is called by siaflat.m and it does its own
+%     adaptive time stepping
+% Example:
+%   >> verifysia;
 
 if nargin<1, J=40; end;
 if nargin<2, dtyears=10.0; end;
@@ -21,8 +22,7 @@ L = 1200e3;    dx = 2 * L / J;
 t1 = 200;    t2 = 20000;    secpera = 31556926;
 H1 = halfar(t1 * secpera,x,y); % initial condition
 
-[H2approx,dtlist] = siaflat(L,L,J,J,H1,dtyears*secpera,...
-                            (t2-t1)*secpera);
+[H2approx,dtlist] = siaflat(L,L,J,J,H1,dtyears*secpera,(t2-t1)*secpera);
 % alternatively, test siageneral:
 %[H2approx,h2approx,dtlist] = siageneral(L,L,J,J,H1,...
 %                               dtyears*secpera,(t2-t1)*secpera,...
@@ -46,8 +46,6 @@ erreta = H2approx.^(8/3) - H2exact.^(8/3);
 maxeta = max(max(H2exact.^(8/3)));
 fprintf('rel max abs error in H^{8/3} = %.5f\n',max(max(abs(erreta / maxeta))) )
 
-%STRIPFROMHERE   (hide figure plots in lecture.pdf)
-
 figure(1),   surf(x,y,error)
 shading('flat'),   axis square,   view(2),   colorbar
 title('thickness error (m)')
@@ -61,4 +59,3 @@ xlabel('x (km)'),   ylabel('y (km)'),   zlabel('numerical thickness (m)')
 % to make figure showing adaptive time-stepping:
 % figure(3), plot(dtlist / secpera,'o')
 % xlabel('step'), ylabel('length of step in years')
-

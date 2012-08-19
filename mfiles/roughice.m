@@ -1,5 +1,5 @@
-% ROUGHICE   Demonstrate that the SIA code siaflat.m can deal adaptively
-%            with terrible surface topography.
+% ROUGHICE   Demonstrate that the SIA code SIAFLAT can deal adaptively
+% with terrible surface topography.
 
 % space-time grid parameters
 J = 60;  K = J;

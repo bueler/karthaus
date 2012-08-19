@@ -1,15 +1,15 @@
 function H = halfar(t,x,y)
-% HALFAR   Compute the similarity solution, to the isothermal flat-bed SIA from
+% HALFAR  Compute the similarity solution, to the isothermal flat-bed SIA from
 % [Halfar, 1983].  Constants are as in Test B in [Bueler and others, 2005].
-% form:
+% Usage:
 %   H = halfar(t,x,y)
-% where:
+% where
 %   x,y = grid; can be matrices, of same size; in meters
-%   t = time in seconds (scalar)
-% example:
+%   t   = time in seconds (scalar)
+% Example:
 %   >> L = 1000e3;  dx = L/100;  [x,y] = meshgrid(-L:dx:L,-L:dx:L);
 %   >> H = halfar(100.0*3.1556926e7,x,y);
-%   >> surf(x,y,H),  shading('interp'),  xlabel x,  ylabel y,  zlabel H
+%   >> surf(x,y,H),  shading('interp'),  xlabel x,  ylabel y
 
 g = 9.81;   rho = 910.0;   secpera = 31556926;  % constants in SI units
 n = 3;
@@ -24,4 +24,3 @@ r = sqrt(x.*x + y.*y);
 r = r / R0;   t = t / t0;
 inside = max(0, 1 - (r / t^beta).^((n+1) / n));
 H = H0 * inside.^(n / (2*n+1)) / t^alpha;
-

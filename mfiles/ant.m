@@ -1,13 +1,15 @@
 function ant(doplot,E)
-% ANT  simulate Antarctic ice sheet flow using buildant.m
-%   to extract data from re-gridded SeaRISE-Antarctic data
-%   (see Ant50km.nc for metadata), and siageneral.m to solve SIA
-% calls:  buildant.m, siageneral.m, diffusion.m
+% ANT  Simulate Antarctic ice sheet flow using BUILDANT to
+% extract data from re-gridded SeaRISE-Antarctic data.  See
+% Ant50km.nc for metadata.
+% Example:  >> ant
+% Calls:  BUILDANT, SIAGENERAL, DIFFUSION
 
 if nargin < 1, doplot = 1; end
 if nargin < 2, E = 3; end  % default enhancement factor
 
-[x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0);  % read input data from NetCDF; no plot
+% read input data from NetCDF; no plot
+[x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0);
 
 % grid info
 Lx = (max(x) - min(x)) / 2;    Ly = (max(y) - min(y)) / 2;
@@ -15,10 +17,14 @@ J = length(x) - 1;    K = length(y) - 1;
 dx = 2 * Lx / J;    dy = 2 * Ly / K;
 
 fprintf('summary of input data:\n')
+fprintf('  J = %d,  K = %d\n',J,K)
 fprintf('  dx = %.3f km,  dy = %.3f km\n',dx/1000.0,dy/1000.0)
-fprintf('  thickness     [min,max] = [%8.2f,%8.2f] m\n',min(min(thk)),max(max(thk)))
-fprintf('  bed elevation [min,max] = [%8.2f,%8.2f] m\n',min(min(topg)),max(max(topg)))
-fprintf('  precipitation [min,max] = [%8.5f,%8.5f] m a-1\n',min(min(prcp)),max(max(prcp)))
+fprintf('  thickness     [min,max] = [%8.2f,%8.2f] m\n',...
+  min(min(thk)),max(max(thk)))
+fprintf('  bed elevation [min,max] = [%8.2f,%8.2f] m\n',...
+  min(min(topg)),max(max(topg)))
+fprintf('  precipitation [min,max] = [%8.5f,%8.5f] m a-1\n',...
+  min(min(prcp)),max(max(prcp)))
 
 % run-time and time-step (in years)
 deltat = 1.0;
@@ -71,5 +77,5 @@ grid on
 
   function vol = printvolume(time,dx,dy,thk)
     vol = sum(sum(thk)) * dx * dy;
-    fprintf('  ice volume at time %7.3fka = %.4e km^3\n',time/1000.0,vol/1.0e9)
+    fprintf('  ice volume at time %7.3fka  is %.4e km^3\n',time/1000.0,vol/1.0e9)
 
