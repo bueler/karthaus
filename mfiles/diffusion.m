@@ -40,8 +40,8 @@ if nargin < 12, b = zeros(size(T0)); end  % allows use for nonflat-bed SIA case
 t = 0.0;    count = 0;
 while t < tf
    % stability condition gives time-step restriction
-   Dregular = max(max(Dup,Ddown),max(Dleft,Dright));  % array on regular grid
-   maxD = max(max(Dregular));  % scalar maximum of D
+   maxD = [max(max(Dup)) max(max(Ddown)) max(max(Dleft)) max(max(Dright))];
+   maxD = max(maxD);  % scalar maximum of D
    dt0 = 0.25 * min(dx,dy)^2 / maxD;
    dt = min(dt0, tf - t);  % do not go past tf
    mu_x = dt / (dx*dx);    mu_y = dt / (dy*dy);
