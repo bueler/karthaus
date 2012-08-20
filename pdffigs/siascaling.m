@@ -6,7 +6,7 @@ J = 500;
 JJ = 1:5;
 secpera = 31556926;
 %note t0 = 422.45 a; see halfar.m and Bueler et al (2005)
-tt = 10.^(JJ-1) * secpera;  % [1 10 100 1000 10^4 10^5]  a
+tt = 10.^(JJ-1) * secpera;  % [1 10 100 1000 10000]  a
 
 figure(1), clf
 for j=JJ
@@ -18,7 +18,3 @@ for j=JJ
   set(gca, 'xtick', [0 300 600 900])
   %axis off
 end
-
-% to create .eps:
-%print -deps ../siascaling.eps
-
