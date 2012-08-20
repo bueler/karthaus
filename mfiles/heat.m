@@ -25,13 +25,13 @@ fprintf('  doing N = %d steps of dt = %.5f for 0.0 < t < %.3f\n',N,dt,N*dt)
 fprintf('  nu = 1 * dt / dx^2 = %.5f\n',dt/dx^2)
 
 % do explicit time steps
-nu_x = dt * D / (dx*dx);
-nu_y = dt * D / (dy*dy);
+mu_x = dt * D / (dx*dx);
+mu_y = dt * D / (dy*dy);
 for n=1:N
    % colon notation substitutes for double loop over interior grid points
    T(2:J,2:K) = T(2:J,2:K) + ...
-       nu_x * ( T(3:J+1,2:K) - 2 * T(2:J,2:K) + T(1:J-1,2:K) ) + ...
-       nu_y * ( T(2:J,3:K+1) - 2 * T(2:J,2:K) + T(2:J,1:K-1) );
+       mu_x * ( T(3:J+1,2:K) - 2 * T(2:J,2:K) + T(1:J-1,2:K) ) + ...
+       mu_y * ( T(2:J,3:K+1) - 2 * T(2:J,2:K) + T(2:J,1:K-1) );
 end
 
 % show solution

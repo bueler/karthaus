@@ -24,14 +24,14 @@ T = exp(-30*(x.*x + y.*y));
 fprintf('  doing explicit steps adaptively on 0.0 < t < %.3f\n',tf)
 t = 0.0;    count = 0;
 while t < tf
-   % stability requires  1 - 2 nu_x - 2 nu_y >= 0,  which is the
+   % stability requires  1 - 2 mu_x - 2 mu_y >= 0,  which is the
    %   following as a time-step restriction
    dt0 = 0.25 * min(dx,dy)^2 / D;
    dt = min(dt0, tf - t);  % do not go past tf
-   nu_x = dt * D / (dx*dx);    nu_y = dt * D / (dy*dy);
+   mu_x = dt * D / (dx*dx);    mu_y = dt * D / (dy*dy);
    T(2:J,2:K) = T(2:J,2:K) + ...
-       nu_x * ( T(3:J+1,2:K) - 2 * T(2:J,2:K) + T(1:J-1,2:K) ) + ...
-       nu_y * ( T(2:J,3:K+1) - 2 * T(2:J,2:K) + T(2:J,1:K-1) );
+       mu_x * ( T(3:J+1,2:K) - 2 * T(2:J,2:K) + T(1:J-1,2:K) ) + ...
+       mu_y * ( T(2:J,3:K+1) - 2 * T(2:J,2:K) + T(2:J,1:K-1) );
    t = t + dt;
    count = count + 1;
    fprintf('.')
