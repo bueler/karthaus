@@ -491,91 +491,86 @@ Having addressed these two details about the diffusivity, we can already give a 
 
 \subsection{Exact solutions and verification}
 
-In \texttt{siaflat.m} above, we already have a fairly complicated code.  How do we make sure an \emph{implemented} numerical scheme is correct?  Essentially there are three proposed techniques:
+In \texttt{siaflat.m} above, we already have a fairly complicated code.  How do we make sure an \emph{implemented} numerical scheme is correct?  Here are three proposed techniques:
 \begin{enumerate}
   \item don't make any mistakes, or
   \item compare your model with others, and hope that the outliers have the errors, or
-  \item build-in a comparison to an exact solution, and measure the numerical error.   \end{enumerate}
+  \item compare your numerical results to an exact solution (measure the difference).   \end{enumerate}
 The last one of these, which we prefer to the first two, is called ``verification.''  % for N&R: cite Roache; also ISMIP-HOM as example of 2
 But to do it we need to return to the PDE itself, to get useful exact solutions.
 
 \subsubsection*{Exact solution of heat equation}
 
-Though the goal is an SIA exact solution with which to test \texttt{siaflat.m} above, it is useful to see the simpler case of the 1D heat equation with constant $D$, namely $T_t = D T_{xx}$
+The goal is an SIA exact solution with which to test \texttt{siaflat.m}.  However, it is useful to see the simpler case of the 1D heat equation with constant $D$, namely $T_t = D T_{xx}$.  Many exact solutions $T(t,x)$ to this heat equation are known, but I'll show the time-dependent ``Green's function''---date of invention approximately 1830---also known as the ``heat kernel''.  It starts at time $t=0$ with a ``delta function'' $T(0,x)=\delta(x)$ of heat at the origin $x=0$ and then it spreads out over time.  It solves the heat equation on the whole line $-\infty<x<\infty$ and for all $t>0$.  We calculate (find) this exact solution by a method which generalizes to the SIA.
 
-many \emph{exact} solutions to the heat equation are known, but I'll show the ``Green's function'', also known as ``fundamental solution'' or ``heat kernel''
-
-it starts at time $t=0$ with a ``delta function'' of heat at the origin $x=0$ and then it spreads out over time
-
-we find it by a method which generalizes to the SIA
-
-Green's function of heat equation
-
-\begin{itemize}
-\item the solution is ``self-similar'' over time
-\item as time goes it changes shape by
-  \begin{itemize}
-  \item[$\circ$] shrinking the output (vertical) axis and
-  \item[$\circ$] lengthening the input (horizontal) axis
-  \end{itemize}
-\item \dots but otherwise it is the same shape
-\item the integral over $x$ is independent of time
-\end{itemize}
+The Green's function of the heat equation is ``self-similar'' over time, in the sense that it changes shape \emph{only} by shrinking the output (vertical) axis and lengthening the input (horizontal) axis, as shown in Figure \ref{fig:heatscaling}.  These scalings are constrained by the conservation of heat energy, which says that the integral over $x$ is independent of time.
 
 \onefig{heatscaling}{The Green's function of the heat equation in 1D has the same ``shape'' at each time, but there are time-dependent input- and output-scalings.  It is a ``similarity'' solution.}
 
-similarity solutions
+In particular, the Green's function is
+	$$T(t,x) = \frac{1}{\sqrt{4 \pi D t \;}}\, e^{-x^2/(4Dt)}.$$
+``Similarity'' variables for 1D heat equation, namely the above-mentioned scalings, are
+	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad T(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s).$$
+That is, the shape which is the same at each time is
+	$$\phi(s) = \frac{1}{\sqrt{4 \pi D \;}}\, e^{-s^2/(4D)},$$
+and the entire time-dependence is from the input and output scalings.  In formulas, $T(t,x) = t^{-1/2}\, \phi\left(t^{-1/2} x\right)$.
+%EXERCISE: check the above claims
 
-\begin{itemize}
-\item Green's function of heat equation in 1D is
-	$$u(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
-\item ``similarity'' variables for 1D heat equation are
-	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad u(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
-\end{itemize}
+For a sufficiently long interval, so that zero boundary conditions are nearly exact, a numerical solver for the 1D heat equation should produce numbers which are close to this exact solution.  Instead of pursuing that, we move on to the analogous SIA solution.
+% EXERCISE: do this 1D heat equation verification
 
 \subsubsection*{An exact ``similarity'' solution to the SIA}
 
-\begin{itemize}
-\item jump forward to 1981
-\item P.~Halfar found the similarity solution of the SIA in the case of flat bed and no surface mass balance \nocite{Halfar81,Halfar83}
-\item Halfar's 2D solution for Glen flow law with $n=3$ has scalings
-   $$H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r$$
-\item \dots so the diffusion of ice really slows down as the shape flattens out!
-\end{itemize}
+So now we jump forward from 1830 to 1981, the year in which P.~Halfar published the similarity solution of the SIA in the case of flat bed and no surface mass balance.
+%N&R: \cite{Halfar81,Halfar83}
+Halfar's solution to the 2D SIA model, namely equation \eqref{sia}, using a Glen flow law with $n=3$, has scalings
+\begin{equation}
+H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r \label{halfarscalings}
+\end{equation}
+where $r=(x^2+y^2)^{1/2}$ is distance from the origin.  It is shown in Figure \ref{fig:siascaling}.  The scalings in \eqref{halfarscalings} imply that, quite differently from heat, the diffusion of ice really slows down as the shape flattens out!  That is, the powers $t^{-1/9}$, $t^{-1/18}$ imply very little change for times $t$ significantly larger than one.  This is what we see in the Figure.
 
-Halfar solution to the SIA: the movie
+\onefigsize{siascaling}{Halfar's solution $H(t,r)$ of the SIA equation \eqref{sia} on a flat bed (i.e.~$b=0$ so $H=h$) and with zero mass balance (i.e.~$M=0$).  The solution is shown on $H$ versus $r$ axes for times $t=1,10,100,1000,10000$ years.}{5.5in}
 
-%\animategraphics[autoplay,loop,height=7.0cm]{4}{anim/halfar}{0}{26}
+The full formula for the Halfar solution to the SIA is remarkably simple,
+\begin{equation}
+H(t,r) = H_0 \left(\frac{t_0}{t}\right)^{1/9} \left[1 - \left(\left(\frac{t_0}{t}\right)^{1/18} \frac{r}{R_0}\right)^{4/3}\right]^{3/7} \label{halfar}
+\end{equation}
+where the ``characteristic time'' is
+  $$t_0 = \frac{1}{18 \Gamma} \left(\frac{7}{4}\right)^3 \frac{R_0^4}{H_0^{7}}.$$
+Thus if we choose central height $H_0$ and ice cap radius $R_0$ then the characteristic time $t_0$ is determined, and, at that time $t=t_0$, the Halfar solution has height $H_0$ and radius $R_0$.
+%EXERCISE: verify these simple claims
 
-frames from $t=4$ months to $t = 10^6$ years, equal spaced in \emph{exponential} time
+Formula \eqref{halfar} is certainly simple enough to use for verifying time-dependent SIA models, and so we use it that way.  Among the distributed codes is \texttt{verifysia.m}, which takes as input the number of grid points in each ($x,y$) direction.  It uses the Halfar solution at 200 a as the initial condition, does a numerical run to time 20000 a, with \texttt{siaflat.m} above, and then compares to the Halfar formula for that time:
+\small
+\begin{verbatim}
+>> verifysia(20)
+average thickness error     = 22.310
+maximum thickness error     = 227.849
+>> verifysia(40)
+average thickness error     = 9.490
+maximum thickness error     = 241.470
+>> verifysia(80)
+average thickness error     = 2.800
+maximum thickness error     = 155.796
+>> verifysia(160)
+average thickness error     = 1.059
+maximum thickness error     = 109.466
+\end{verbatim}
+\normalsize
+We see that the thickness error, the absolute value of the difference between the numerical and exact solutions at $t=20000$ a, is shrinking with increasing grid resolution.  This is as expected for a correctly-implemented code.  What is less obvious, perhaps, is that almost any numerical implemention error will break this property and we will find that these errors do not shrink as we expect them to.
 
-Halfar solution to the SIA: the formula
-
-\begin{itemize}
-\item for $n=3$ the solution formula is:
-  $$H(t,r) = H_0 \left(\frac{t_0}{t}\right)^{1/9} \left[1 - \left(\left(\frac{t_0}{t}\right)^{1/18} \frac{r}{R_0}\right)^{4/3}\right]^{3/7}$$
-\item the ``characteristic time'' is
-  $$t_0 = \frac{1}{18 \Gamma} \left(\frac{7}{4}\right)^3 \frac{R_0^4}{H_0^{7}}$$
-if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
-\item you choose $H_0$ and $R_0$ and then determine $t_0$
-\item it is a simple formula to use for verification!
-\end{itemize}
-
-\onefigsize{siascaling}{FIXME}{5.5in}
-
-is the Halfar solution \emph{good for any modeling}?
-
-\begin{itemize}
-\item John Nye and others (2000)\nocite{NyeIcarus2000} compared the long-time consequences of different flow laws for the South Mars Polar Cap
-\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters
-\item \dots by comparing the long-time behavior of the corresponding Halfar solutions
-\item conclusions:
+You might ask, is the Halfar solution good for modelling real ice masses directly?  John Nye and others (2000)
+%N&R: \cite{NyeIcarus2000}
+compared the long-time consequences of different flow laws for the South Mars Polar Cap.  In particular, they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters by comparing the long-time behavior of the corresponding Halfar solutions.  Their conclusions:
   \begin{quote}
   \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
   \end{quote}
-\end{itemize}
+This theoretical result has increasing confirmation in the observation of, and sampling of, the polar geology of Mars.
 
-\subsubsection*{Verifying the SIA scheme}
+
+\subsubsection*{Exact solutions for ice flow models}
+
+FIXME: put in N\&R?
 
 \begin{itemize}
 \item where to get exact solutions for ice flow models?
@@ -590,22 +585,7 @@ is the Halfar solution \emph{good for any modeling}?
   \end{itemize}
 \end{itemize}
 
-verifying SIA code vs Halfar
 
-\begin{verbatim}
-octave:40> verifysia(20)
-average abs error            = 22.310
-maximum abs error            = 227.849
-octave:41> verifysia(40)
-average abs error            = 9.490
-maximum abs error            = 241.470
-octave:42> verifysia(80)
-average abs error            = 2.800
-maximum abs error            = 155.796
-octave:43> verifysia(160)
-average abs error            = 1.059
-maximum abs error            = 109.466
-\end{verbatim}
 
 
 \subsection{Applying our numerical ice sheet model}
