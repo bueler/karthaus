@@ -1,3 +1,4 @@
+function roughice
 % ROUGHICE   Demonstrate that the SIA code SIAFLAT can deal adaptively
 % with terrible surface topography.
 
@@ -18,9 +19,11 @@ title('initial surface')
 
 % run SIA code
 fprintf('initial ice volume:   %.6e km^3\n',sum(sum(H0))*dx*dy/1e9)
+fprintf('initial maximum driving stress:   %.6e Pa\n',getmaxtaud(J,K,dx,dy,H0))
 tfyears = 50;
 [H,dtlist] = siaflat(Lx,Ly,J,K,H0,0.2*secpera,tfyears*secpera);
 fprintf('final ice volume (at t = %.2f a):   %.6e km^3\n',tfyears,sum(sum(H))*dx*dy/1e9)
+fprintf('final maximum driving stress:   %.6e Pa\n',getmaxtaud(J,K,dx,dy,H))
 
 % show final state and adaptive time-stepping
 figure(2),  surf(x/1000,y/1000,H)
@@ -33,3 +36,12 @@ xlabel('n  (time step count)'), ylabel('dt  (a)')
 title('adaptive time steps taken')
 %print -dpng roughtimesteps.png
 
+  function z = getmaxtaud(J,K,dx,dy,H)
+    g = 9.81;    rho = 910.0;
+    dHdx = (H(3:J,2:K-1) - H(1:J-2,2:K-1)) / (2 * dx);
+    dHdy = (H(2:J-1,3:K) - H(2:J-1,1:K-2)) / (2 * dy);
+    taud = rho * g * H(2:J-1,2:K-1) .* sqrt(dHdx.^2 + dHdy.^2);
+    z = max(max(taud));
+  end
+
+end
