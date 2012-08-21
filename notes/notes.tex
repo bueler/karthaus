@@ -571,17 +571,13 @@ This theoretical result has been confirmed by the observation and sampling of th
 To finish our brief demonstration of verification, a natural concern is roughly that ``exact solutions are not always available when needed''.  This is true, but sometimes it reflects the equally significant, though perhaps unvocalized, concern that not enough thought has gone into the meaning of the continuum model itself!  In any case, many ice flow models do have exact solutions which are relevant to verification, and we will use van der Veen's solution for ice shelves in a later section.  Existing exact solutions, and techniques for generating additional exact solutions, are listed in Notes and References.
 
 
-
-
 \subsection{Applying our numerical ice sheet model}
 
-demonstrate robustness
+While we should probably not trust any computer program for any purpose, the above verification is a start.  Another test is of ``robustness'': does the model break when you ask it to do hard things, even if you don't know exactly what it should do.  Here we demonstrate that \texttt{siaflat.m} can handle an ice sheet with extraordinarily high driving stresses.  Recall that glaciological ``driving stress'' is $\tau_d = \rho g H \grad h$, which appears in the slab-on-a-slope example and the SIA model as the value of the shear stress $(\tau_{13},\tau_{23})$ at the base of the ice.
 
-see \texttt{roughice.m}, which calls \texttt{siaflat.m} after setting-up the nasty initial state at left:
+Specifically, the program \texttt{roughice.m} gives the numerical code \texttt{siaflat.m} the worst-possible ice sheet, which is both thick and has large surface slopes, shown in the left side of Figure \ref{fig:roughinitial}.  After 50 model years of evolution the ice cap has the shape rather close to a Halfar solution state, as also shown in Figure \ref{fig:roughinitial}.  The first time step was determined adaptively as 0.0002 years, and this increases in the adaptive time-stepping scheme to close to the user-chosen maximum step of 0.2 years.
 
-\includegraphics[width=2.5in]{roughinitial}
-\quad
-\includegraphics[width=2.5in]{roughfinal}
+\twofig{roughinitial}{roughfinal}{FIXME}
 
 model the Antarctic ice sheet
 
