@@ -573,29 +573,23 @@ To finish our brief demonstration of verification, a natural concern is roughly 
 
 \subsection{Applying our numerical ice sheet model}
 
-While we should probably not trust any computer program for any purpose, the above verification is a start.  Another test is of ``robustness'': does the model break when you ask it to do hard things, even if you don't know exactly what it should do.  Here we demonstrate that \texttt{siaflat.m} can handle an ice sheet with extraordinarily high driving stresses.  Recall that glaciological ``driving stress'' is $\tau_d = \rho g H \grad h$, which appears in the slab-on-a-slope example and the SIA model as the value of the shear stress $(\tau_{13},\tau_{23})$ at the base of the ice.
+\subsubsection*{A test of robustness}  Verification is a reasonable start to testing a code.  Another kind of test is for ``robustness'': does the model break when you ask it to do hard things?  Unlike for verification, we might not have precise knowledge of what it should do, but we know the program should act in a ``reasonable'' way.
 
-Specifically, the program \texttt{roughice.m} gives the numerical code \texttt{siaflat.m} the worst-possible ice sheet, which is both thick and has large surface slopes, shown in the left side of Figure \ref{fig:roughinitial}.  After 50 model years of evolution the ice cap has the shape rather close to a Halfar solution state, as also shown in Figure \ref{fig:roughinitial}.  The first time step was determined adaptively as 0.0002 years, and this increases in the adaptive time-stepping scheme to close to the user-chosen maximum step of 0.2 years.
+The robustness test in the program \texttt{roughice.m} demonstrates that \texttt{siaflat.m} can handle an ice sheet with extraordinarily high driving stresses.\footnote{Recall that glaciological ``driving stress'' is $\tau_d = \rho g H \grad h$.  This quantity appears in the slab-on-a-slope example and in the SIA model as the value of the shear stress $(\tau_{13},\tau_{23})$ at the base of the ice. }  We give \texttt{siaflat.m} a randomly-generated initial ice sheet which is of the ``worst possible'' sort.  It is both thick---mean thickness 3000 m---and it has large surface slopes.  The initial sheet from one run is shown in the left side of Figure \ref{fig:roughinitial}.  During the run of 50 model years, the time step is determined adaptively, increasing from 0.0002 years to close to the user-chosen maximum time step of 0.2 years.  The maximum value of the driving stress decreases from $5.7\times 10^6$ Pa to $3.6\times 10^5$ Pa.  At the end of the run the ice cap has the shape shown at right in Figure \ref{fig:roughinitial}.  The shape is rather close to a Halfar solution; indeed Halfar proved that all solutions of the SIA on a flat bed with no mass balance asymptotically approach the Halfar solution.
 
-\twofig{roughinitial}{roughfinal}{FIXME}
+\twofig{roughinitial}{roughfinal}{SIA code \texttt{siaflat.m} evolves the worst-possible initial ice sheet (left), a state with huge driving stresses, to a well-behaved ice cap (right) after 50 model years.}
 
-model the Antarctic ice sheet
+\subsubsection*{A first model for the Antarctic ice sheet}  Finally we might really use the model, in this case for the Antarctic ice sheet.  We carefully make some small modifications of \texttt{siaflat.m} to get \texttt{siageneral.m}.  We use observed accumulation as surface mass balance, allow a non-flat bedrock (so $H\ne h$)---we simply use BEDMAP \cite{BamberLayberryGogenini}, we modify the surface gradient method to be FIXME: floatkill
 
-\begin{itemize}
-\item with careful-but-small modifications of \texttt{siaflat.m}, which make a good exercise:
-  \begin{itemize}
-  \item[$\circ$] observed accumulation as surface mass balance,
-  \item[$\circ$] allow non-flat bed (so $H\ne h$),
-  \item[$\circ$] differentiate the surface correctly where floating, and
-  \item[$\circ$] calve at current calving front location
-  \end{itemize}
+ differentiate the surface correctly where floating, and
+
+NO: calve at current calving front location
+
 here are results from this \emph{toy} Antarctic flow model
-\item a 2000 model year run on a $\Delta x=50$ km grid; runtime a few seconds
-\end{itemize}
 
-\includegraphics[width=2.5in]{antinitial}
-\quad
-\includegraphics[width=2.5in]{antfinal}
+a 2000 model year run on a $\Delta x=50$ km grid; runtime a few seconds
+
+\twofig{antinitial}{antfinal}{FIXME}
 
 
 
