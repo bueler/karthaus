@@ -1,10 +1,11 @@
 function [H,h,dtlist] = siageneral(Lx,Ly,J,K,H0,deltat,tf,b,M,A)
-% SIAGENERAL  Numerical solution of isothermal n=3 SIA with general bed
-% elevation b(x,y), general surface mass balance M(x,y),
-% calve-at-original-front rule, and nonnegative thickness rule:
+% SIAGENERAL  Numerical solution of isothermal n=3 SIA
 %   H_t = M + div (D grad (H + b))
 % where  H = (ice thickness), the ice surface elevation is h = H + b,
-% M = (surface mass balance), and D is the diffusivity.  Compare SIAFLAT.
+% M = (surface mass balance), and D is the diffusivity.  We allow
+% with general bed elevation b(x,y), general surface mass balance M(x,y),
+% and nonnegative thickness rule.  Any floating ice is immediately calved.
+% Compare SIAFLAT.
 % Usage:
 %   [H,h,dtlist] = siageneral(Lx,Ly,J,K,H0,deltat,tf,b,M,A)
 % where
@@ -19,16 +20,14 @@ function [H,h,dtlist] = siageneral(Lx,Ly,J,K,H0,deltat,tf,b,M,A)
 %   b      = bed elevation, a (J+1)x(K+1) array
 %   M      = surface mass balance, a (J+1)x(K+1) array
 %   A      = ice softness
-% Calls DIFFUSION, which does adaptive explicit time-stepping within the
-% major time step deltat.  Also calls GETSURFACE for flotation criterion.
+% Calls: DIFFUSION, which does adaptive explicit time-stepping within the
+% major time step deltat.
 % Example: See ANT.
 
 % constants
 g = 9.81;    rho = 910.0;    rhow = 1028.0;
 Gamma  = 2 * A * (rho * g)^3 / 5; % see Bueler et al (2005)
-
-calvehere = (H0 <= 1.0) & (b < 0.0);
-H = H0;
+f = rho / rhow;                   % fraction of floating ice below surface
 
 dx = 2 * Lx / J;   dy = 2 * Ly / K;
 N = ceil(tf / deltat);   deltat = tf / N;
@@ -36,13 +35,14 @@ j  = 2:J;   k = 2:K;  % interior indices
 nk = 3:K+1;   sk = 1:K-1;   ej = 3:J+1;   wj = 1:J-1; % north,south,east,west
 
 t = 0;   dtlist = [];
+H = H0;
 for n=1:N
   % staggered grid thicknesses
   Hup  = 0.5 * ( H(j,nk) + H(j,k) ); % up
   Hdn  = 0.5 * ( H(j,k) + H(j,sk) ); % down
   Hrt  = 0.5 * ( H(ej,k) + H(j,k) ); % right
   Hlt  = 0.5 * ( H(j,k) + H(wj,k) ); % left
-  h    = getsurface(H,b,rho,rhow);   % surface elevation on regular grid
+  h = max(0.0,H + b); % update surface
   % staggered grid value of |grad h|^2 = "alpha^2"
   a2up = (h(ej,nk) + h(ej,k) - h(wj,nk) - h(wj,k)).^2 / (4*dx)^2 + ...
          (h(j,nk) - h(j,k)).^2 / dy^2;
@@ -59,9 +59,10 @@ for n=1:N
   Dlt  = Gamma * Hlt.^5 .* a2lt;
   % call *adaptive* diffusion() to time step H
   [H,dtadapt] = diffusion(Lx,Ly,J,K,Dup,Ddn,Drt,Dlt,H,deltat,M,b);
-  H(calvehere) = 0.0;   % calving occurs at location of initial front
   H = max(H,0.0);       % enforce nonnegative thickness (H->0 can occur where M<0)
+  calvehere = (b < - f * H);  % floating
+  H(calvehere) = 0.0;   % calving occurs anywhere the ice is floating
   t = t + deltat;
   dtlist = [dtlist dtadapt];
 end
-h = getsurface(H,b,rho,rhow);  % finalize the surface
+h = max(0.0,H + b); % finalize surface

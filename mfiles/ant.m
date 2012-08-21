@@ -54,16 +54,16 @@ end
 if doplot==0, return; end
 
 figure(1)
-imagesc(x/1000,y/1000,flipud(hinit),[0, 4000]), colorbar, axis square
+imagesc(x/1000,y/1000,flipud(hinit),[0, 4000]), axis square, colorbar
 xlabel('x  (km)','fontsize',14), ylabel('y  (km)','fontsize',14)
-title('initial surface elevation')
-%print -dpdf antinitial.pdf
+%title('initial surface elevation')
+print -dpng antinitial.png
 
 figure(2)
 imagesc(x/1000,y/1000,flipud(hfinal),[0, 4000]), axis square, colorbar
 xlabel('x  (km)','fontsize',14), ylabel('y  (km)','fontsize',14)
-title('final surface elevation')
-%print -dpdf antfinal.pdf
+%title('final surface elevation')
+print -dpng antfinal.png
 
 figure(3)
 imagesc(x/1000,y/1000,flipud(H-thk),[-1000, 1000]), axis square, colorbar
@@ -71,11 +71,11 @@ xlabel x, ylabel y, title('thickness change')
 
 figure(4)
 plot((0:NN)*tf/secpera,vol/(1.0e6*1.0e9),'o-','markersize',11,'linewidth',2)
-xlabel('t  (a)','fontsize',14), ylabel('volume  (10^6 km^3)','fontsize',14)
+xlabel('t  (a)','fontsize',14)
+%ylabel('volume  (10^6 km^3)','fontsize',14)
 grid on
-%print -dpdf antvol.pdf
+print -dpdf antvol.pdf
 
   function vol = printvolume(time,dx,dy,thk)
     vol = sum(sum(thk)) * dx * dy;
     fprintf('  ice volume at time %7.3fka  is %.4e km^3\n',time/1000.0,vol/1.0e9)
-
