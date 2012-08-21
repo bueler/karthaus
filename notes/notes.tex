@@ -521,15 +521,15 @@ For a sufficiently long interval, so that zero boundary conditions are nearly ex
 
 \subsubsection*{An exact ``similarity'' solution to the SIA}
 
-So now we jump forward from 1830 to 1981, the year in which P.~Halfar published the similarity solution of the SIA in the case of flat bed and no surface mass balance.
+Now we jump forward from 1830 to 1981, to the year in which P.~Halfar published the similarity solution of the SIA in the case of flat bed and no surface mass balance.
 %N&R: \cite{Halfar81,Halfar83}
 Halfar's solution to the 2D SIA model, namely equation \eqref{sia}, using a Glen flow law with $n=3$, has scalings
 \begin{equation}
 H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r \label{halfarscalings}
 \end{equation}
-where $r=(x^2+y^2)^{1/2}$ is distance from the origin.  It is shown in Figure \ref{fig:siascaling}.  The scalings in \eqref{halfarscalings} imply that, quite differently from heat, the diffusion of ice really slows down as the shape flattens out!  That is, the powers $t^{-1/9}$, $t^{-1/18}$ imply very little change for times $t$ significantly larger than one.  This is what we see in the Figure.
+where $r=(x^2+y^2)^{1/2}$ is distance from the origin.  The scalings in \eqref{halfarscalings} imply that, quite differently from heat, the diffusion of ice really slows down as the shape flattens out.  That is, the powers $t^{-1/9}$, $t^{-1/18}$ imply very little change for large times $t$.
 
-\onefigsize{siascaling}{Halfar's solution $H(t,r)$ of the SIA equation \eqref{sia} on a flat bed (i.e.~$b=0$ so $H=h$) and with zero mass balance (i.e.~$M=0$).  The solution is shown on $H$ versus $r$ axes for times $t=1,10,100,1000,10000$ years.}{5.5in}
+\onefigsize{siascaling}{Halfar's solution $H(t,r)$ of the SIA equation \eqref{sia} on a flat bed (i.e.~$b=0$ so $H=h$) and with zero mass balance (i.e.~$M=0$).  The solution is shown on $H$ versus $r$ axes for times $t=1,10,100,1000,10000$ years, in a case where $t_0=422$ years.}{5.5in}
 
 The full formula for the Halfar solution to the SIA is remarkably simple,
 \begin{equation}
@@ -537,10 +537,10 @@ H(t,r) = H_0 \left(\frac{t_0}{t}\right)^{1/9} \left[1 - \left(\left(\frac{t_0}{t
 \end{equation}
 where the ``characteristic time'' is
   $$t_0 = \frac{1}{18 \Gamma} \left(\frac{7}{4}\right)^3 \frac{R_0^4}{H_0^{7}}.$$
-Thus if we choose central height $H_0$ and ice cap radius $R_0$ then the characteristic time $t_0$ is determined, and, at that time $t=t_0$, the Halfar solution has height $H_0$ and radius $R_0$.
+Thus if we choose central height $H_0$ and ice cap radius $R_0$ then the characteristic time $t_0$ is determined, and, at that time $t=t_0$, the Halfar solution has height $H_0$ and radius $R_0$.  This time- and space-dependent formula for thickness $H(t,r)$ is plotted in Figure \ref{fig:siascaling}.  We see clear that for times significantly greater than $t_0$, i.e.~when $t/t_0 \gg 1$, the solution changes very slowly.  The change between years $1$ and $100$ is comparably large with that between years $1000$ and $10000$.
 %EXERCISE: verify these simple claims
 
-Formula \eqref{halfar} is certainly simple enough to use for verifying time-dependent SIA models, and so we use it that way.  Among the distributed codes is \texttt{verifysia.m}, which takes as input the number of grid points in each ($x,y$) direction.  It uses the Halfar solution at 200 a as the initial condition, does a numerical run to time 20000 a, with \texttt{siaflat.m} above, and then compares to the Halfar formula for that time:
+Formula \eqref{halfar} is simple enough to use for verifying time-dependent SIA models, and so we use it that way.  Among the distributed codes is \texttt{verifysia.m}, which takes as input the number of grid points in each ($x,y$) direction.  It uses the Halfar solution at 200 a as the initial condition, does a numerical run to time 20000 a, with \texttt{siaflat.m} above, and then compares to the Halfar formula for that time:
 \small
 \begin{verbatim}
 >> verifysia(20)
@@ -557,33 +557,18 @@ average thickness error     = 1.059
 maximum thickness error     = 109.466
 \end{verbatim}
 \normalsize
-We see that the thickness error, the absolute value of the difference between the numerical and exact solutions at $t=20000$ a, is shrinking with increasing grid resolution.  This is as expected for a correctly-implemented code.  What is less obvious, perhaps, is that almost any numerical implemention error will break this property and we will find that these errors do not shrink as we expect them to.
+We see that the thickness error, the absolute value of the difference between the numerical and exact thickness solutions at $t=20000$ a, is shrinking with increasing grid resolution.  This is as expected for a correctly-implemented code.  What is less obvious, perhaps, is that almost any numerical implemention mistake---almost any bug---will break this property, and these errors will not shrink.
+%EXERCISE: try this
 
-You might ask, is the Halfar solution good for modelling real ice masses directly?  John Nye and others (2000)
+You might ask, is the Halfar solution also good for modelling real ice masses?  John Nye and others (2000)
 %N&R: \cite{NyeIcarus2000}
 compared the long-time consequences of different flow laws for the South Mars Polar Cap.  In particular, they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters by comparing the long-time behavior of the corresponding Halfar solutions.  Their conclusions:
   \begin{quote}
   \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
   \end{quote}
-This theoretical result has increasing confirmation in the observation of, and sampling of, the polar geology of Mars.
+This theoretical result has been confirmed by the observation and sampling of the polar geology of Mars.
 
-
-\subsubsection*{Exact solutions for ice flow models}
-
-FIXME: put in N\&R?
-
-\begin{itemize}
-\item where to get exact solutions for ice flow models?
-  \begin{itemize}
-  \item[$\circ$] textbook: Greve and Blatter (2009)\nocite{GreveBlatter2009}
-  \item[$\circ$] similarity solutions to SIA (Halfar 1983\nocite{Halfar83}; Bueler et al 2005\nocite{BLKCB})
-  \item[$\circ$] manufactured solutions to thermo-coupled SIA (Bueler et al 2007\nocite{BBL})
-  \item[$\circ$] flowline and cross-flow SSA solutions (van der Veen, 1985; Schoof, 2006)\nocite{SchoofStream,vanderVeen85}
-  \item[$\circ$] flowline Blatter solutions (Glowinski and Rappaz 2003)\nocite{GlowinskiRappaz}
-  \item[$\circ$] flowline Stokes solutions for constant viscosity (Ladyzhenskaya 1963\nocite{Ladyzhenskaya}, Balise and Raymond 1985\nocite{BaliseRaymond1985})
-  \item[$\circ$] manufactured solutions to the Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011)\nocite{JouvetRappaz2011,SargentFastook2010}
-  \end{itemize}
-\end{itemize}
+To finish our brief demonstration of verification, a natural concern is roughly that ``exact solutions are not always available when needed''.  This is true, but sometimes it reflects the equally significant, though perhaps unvocalized, concern that not enough thought has gone into the meaning of the continuum model itself!  In any case, many ice flow models do have exact solutions which are relevant to verification, and we will use van der Veen's solution for ice shelves in a later section.  Existing exact solutions, and techniques for generating additional exact solutions, are listed in Notes and References.
 
 
 
@@ -1146,31 +1131,19 @@ Stokes equations and solvers:
 \end{itemize}
 
 
-
 \subsection{Notes and references}
 
-Not covered here:
-  \begin{itemize}
-  \item Stokes and ``higher order'' flow equations
-  \item thermomechanical coupling or polythermal ice
-  \item subglacial hydrology/processes
-  \item mass balance and snow/firn processes
-  \item constitutive relations other than Glen isotropic
-  \item grounding lines, calving fronts, ocean interaction
-  \item paleo-climate and ``spin-up''
-  \item earth deformation under ice sheet load
-  \item other numerics: FEM, spectral, multigrid, parallel, \dots
-  \item etc.
-  \end{itemize}
+There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  In fact, both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, so one might ask whether there a common shallow antecedent model?  Schoof and Hindmarsh \cite{SchoofHindmarsh} show that the model derived by Blatter \cite{Blatter} and first put to good use by Pattyn \cite{Pattyn03} is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter-Pattyn ``higher-order'' model.  Then further small-parameter arguments get either SIA or SSA from Blatter-Pattyn, according to the details of these arguments.
 
-Where does the SIA come from?    Historically, it was derived several authors in the 1970s and 80s \cite{FowlerLarson1978,MorlandJohnson,Hutter} and thus it is recent compared to the Stokes model.  Logically, you scale the Stokes equations using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension \cite{Fowler}; this is a ``small-parameter argument''.  Then you drop the terms that are small, noting that in one such derivation this means dropping only terms of $\eps^2$ and smaller.
+There are also shallow hybrid schemes which ``glue together'' the SIA and SSA \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used at higher spatial resolution and paleoglacial time scales than higher order and Stokes models, because the SSA model is an easier distributed stress balance to solve than the 3D alternatives.  Generally, computational limitations restrict either the spatial extent or spatial resolution or the model run duration of more complete continuum models, at least relative to the simpler continuum models.  Questions remain about what is lost, relative to the Stokes model, in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
 
-The SSA model is derived by \cite{Morland} for ice shelves and \cite{MacAyeal} for ice streams.  It is thoroughly addressed by \cite{WeisGreveHutter}.
+Where does the SIA come from?    Historically, it was derived by several authors in the 1970s and 80s \cite{FowlerLarson1978,MorlandJohnson,Hutter} and thus it is recent compared to the Stokes model.  Logically, you scale the Stokes equations using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension \cite{Fowler}; this is a ``small-parameter argument''.  Then you drop the terms that are small, noting that in one such derivation this means dropping only terms of $\eps^2$ and smaller.
 
-There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  In fact, both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, so one might ask whether there a common shallow antecedent model?  Schoof and Hindmarsh \cite{SchoofHindmarsh} show that the model derived by Blatter\nocite{Blatter} and first put to good use by Pattyn \cite{Pattyn03} is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter/Pattyn ``higher-order'' model, and then further small-parameter arguments get either SIA or SSA from Blatter/Pattyn, according to the details of these arguments.
+The SSA model is derived by \cite{Morland} for ice shelves and \cite{MacAyeal} for ice streams.  A review is given by \cite{WeisGreveHutter} and the first coherent whole ice sheet model using only the SSA by \cite{SchoofStream}.
 
-There are also less-precise shallow hybrid schemes which ``glue together'' the SIA and SSA \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used \emph{now} at high spatial resolution and paleoglacial time scales while higher order and Stokes models have computational limitations which restrict either their spatial extent, their spatial resolution, or the duration of model runs.  Questions remain about what is lost in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
+Where to get exact solutions for ice flow models?  The textbook Greve and Blatter \cite{GreveBlatter2009} has a few.  The similarity solutions to SIA from Halfar \cite{Halfar81,Halfar83} were generalized to non-zero mass balance cases by Bueler et al \cite{BLKCB}.  There are manufactured solutions to the thermomechanically-coupled SIA  \cite{BBL}.  There are flowline \cite{vanderVeen83} and cross-flow \cite{SchoofStream} solutions to the SSA model.  There are flowline Blatter model solutions \cite{GlowinskiRappaz}.  For the Stokes equations themselves there are flowline Stokes solutions for constant viscosity \cite{BaliseRaymond1985} and manufactured solutions for the Glen flow law \cite{JouvetRappaz2011,SargentFastook2010}, in addition to the slab-on-a-slope solution itself.
 
+The following important modelling topics are \emph{not} covered here: thermomechanical coupling \cite{BBL}, polythermal ice \cite{Greve,AschwandenBuelerKhroulevBlatter}, subglacial hydrology and processes \cite{Clarke05}, mass balance and snow/firn process modeling, constitutive relations other than Glen isotropic, grounding lines, calving fronts, ocean-ice interaction, paleo-climate and ``spin-up'', earth deformation under ice sheet load.  Some alternative numerical discretization techniques, other than finite differences, which are not mentioned here include the finite element, finite volume, and spectral methods.  Also we don't address advanced methods for solving the discretized equations, such as multigrid and parallel methods.  So there is a lot that is not here.
 
 \small
 \bibliography{ice_bib}
