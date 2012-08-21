@@ -9,23 +9,24 @@ function [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(doplot,filename)
 %   >> [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0,'foobar.nc');
 
 % notes: the preparatory steps to create Ant50km.nc require 
-% the NCO ("NetCDF Operators"; ) and the download of a LARGE file:
-%   $ wget http://websrv.cs.umt.edu/isis/images/e/e6/Antarctica_5km_woshelves_v0.7.nc
-%   $ ncks -v lat,lon,thk,topg,usrf,presprcp -d x1,,,10 -d y1,,,10 \
-%        Antarctica_5km_woshelves_v0.7.nc Ant50km.nc
+% the NCO ("NetCDF Operators"; ) and the download of a LARGE file,
+% which is actually ALBMAP:
+%   $ wget -nc http://websrv.cs.umt.edu/isis/images/4/4d/Antarctica_5km_dev1.0.nc
+%   $ ncks -v lat,lon,thk,topg,usrf,acca -d x1,,,10 -d y1,,,10 \
+%        Antarctica_5km_dev1.0.nc Ant50km.nc
 
 if nargin < 1, doplot = 1; end
 if nargin < 2, filename = 'Ant50km.nc'; end
 
-disp(['reading variables x,y,lat,lon,prcp,thk,topg,usrf from NetCDF file ' filename])
+disp(['reading variables x,y,lat,lon,acca,thk,topg,usrf from NetCDF file ' filename])
 
 S = netcdf(filename);  % reads NetCDF file into a large structure
 
 x = double(S.VarArray(8).Data);
 y = double(S.VarArray(9).Data);
-lat = squeeze(double(S.VarArray(1).Data));
-lon = squeeze(double(S.VarArray(2).Data));
-prcp = squeeze(double(S.VarArray(3).Data));
+lat = squeeze(double(S.VarArray(2).Data));
+lon = squeeze(double(S.VarArray(3).Data));
+prcp = squeeze(double(S.VarArray(1).Data));
 thk = squeeze(double(S.VarArray(4).Data));
 topg = squeeze(double(S.VarArray(6).Data));
 usrf = squeeze(double(S.VarArray(7).Data));
