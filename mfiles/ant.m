@@ -10,6 +10,7 @@ if nargin < 2, E = 3; end  % default enhancement factor
 
 % read input data from NetCDF; no plot
 [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0);
+%[x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0,'Ant25km.nc');
 
 % grid info
 Lx = (max(x) - min(x)) / 2;    Ly = (max(y) - min(y)) / 2;

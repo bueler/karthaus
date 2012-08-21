@@ -15,6 +15,9 @@ function [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(doplot,filename)
 %   $ ncks -v lat,lon,thk,topg,usrf,acca -d x1,,,10 -d y1,,,10 \
 %        Antarctica_5km_dev1.0.nc Ant50km.nc
 
+% OR: ncks -v lat,lon,thk,topg,usrf,acca -d x1,,,5 -d y1,,,5 \
+%        Antarctica_5km_dev1.0.nc Ant25km.nc
+
 if nargin < 1, doplot = 1; end
 if nargin < 2, filename = 'Ant50km.nc'; end
 

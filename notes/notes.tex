@@ -579,7 +579,7 @@ The robustness test in the program \texttt{roughice.m} demonstrates that \texttt
 
 \twofig{roughinitial}{roughfinal}{SIA code \texttt{siaflat.m} evolves the worst-possible initial ice sheet (left), a state with huge driving stresses, to a well-behaved ice cap (right) after 50 model years.}
 
-\subsubsection*{A first model for the Antarctic ice sheet}  Finally we actually apply the model, in this case for the Antarctic ice sheet.  We carefully make some small modifications of \texttt{siaflat.m} to get \texttt{siageneral.m}.  We use observed accumulation as surface mass balance, allow a non-flat bedrock (so $H\ne h$)---we simply use BEDMAP (FIXME: cite?), we (FIXME: floatkill)
+\subsubsection*{A first model for the Antarctic ice sheet}  Finally we actually apply the model, in this case for the Antarctic ice sheet.  We carefully make some small modifications of \texttt{siaflat.m} to get \texttt{siageneral.m}.  We use observed accumulation as surface mass balance, allow a non-flat bedrock (so $H\ne h$)---we use ALBMAPv1 data \cite{LeBrocqetal2010} and (FIXME: floatkill)
 
 here are results from this \emph{toy} Antarctic flow model
 
@@ -587,7 +587,7 @@ a 40000 model year run on a $\Delta x=50$ km grid; runtime about a minute
 
 \twofigsizes{antinitial}{antfinal}{FIXME}{2.55in}{3.2in}
 
-\onefig{antvol}{FIXME}
+\twofig{antvol}{antvol25km}{FIXME}
 
 
 \subsection{Mass continuity and kinematical equations}
