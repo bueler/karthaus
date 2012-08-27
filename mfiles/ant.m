@@ -1,16 +1,19 @@
-function ant(doplot,E)
+function ant(filename,doplot,E)
 % ANT  Simulate Antarctic ice sheet flow using BUILDANT to
 % extract data from re-gridded SeaRISE-Antarctic data.  See
 % Ant50km.nc for metadata.
-% Example:  >> ant
+% Example: Using Ant50km.nc data for 40 ka run:
+%   >> ant
+% Using different data and different enhancement factor E=5.0:
+%   >> ant('Ant25km.nc',1,5.0)
 % Calls:  BUILDANT, SIAGENERAL, DIFFUSION
 
-if nargin < 1, doplot = 1; end
-if nargin < 2, E = 3; end  % default enhancement factor
+if nargin < 1, filename = 'Ant50km.nc'; end
+if nargin < 2, doplot = 1; end
+if nargin < 3, E = 3; end  % default enhancement factor
 
 % read input data from NetCDF; no plot
-[x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0);
-%[x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0,'Ant25km.nc');
+[x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0,filename);
 
 % grid info
 Lx = (max(x) - min(x)) / 2;    Ly = (max(y) - min(y)) / 2;

@@ -1,12 +1,14 @@
 function [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(doplot,filename)
-% BUILDANT  helper function for ant.m, to build a Matlab/Octave set of
-% variables, for Antarctic ice sheet, on 50km grid, from existing NetCDF file
-% example which plots 3 fields:
+% BUILDANT  Helper function for ANT, to build a Matlab/Octave model state
+% for the Antarctic ice sheet, on a (default) 50km grid, from NetCDF
+% file Ant50km.nc.  (See comments for how this NetCDF file was generated.)
+% Examples:  Plots 3 fields:
 %   >> buildant
-% example which fills these variables, but no plot
+% This example fills the variables, but with no plot:
 %   >> [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0);
-% as above but attempting to read a different NetCDF file:
-%   >> [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0,'foobar.nc');
+% This reads from a different NetCDF file:
+%   >> [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(0,'Ant25km.nc');
+% See also:  ANT.
 
 % notes: the preparatory steps to create Ant50km.nc require 
 % the NCO ("NetCDF Operators"; ) and the download of a LARGE file,
@@ -14,7 +16,6 @@ function [x,y,lat,lon,prcp,thk,topg,usrf] = buildant(doplot,filename)
 %   $ wget -nc http://websrv.cs.umt.edu/isis/images/4/4d/Antarctica_5km_dev1.0.nc
 %   $ ncks -v lat,lon,thk,topg,usrf,acca -d x1,,,10 -d y1,,,10 \
 %        Antarctica_5km_dev1.0.nc Ant50km.nc
-
 % OR: ncks -v lat,lon,thk,topg,usrf,acca -d x1,,,5 -d y1,,,5 \
 %        Antarctica_5km_dev1.0.nc Ant25km.nc
 
@@ -25,6 +26,7 @@ disp(['reading variables x,y,lat,lon,acca,thk,topg,usrf from NetCDF file ' filen
 
 S = netcdf(filename);  % reads NetCDF file into a large structure
 
+% the order of variables seems unclear and special to the file!
 x = double(S.VarArray(8).Data);
 y = double(S.VarArray(9).Data);
 lat = squeeze(double(S.VarArray(2).Data));

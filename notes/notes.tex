@@ -579,15 +579,15 @@ The robustness test in the program \texttt{roughice.m} demonstrates that \texttt
 
 \twofig{roughinitial}{roughfinal}{SIA code \texttt{siaflat.m} evolves the worst-possible initial ice sheet (left), a state with huge driving stresses, to a well-behaved ice cap (right) after 50 model years.}
 
-\subsubsection*{A first model for the Antarctic ice sheet}  Finally we actually apply the model, in this case for the Antarctic ice sheet.  We carefully make some small modifications of \texttt{siaflat.m} to get \texttt{siageneral.m}.  We use observed accumulation as surface mass balance, allow a non-flat bedrock (so $H\ne h$)---we use ALBMAPv1 data \cite{LeBrocqetal2010} and (FIXME: floatkill)
+\subsubsection*{A first model for the Antarctic ice sheet}  Finally we actually apply the model, to the Antarctic ice sheet.  First we modify \texttt{siaflat.m} to allow bedrock elevation $b(x,y)$, time-independent surface mass balance $M(x,y)$, and to calve any floating ice.  Also we enforce non-negative thickness at each timestep.  The new code is \texttt{siageneral.m}.  The we use measured accumulation, bedrock elevation, and surface elevation from ALBMAPv1 data \cite{LeBrocqetal2010}.  No melt is considered, so the surface mass balance is the accumulation rate.  The input data is brought into Matlab from a NetCDF file by a brief code \texttt{buildant.m}.
 
-here are results from this \emph{toy} Antarctic flow model
+\twofigsizes{antinitial}{antfinal}{Left: Initial surface elevation (m) of Antarctic ice sheet.  Right: Final surface elevation at end of 40 ka model run on 50 km grid.}{2.55in}{3.2in}
 
-a 40000 model year run on a $\Delta x=50$ km grid; runtime about a minute
+The code \texttt{ant.m} calls \texttt{siageneral.m} to do the simulation in blocks of 500 model years.  The volume is computed at the end of each block.  Figure \ref{fig:antinitial} shows the initial and final surface elevations from a run of 40,000 model years on a $\Delta x = \Delta y = 50$ km grid.  The runtime on a typical laptop is a few minutes.  Note that areas of low-slope and fast-flowing ice experience thickening, while near-divide ice in East Antarctica thins.  This reflects the lack of a sliding mechanism in the former case and thermomechanical coupling in the latter case, relative to the presumably near-steady ice sheet geometry.
 
-\twofigsizes{antinitial}{antfinal}{FIXME}{2.55in}{3.2in}
+Figure \ref{fig:antvol} shows the ice volume time series for this 50 km run, but it also shows the ice volume from a finer 25 km grid.  This result, namely grid dependence of the ice volume, is typical.  It is a warning about the interpretation of ``real'' model runs on fixed grids.  Even if the data is available only on a fixed grid, the model should be run on different resolutions in order to understand the robustness of the model results.
 
-\twofig{antvol}{antvol25km}{FIXME}
+\twofig{antvol}{antvol25km}{Left: Ice volume time series of the modeled Antarctic ice sheet, in units of $10^6 \, \text{km}^3$, for a \texttt{ant.m} run on a 50 km grid.  Right:  For a 25 km grid.}
 
 
 \subsection{Mass continuity and kinematical equations}
