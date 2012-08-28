@@ -34,3 +34,4 @@ notes/notes.pdf
 pdffigs/*.pdf
 anim/*.png
 ice_bib.bib
+mfiles/*.nc
