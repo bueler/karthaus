@@ -623,78 +623,26 @@ The above ``standard paradigm'' has many variations, however.  Some glaciologica
 
 Fast flow in ice sheets is associated with sliding and floating ice.  We address the associated stress balance next.
 
-\subsection{Shelves and streams}
 
+\subsection{Shelves and streams} \label{sec:shelvesandstreams}
 
-\subsubsection*{shallow shelf approximation (SSA)}
+We now introduce a different method for computing the velocity in portions of ice sheets, namely the shallow shelf approximation (SSA) stress balance.  It applies to ice shelves, but it is not the complete Stokes stress balance, so it applies best to the parts of ice shelves which are some distance from grounding linesand calving fronts.  The SSA also applies reasonably well to ice streams; see Figure \ref{fig:iceshelfedge}.  Ice streams to which the SSA might apply have not-too-steep bed topography, and they have low basal resistance.  Again, because of the shallow approximations in the SSA, it is an imperfect stress balance near shear margins and grounding lines.
 
-flow model II: shallow shelf approximation (SSA) stress balance:
-  
-SSA model applies very well to \alert{ice shelves}:
-\begin{itemize}
-\item \dots for parts away from grounding lines
-\item \dots and away from calving fronts
-\end{itemize}
+\twofigsizes{iceshelfedge}{siple}{The two kinds of ice flows to which the SSA model might apply.  Left: edge of Ekstr\"om ice shelf, Antarctica (photo Hans Grobe).  Right: Radar-derived surface velocity for Siple Coast ice streams, Antarctica.}{3.0in}{2.6in}
 
-\begin{center}
-\includegraphics[width=2.5in]{ice_shelf_edge_hg}
-\quad
-\includegraphics[width=2.5in]{siple}
+But what is, and is not, an ice stream?  Ice streams slide at $100$ to $1000 \,\text{m}\,\text{a}^{-1}$, they have a concentration of vertical shear in a thin layer near base, and liquid water at their beds plays a critical role.  But there are also fast flowing parts of ice sheets called ``outlet glaciers'', which also interact with the ocean and have contact with floating ice, like ice streams.  Outlet glaciers can have even faster surface speed (up to $10 \,\text{km}\,\text{a}^{-1}$), but it is typically uncertain how much of this speed is from sliding, and there is usually substantial vertical shear ``up'' in the ice column, sometimes caused by soft temperate ice making up a significant fraction of the ice column.  Finally and critically, outlet glaciers are strongly controlled by not-at-all-flat, typically fjord-like, bed topography.  Figure \ref{fig:streamisbrae} compares the shallowness and bedrock topography of an outlet glacier and an ice stream.  Few simplifying assumptions are appropriate for outlet glaciers, and it is not clear that the SSA is a good model.
 
-edge of Ekstr\"om ice shelf (photo Hans Grobe) \qquad RADARSAT-derived surface velocity for Siple Coast ice streams, Antarctica
-\end{center}
+\onefig{streamisbrae}{Figure 1 in \cite{TrufferEchelmeyer} plots cross sections of Jakobshavns Isbrae (above) and Whillans Ice Stream (below) \emph{without} vertical exaggeration.}
 
-SSA also applies reasonably well to \alert{ice streams}:
-\begin{itemize}
-\item \dots with modest bed topography
-\item \dots and weak bed strength\footnote{energy conservation (= ice temperature and basal melt) is a major aspect of ice stream flow \cite{Raymondenergy}, but not addressed here}
-\item imperfect near shear margins and grounding lines
-\end{itemize}
+\subsubsection*{The shallow shelf approximation (SSA)}  We give this stress balance equation only in the plane flow case, i.e.~a ``flow line'', and for an ice stream:
+\begin{equation}
+  \left({\color{red}2 A^{-1/n} H |u_x|^{1/n - 1} u_x}\right)_x {\color{blue} - C|u|^{m-1}u} = {\color{green}\rho g H h_x} \label{ssa}
+\end{equation}
+The {\color{red} red term} is the vertically-integrated ``longitudinal'' or ``membrane'' stress, the {\color{blue} blue term} is basal resistance, and the negative of the {\color{green} green term} is the driving stress.
 
+How should we think about this equation, and solve it numerically?
 
-what is, \emph{and is not}, an ice stream?:
-
-\begin{itemize}
-\item ice streams 
-  \begin{itemize}
-  \item[$\circ$] slide ($100$ to $1000 \,\text{m}\,\text{a}^{-1}$)
-  \item[$\circ$] concentration of vertical shear in a thin layer near base
-  \item[$\circ$] \emph{liquid water} at bed plays a critical role (Clarke, 2005)\nocite{Clarke05}
-  \end{itemize}
-\item ``outlet glaciers''
-  \begin{itemize}
-  \item[$\circ$] fast surface speed (up to $10 \,\text{km}\,\text{a}^{-1}$)
-  \item[$\circ$] uncertain how much is sliding
-  \item[$\circ$] substantial vertical shear ``up'' in the ice column,
-  \item[$\circ$] not-at-all flat bed topography
-  \item[$\circ$] soft, temperate ice may play a big role
-  \end{itemize} 
-\item \alert{few simplifying assumptions are appropriate for outlet glaciers}
-\end{itemize}
-
-\begin{center}
-\includegraphics[width=3.0in]{streamisbrae}
-
-Cross sections of Jakobshavns Isbrae (\textbf{a}) and Whillans Ice Stream (\textbf{b}).  Plotted without vertical exaggeration.  (Figure 1 in \cite{TrufferEchelmeyer})
-\end{center}
-
-SSA stress balance equation:
-
-\begin{itemize}
-\item only plane flow case (``flow line'')
-\item the stress balance equation which determines velocity in an \emph{ice stream}:
-\begin{empheq}[box=\fbox]{equation}
-  \left({\color{red}2 A^{-1/n} H |u_x|^{1/n - 1} u_x}\right)_x - {\color{blue}C|u|^{m-1}u} = {\color{green}\rho g H h_x} \label{ssa}
-\end{empheq}
-\item the {\color{red} red term} inside parentheses is the vertically-integrated ``longitudinal'' or ``membrane'' stress
-\item the {\color{blue} blue term} is basal resistance
-\item the {\color{green} green term} is  driving stress
-\item derived originally by \cite{Morland,MacAyeal}
-\item \emph{how to think about this equation}?
-\item \emph{how do you solve it numerically}?
-\end{itemize}
-
-flow line model: from stream to shelf:
+FIXME:  flow line model: from stream to shelf:
 \begin{align*}
   u = u_0 & \qquad \text{ at } x = 0 \\
   \left.\begin{array}{r}
@@ -745,7 +693,7 @@ exact velocity and thickness for steady ice shelf:
 see \texttt{testshelf.m} 
 
 \begin{center}
-  \includegraphics[width=3.0in]{steadyshelf} \hfill \includegraphics[width=2.5in]{Rocket_nozzle_expansion}
+  \includegraphics[width=3.5in]{steadyshelf}
 \end{center}
 
 
@@ -1016,9 +964,6 @@ solid Earth deformation:
 \item modeling Earth deformation is most important to modeling ice flow over long time scales (Peltier, 1998)\nocite{Peltier1998review}
 \end{itemize}
 
-\begin{center}
-  \includegraphics[width=3.0in]{earthcompare}
-\end{center}
 
 spin-up:
 
@@ -1045,11 +990,6 @@ inverse modeling:
 \item mostly future: invert radar layers (isochrones)
 \end{itemize}
 
-\begin{center}
-  \includegraphics[width=3.0in]{NEgreenlandJoughin}
-  
-from Joughin et al.~(2001)\nocite{Joughinetal2001}
-\end{center}
 
 Stokes equations and solvers:
 
@@ -1064,21 +1004,21 @@ Stokes equations and solvers:
 \end{itemize}
 
 
-\subsection{Notes and references}
+\subsection{Notes and references} \label{sec:nr}
 
-There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  In fact, both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, so one might ask whether there a common shallow antecedent model?  Schoof and Hindmarsh \cite{SchoofHindmarsh} show that the model derived by Blatter \cite{Blatter} and first put to good use by Pattyn \cite{Pattyn03} is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter-Pattyn ``higher-order'' model.  Then further small-parameter arguments get either SIA or SSA from Blatter-Pattyn, according to the details of these arguments.
+The SIA model is derived by scaling the Stokes equations using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension \cite{Fowler}; this is a ``small-parameter argument''.  Then you drop the terms that are small, noting that in one such derivation this means dropping only terms of $\eps^2$ and smaller.  It was derived by several authors \cite{FowlerLarson1978,MorlandJohnson,Hutter}.  
 
-There are also shallow hybrid schemes which ``glue together'' the SIA and SSA \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used at higher spatial resolution and paleoglacial time scales than higher order and Stokes models, because the SSA model is an easier distributed stress balance to solve than the 3D alternatives.  Generally, computational limitations restrict either the spatial extent or spatial resolution or the model run duration of more complete continuum models, at least relative to the simpler continuum models.  Questions remain about what is lost, relative to the Stokes model, in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
+The SSA model was derived by \cite{Morland} for ice shelves and \cite{MacAyeal} for ice streams.  A review is given by \cite{WeisGreveHutter}.  A well-posed steady whole ice sheet model using only the SSA is in \cite{SchoofStream}.  As noted, basal water is required for ice streaming.  One must compute the ice base temperature and the basal melt rate through the energy conservation equation in order to model evolving ice streams \cite{Clarke05,Raymondenergy}.  Evidence that outlet glaciers have thick temperate ice is in \cite{Luethietal2009}.
 
-Where does the SIA come from?    Historically, it was derived by several authors in the 1970s and 80s \cite{FowlerLarson1978,MorlandJohnson,Hutter} and thus it is recent compared to the Stokes model.  Logically, you scale the Stokes equations using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension \cite{Fowler}; this is a ``small-parameter argument''.  Then you drop the terms that are small, noting that in one such derivation this means dropping only terms of $\eps^2$ and smaller.
+One of the most significant issues in modeling ice sheets is modeling the ``switch'', in space and time, between shear-dominated and longitudinal-stress-dominated flow.  It is not a good idea to abruptly switch from the SIA model to the SSA model at the edge of an ice stream, by whatever criterion that switch might be applied, though it had been attempted \cite{HulbeMacAyeal,Ritzetal2001}.  Shallow hybrid schemes which ``glue together'' the SIA and SSA everywhere in the ice sheet, without such a switch, are in \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used at high spatial resolution and long time scales because the SSA model is an easier distributed stress balance to solve than the 3D alternatives.
 
-The SSA model is derived by \cite{Morland} for ice shelves and \cite{MacAyeal} for ice streams.  A review is given by \cite{WeisGreveHutter} and the first coherent whole ice sheet model using only the SSA by \cite{SchoofStream}.
+There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  As both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, one might ask whether there a common shallow antecedent model.  To which Schoof and Hindmarsh \cite{SchoofHindmarsh} answer that the model derived by Blatter \cite{Blatter}---see also \cite{Pattyn03}---is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter-Pattyn ``higher-order'' model, then get either SIA or SSA by additional small-parameter limits.  Computational limitations generally restrict either the spatial extent, the spatial resolution, or the model run duration of these more complete continuum models.  Questions remain about what is lost, relative to the Stokes model, in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
 
 Where to get exact solutions for ice flow models?  The textbook Greve and Blatter \cite{GreveBlatter2009} has a few.  The similarity solutions to SIA from Halfar \cite{Halfar81,Halfar83} were generalized to non-zero mass balance cases by Bueler et al \cite{BLKCB}.  There are manufactured solutions to the thermomechanically-coupled SIA  \cite{BBL}.  There are flowline \cite{vanderVeen83} and cross-flow \cite{SchoofStream} solutions to the SSA model.  There are flowline Blatter model solutions \cite{GlowinskiRappaz}.  For the Stokes equations themselves there are flowline Stokes solutions for constant viscosity \cite{BaliseRaymond1985} and manufactured solutions for the Glen flow law \cite{JouvetRappaz2011,SargentFastook2010}, in addition to the slab-on-a-slope solution itself.
 
 The following important modelling topics are \emph{not} covered here: thermomechanical coupling \cite{BBL}, polythermal ice \cite{Greve,AschwandenBuelerKhroulevBlatter}, subglacial hydrology and processes \cite{Clarke05}, mass balance and snow/firn process modeling, constitutive relations other than Glen isotropic, grounding lines, calving fronts, ocean-ice interaction, paleo-climate and ``spin-up'', earth deformation under ice sheet load.  Some alternative numerical discretization techniques, other than finite differences, which are not mentioned here include the finite element, finite volume, and spectral methods.  Also we don't address advanced methods for solving the discretized equations, such as multigrid and parallel methods.  So there is a lot that is not here.
 
-\small
+\footnotesize
 \bibliography{ice_bib}
 \bibliographystyle{siam}
 
