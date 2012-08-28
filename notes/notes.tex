@@ -583,7 +583,7 @@ Figure \ref{fig:antvol} shows the ice volume time series for this 50 km run, but
 
 \subsection{Mass continuity and kinematical equations}
 
-The previous SIA discussion combines two equations which we will think about separately, namely the ``stress balance'' and mass continuity equations.  In the SIA the stress balance is the formula \eqref{siavelocity} for the velocity.  It can be combined immediately with the mass continuity equation \eqref{masscont} to give model \eqref{sia} for the ice sheet thickness.  In this section we consider the mass continuity equation more generally.  In the next section we describe a different stress balance in which a differential equation must be solved to determine ice velocity.
+The previous SIA discussion combines two equations which we will now think about separately, namely the ``stress balance'' and mass continuity equations.  In the SIA the stress balance is the formula \eqref{siavelocity} for the velocity, which combines with the mass continuity equation \eqref{masscont} to give model \eqref{sia} for the ice sheet thickness.  In this section we consider the mass continuity equation more generally.  In the next section we describe a different stress balance in which a differential equation must be solved to determine ice velocity.
 
 The most basic shallow assumption made by ice flow theories\footnote{There are many inequivalent shallow theories: SIA, SSA, hybrids, Blatter-Pattyn, \dots} is that the surface and base of the ice are given by differentiable functions $z=h(t,x,y)$ and $z=b(t,x,y)$.  Thus surface overhang is not allowed.  By contrast, the Stokes theory of slow viscous fluids only needs some boundary surface for the fluid, i.e.~a surface in three-dimensional space.  Thus most ice sheet and glacier models take a map-plane perspective, so they have a well-defined ice thickness, for example.
 
@@ -602,19 +602,26 @@ and the base kinematical equation is
 \begin{equation}
 b_t = s - \mathbf{U}\big|_b \cdot \grad b + w\big|_b.  \label{basekine}
 \end{equation}
-Note also that the mass continuity equation is often written in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{u}\,dz = \bar{\mathbf{u}}\,H.$, with units $\text{m}^2\,\text{s}^{-1}$, so that \eqref{masscont} is $H_t = M - \Div \bq$.  One proves the claim about equivalence by using the incompressibility of ice \eqref{incompressible} and  the Leibniz rule for differentiating integrals,\footnote{I.e.~the equation $\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy$.} but the details are left for exercises.
+Thus the kinematical equations describe the movement (if any) of the ice upper surface and base.  Of course the air above an ice sheet provides little resistance to movement of the upper surface, while the bedrock is often regarded as fixed: $b_t=0$.  In fact the basal kinematical equation is often not explicitly mentioned in ice sheet modelling, and instead one gets a simplified view like ``because there is no sliding, the basal value of the vertical velocity equals the basal melt rate,'' for example, a simplification which corresponds to $b_t=0$ and $\mathbf{U}\big|_b=0$ so that $w\big|_b=-s$.
+
+Note that the mass continuity equation is often written in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{u}\,dz = \bar{\mathbf{u}}\,H.$, with units $\text{m}^2\,\text{s}^{-1}$, so that \eqref{masscont} is $H_t = M - \Div \bq$.  One proves the claim about equivalence by using the incompressibility of ice \eqref{incompressible} and  the Leibniz rule for differentiating integrals,\footnote{I.e.~the equation $\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy$.} but the details are left for exercises.
 % EXERCISE: do it
 
-FIXME:  literature is full of incomplete calculations of these shallow equivalences: e.g. $b_t=0$ or $w|_b=0$ etc. \dots usually mixed in with small-parameter arguments about shallow stress balances.  most ice sheet models use the mass continuity equation to describe change in ice sheet geometry, \dots but they could instead use the surface kinematical equation
+The ice sheet modelling literature is full of incomplete calculations of the above shallow equivalences, often mixed with small-parameter arguments about shallow stress balances.  In any case, most ice sheet models use the mass continuity equation to describe change in ice sheet geometry, but generally they could instead use the surface kinematical equation instead.  
 
-FIXME: thus a standard recipe for ice sheet models:
-  \begin{enumerate}
-  \item numerical implementation of a stress balance: gives velocity $(u,v,w)$
-  \item from the horizontal velocity $(u,v)$ and the surface balance, do time-step of mass continuity equation to get $H_t$
-  \item update upper and lower surface elevation
-  \item decide on time-step, and repeat at 1.
-  \end{enumerate}
+To conclude this short section we sketch a standard prognostic ice sheet model.  Each time step follows this recipe:
+  \begin{itemize}
+  \item numerical solution of a stress balance, which gives velocity $\mathbf{u}=(u,v,w)$,
+  \item decide on time step $\Delta t$ for mass continuity equation, based on velocities and/or diffusivities,
+  \item from the horizontal velocity $\mathbf{U}=(u,v)$ and the surface and basal mass balances $a$, $s$ giving $M=a-s$, do a time-step of the mass continuity equation \eqref{masscont} to get $H_t$,
+  \item update the upper surface elevation $h \mapsto h + H_t \Delta t$---this assumes $b_t=0$,
+  \item and repeat.
+  \end{itemize}
+In the SIA simulations in previous sections we have hidden the velocity computation because the diffusiveness of the model suggests we just look at the maximum diffusivity so as to do the next mass continuity time step for the new geometry.
 
+The above ``standard paradigm'' has many variations, however.  Some glaciological questions are answered just by solving the stress balance for the velocity.  Sometimes the goal is the steady state configuration of the glacier, which can be computed more quickly than by time-stepping physical evolution equations to this configuration.  (I.e.~there are faster iterative solvers of the coupled steady state equations.)  And other processes are often simulated, such as the conservation of energy in the ice sheet---which gives the temperature which may affect the ice softness.  There may be a simulation of subglacial or supraglacial processes, too.
+
+Fast flow in ice sheets is associated with sliding and floating ice.  We address the associated stress balance next.
 
 \subsection{Shelves and streams}
 
