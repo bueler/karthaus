@@ -17,7 +17,7 @@ zips: all
 	rm -rf bueler_karthaus/
 
 # list file names
-figures := ice_shelf_edge_hg.jpg polarbear.jpg flowline.png fofv.png \
+figures := iceshelfedge.jpg polarbear.jpg flowline.png fofv.png \
 	palmer_land.png polaris.png schoof_planform.png schoof_sliders.png \
 	streamisbrae.png siaerror.png Serac2.jpg eismintone.png \
 	freehutter.png capnonflatobs.pdf classicalobs.pdf \
@@ -27,7 +27,7 @@ figures := ice_shelf_edge_hg.jpg polarbear.jpg flowline.png fofv.png \
 	joughin.png g3km_3_10_98.png g3km_3_10_98_hist.png \
 	slabfigs.pdf  slabmasscontfig.pdf athabasca_deform.pdf \
 	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf shelfnumsoln.pdf \
-	petscwww.pdf antinitial.pdf antfinal.pdf antvol.pdf green_transect.pdf \
+	petscwww.pdf antinitial.png antfinal.png antvol.pdf green_transect.pdf \
 	initialheat.pdf finalheat.pdf stability.pdf instability.pdf
 epsfigures := diffstencil mahaffystencil sshape heatscaling siascaling \
         expstencil impstencil cnstencil exp2dstencil AofT slab
