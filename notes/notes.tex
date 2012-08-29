@@ -142,13 +142,6 @@ This chapter is based on fourteen Matlab (or Octave) codes, each about one-half 
 \end{center}
 Note that a ``usable'' model is \emph{understood} more than it is \emph{correct}!  To get to my goal I will quickly recall the continuum mechanical equations of ice flow.  
 
-Ice in glaciers is a fluid.  We describe the flow of fluids primarily by a \emph{velocity field} $\mathbf{u}(t,x,y,z)$.  If the ice fluid were either faster-moving than it actually is (e.g., because gravity was much stronger), or if it were linearly-viscous (with viscosity $\nu$) like liquid water, or both, then ice flow would be a ``typical'' fluid.  We would use the Navier-Stokes equations as the model:
-\begin{align}
-\nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressible} \\
-\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nu \nabla^2 \mathbf{u} + \rho \mathbf{g} &&\text{\emph{stress balance}} \label{navierstokes}
-\end{align}
-In Equation \eqref{navierstokes} the term in parentheses is an acceleration and the right-hand side is the total stress; in fact, the equation says ``$ma=F$'', i.e.~Newton's second law.
-
 \begin{table}% table1, one column
 \caption{Notation used in this chapter.}
 \label{tab:notation}
@@ -179,6 +172,13 @@ $\mathbf{U}$ & $=(u,v)$ horizontal ice velocity & m s$^{-1}$ \\
 $\mathbf{u}$ & $=(u,v,w)$ ice velocity & m s$^{-1}$ \\
 \end{tabular}
 \end{table}
+
+Ice in glaciers is a fluid.  We describe the flow of fluids primarily by a \emph{velocity field} $\mathbf{u}(t,x,y,z)$.  If the ice fluid were either faster-moving than it actually is (e.g., because gravity was much stronger), or if it were linearly-viscous (with viscosity $\nu$) like liquid water, or both, then ice flow would be a ``typical'' fluid.  We would use the Navier-Stokes equations as the model:
+\begin{align}
+\nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressible} \\
+\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nu \nabla^2 \mathbf{u} + \rho \mathbf{g} &&\text{\emph{stress balance}} \label{navierstokes}
+\end{align}
+In Equation \eqref{navierstokes} the term in parentheses is an acceleration and the right-hand side is the total stress; in fact, the equation says ``$ma=F$'', i.e.~Newton's second law.
 
 You say ``\emph{hmmm} \dots \emph{does not sound like glaciology to me!}''  Indeed, is numerical ice flow modeling a part of computational fluid dynamics?  My answer is emphatically ``yes''.  It is a large scale fluid problem like atmosphere and ocean modelling in climate systems.
 
@@ -626,13 +626,11 @@ Fast flow in ice sheets is associated with sliding and floating ice.  We address
 
 \subsection{Shelves and streams} \label{sec:shelvesandstreams}
 
-We now introduce a different method for computing the velocity in portions of ice sheets, namely the shallow shelf approximation (SSA) stress balance.  It applies to ice shelves, but it is not the complete Stokes stress balance, so it applies best to the parts of ice shelves which are some distance from grounding linesand calving fronts.  The SSA also applies reasonably well to ice streams; see Figure \ref{fig:iceshelfedge}.  Ice streams to which the SSA might apply have not-too-steep bed topography, and they have low basal resistance.  Again, because of the shallow approximations in the SSA, it is an imperfect stress balance near shear margins and grounding lines.
+We now introduce a different method for computing the velocity in portions of ice sheets, namely the shallow shelf approximation (SSA) stress balance.  It applies to ice shelves, but it is not the complete Stokes stress balance, so it applies best to the parts of ice shelves which are some distance from grounding linesand calving fronts.  The SSA also applies reasonably well to ice streams like those shown in Figure \ref{fig:siple}.  Ice streams to which the SSA might apply have not-too-steep bed topography, and they have low basal resistance.  Again, because of the shallow approximations in the SSA, it is an imperfect stress balance near shear margins and grounding lines.
 
-\twofigsizes{iceshelfedge}{siple}{The two kinds of ice flows to which the SSA model might apply.  Left: edge of Ekstr\"om ice shelf, Antarctica (photo Hans Grobe).  Right: Radar-derived surface velocity for Siple Coast ice streams, Antarctica.}{3.0in}{2.6in}
+\twofigsizes{siple}{streamisbrae}{Left:  The SSA model applies to ice streams, like these Siple Coast ice streams in Antarctica, shown by their radar-derived surface velocity.  Right: Figure 1 in \cite{TrufferEchelmeyer} plots cross sections of Jakobshavns Isbrae (above) and Whillans Ice Stream (below) \emph{without} vertical exaggeration.}{2.7in}{3.0in}
 
-But what is, and is not, an ice stream?  Ice streams slide at $100$ to $1000 \,\text{m}\,\text{a}^{-1}$, they have a concentration of vertical shear in a thin layer near base, and liquid water at their beds plays a critical role.  But there are also fast flowing parts of ice sheets called ``outlet glaciers'', which also interact with the ocean and have contact with floating ice, like ice streams.  Outlet glaciers can have even faster surface speed (up to $10 \,\text{km}\,\text{a}^{-1}$), but it is typically uncertain how much of this speed is from sliding, and there is usually substantial vertical shear ``up'' in the ice column, sometimes caused by soft temperate ice making up a significant fraction of the ice column.  Finally and critically, outlet glaciers are strongly controlled by not-at-all-flat, typically fjord-like, bed topography.  Figure \ref{fig:streamisbrae} compares the shallowness and bedrock topography of an outlet glacier and an ice stream.  Few simplifying assumptions are appropriate for outlet glaciers, and it is not clear that the SSA is a good model.
-
-\onefig{streamisbrae}{Figure 1 in \cite{TrufferEchelmeyer} plots cross sections of Jakobshavns Isbrae (above) and Whillans Ice Stream (below) \emph{without} vertical exaggeration.}
+But what is, and is not, an ice stream?  Ice streams slide at $100$ to $1000 \,\text{m}\,\text{a}^{-1}$, they have a concentration of vertical shear in a thin layer near base, and liquid water at their beds plays a critical role.  But there are also fast flowing parts of ice sheets called ``outlet glaciers'', which also interact with the ocean and have contact with floating ice, like ice streams.  Outlet glaciers can have even faster surface speed (up to $10 \,\text{km}\,\text{a}^{-1}$), but it is typically uncertain how much of this speed is from sliding, and there is usually substantial vertical shear ``up'' in the ice column, sometimes caused by soft temperate ice making up a significant fraction of the ice column.  Finally and critically, outlet glaciers are strongly controlled by not-at-all-flat, typically fjord-like, bed topography.  Figure \ref{fig:siple} (right) compares the shallowness and bedrock topography of an outlet glacier and an ice stream.  Few simplifying assumptions are appropriate for outlet glaciers, and it is not clear that the SSA is a good model.
 
 \subsubsection*{The shallow shelf approximation (SSA)}  We give this stress balance equation only in the plane flow case, i.e.~a ``flow line'', and for an ice stream:
 \begin{equation}
@@ -933,8 +931,6 @@ thermomechanical coupling:
 \begin{itemize}
 \item ice softness $A(T)$ varies by $10^3$ in relevant temperature range
 \end{itemize}
-
-\includegraphics[width=3.0in]{AofT}
 
 
 \begin{itemize}
