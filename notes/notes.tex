@@ -633,9 +633,9 @@ But what is, and is not, an ice stream?  Ice streams slide at $100$ to $1000 \,\
 \begin{equation}
   \left({\color{red}2 A^{-1/n} H |u_x|^{1/n - 1} u_x}\right)_x {\color{blue} - C|u|^{m-1}u} = {\color{green}\rho g H h_x} \label{ssa}
 \end{equation}
-The {\color{red} \textbf{red} term} is the vertically-integrated ``longitudinal'' or ``membrane'' stress, the {\color{blue} \textbf{blue} term} is the basal resistance, and the negative of the {\color{green} \textbf{green} term} is the driving stress.  Thus we can say that the SSA is stress balance where longitudinal stresses are determined by the slipperyness of the bed (i.e.~the coefficient $C$) and the geometry of the ice sheet (i.e.~the thickness $H$ and the surface slope $h_x$).
+The {\color{red} \textbf{red} term} is the vertically-integrated ``longitudinal'' or ``membrane'' stress, the {\color{blue} \textbf{blue} term} is the basal resistance, and the negative of the {\color{green} \textbf{green} term} is the driving stress.  Thus we can say that the SSA is stress balance where longitudinal stresses are determined by the slipperyness of the bed (i.e.~the coefficient $C$) and the geometry of the ice sheet (i.e.~the thickness $H$ and the surface slope $h_x$).  Note that the velocity $u(x)$ is independent of the vertical coordinate $z$.
 
-How should we think about this equation?  How should we solve it numerically?  We address these questions, though not exhaustively, below.
+How should we think about this equation?  How should we solve it numerically?  We address these questions---not exhaustively, but concretely---below.
 
 \subsubsection*{Flotation and grounding lines}  The equation simplifies if the ice is floating, because we assume zero resistance is applied by the ocean (and the atmosphere, for that matter).  Also the ice surface elevation is determined by flotation.  The inequality ``$\rho H < - \rho_w b$'' is sometimes called the \emph{flotation criterion}.  At the grounding line $x=x_g$ the inequality switches.  On the grounded side we know $\rho H > - \rho_w b$ and that the driving stress is $\rho g H h_x = \rho g H (H_x + b_x)$.  On the floating side we know $\rho H < - \rho_w b$ and that $h = (1-\rho/\rho_w) H$ so the driving stress is $\rho g H h_x = \rho(1-\rho/\rho_w) g H H_x$.  Thus the SSA becomes
 \begin{equation}
@@ -643,99 +643,40 @@ How should we think about this equation?  How should we solve it numerically?  W
 \end{equation}
 for floating ice.  A useful observation about equation \eqref{ssafloat} is that both left and right sides are derivatives, because $(H^2)_x = 2 H H_x$; we'll use this below.
 
-\subsubsection*{Steady ice shelf exact solution}  exact velocity and thickness for steady ice shelf:
-\begin{itemize}
-\item limited goal here: describe a steady state, 1D ice shelf
-\item there is this nice \alert{by-hand} result (next slide): the thickness and velocity in the ice shelf can be completely determined \cite{MacAyealBarcilon,vanderVeen83} in terms of the 
-  \begin{enumerate}
-  \item ice thickness $H_g$ at the grounding line and
-  \item ice velocity $u_g$ at the grounding line
-  \end{enumerate}
-\item we will use this to
-  \begin{itemize}
-  \item[$\circ$] understand the SSA better
-  \item[$\circ$] verify a numerical SSA code
-  \end{itemize}
-\end{itemize}
+\subsubsection*{Steady ice shelf exact solution}  In fact, because of the relative simplicity of the SSA equation \eqref{ssafloat} for 1D floating ice, the exact velocity and thickness for steady ice shelf can be computed \cite{vanderVeen83}.  Note that for such a steady ice shelf with $H_t=0$, the mass continuity equation \eqref{masscont} reduces to $M=(uH)_x$.  To compute the exact solution we need the ice thickness $H_g$ and ice velocity $u_g$ at the grounding line and we set the surface mass balance $M$ to be a positive constant $M_0$.  The derivation of this solution, which is left to the exercises, uses the above-mentioned ``useful observation.''
+%EXERCISE: do it
 
-see \texttt{testshelf.m} 
+Supposing $H_g=500$ m, $u_g = 50 \,\text{m}\,\text{a}^{-1}$, and $M_0=30 \,\text{cm}\,\text{a}^{-1}$ we get the result in Figure \ref{fig:steadyshelfprofile}.  We will use this exact solution to understand the SSA better and to verify a numerical SSA code.
 
-\begin{center}
-  \includegraphics[width=3.5in]{steadyshelf}
-\end{center}
+\twofig{steadyshelfprofile}{steadyshelfvelocity}{Results from \texttt{exactshelf.m}.  Left:  Upper and lower surface elevation (m a.s.l.) of van der Veen exact ice shelf solution.  Right: Velocity (m/a) for same solution.}
 
+\subsubsection*{Numerical solution of the SSA}  Suppose the ice thickness is a fixed function $H(x)$.  To find the velocity numerically we solve the nonlinear PDE \eqref{ssa} for the unknown $u(x)$.  An iteration is needed, because of the nonlinearity.  We describe  numerical method for a shelf \emph{or} stream, but only give a code for an ice shelf, and leave the ice stream modifications as an exercise.
 
-\subsubsection*{numerical SSA}
+First note that coefficient $\bar \nu = A^{-1/n} |u_x|^{1/n-1}$ in \eqref{ssa} is the ``effective viscosity'', so that \eqref{ssa} can be written
+   $$\left(2 \,\bar \nu\, H u_x\right)_x - C |u|^{m-1} u = \rho g H h_x.$$
+The simplest iteration idea is to use the old effective viscosity to get new velocity solution, and repeat until things stop changing.  This is a ``Picard'' iteration; Newton iteration is a superior alternative but we stick to Picard in these notes.
 
-numerically solving the SSA stress balance:
-\begin{itemize}
-\item here we fix ice thickness $H(x)$ and find the velocity numerically
-\item the stress balance is a nonlinear equation in the velocity:
-  $$\left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x - C|u|^{m-1}u = \rho g H h_x$$
-\item \alert{iteration is needed}
-\item I'll describe the numerical method for a shelf \emph{or} stream, but only give a code for an ice shelf
-\end{itemize}
+Specifically, denote the previous iterate as $u^{(k-1)}$ and the current iterate---the unknown---as $u^{(k)}$.  Define $W^{(k-1)} = 2 \bar \nu H = 2 A^{-1/n} |u^{(k-1)}_x|^{1/n-1} H$.  Now solve repeatedly:
+     $$\left(W^{(k-1)} u^{(k)}_x\right)_x - C |u^{(k-1)}|^{m-1} u^{(k)} = \rho g H h_x.$$
+At each iteration this is a linear problem, sometimes called the ``inner'' iteration.  In the abstract it is a linear boundary value problem
+\begin{equation}
+  \left(W(x)\, u_x\right)_x - \alpha(x)\, u = \beta(x)  \label{innerlinear}
+\end{equation}
+on an interval $0 < x < L$, with boundary conditions $u(0) = V$ and $u_x(L) = \gamma$.  (FIXME: explain calving front b.c.)  It is an \emph{elliptic} PDE boundary value problem.  The functions $W(x)$, $\alpha(x)$, $\beta(x)$ are known in this SSA context because both $W(x)$ and $\alpha(x)$ come from the previous iteration, while $\beta(x)$ is also known; it is the driving stress.
 
-\begin{itemize}
-\item coefficient ${\color{red} \bar \nu} = A^{-1/n} |u_x|^{1/n-1}$ is the ``effective viscosity'':
-   $$\left(2 \,{\color{red} \bar \nu}\, H u_x\right)_x - C |u|^{m-1} u = \rho g H h_x$$
-\item \emph{simplest iteration idea}: use old effective viscosity to get new velocity solution, and repeat until things stop changing
-  \begin{itemize}
-  \item[$\circ$] this is ``Picard'' iteration
-  \item[$\circ$] Newton iteration is a superior alternative
-  \end{itemize}
-\item specifically:
-  \begin{itemize}
-  \item[$\circ$] last iterate $u^{(k-1)}$
-  \item[$\circ$] define $W^{(k-1)} = 2 \bar \nu H = 2 A^{-1/n} |u^{(k-1)}_x|^{1/n-1} H$
-  \item[$\circ$] current iterate (unknown) $u^{(k)}$
-  \item[$\circ$] solve repeatedly:
-     $$\left(W^{(k-1)} u^{(k)}_x\right)_x - C |u^{(k-1)}|^{m-1} u^{(k)} = \rho g H h_x$$
-  \end{itemize}
-\end{itemize}
+Where do you get an initial guess $u^{(0)}$?  We can give a helpful answer in the 1D cases.  For floating ice, a possible initial guess for velocity comes from assuming a uniform strain rate: $u^{(0)}(x) = \gamma (x-x_g) + u_g$, where $\gamma$ is the value of $u_x$ found from calving front condition.  For grounded ice, a possible initial guess for velocity is to assume ice is held by basal resistance only: $u^{(0)}(x) = \left(-C^{-1} \rho g H h_x\right)^{1/m}$.
 
-solving the ``inner'' linear problem:
-\begin{itemize}
-\item abstract the problem:
-   $$\left(W(x)\, u_x\right)_x - \alpha(x)\, u = \beta(x)$$
-on $0 < x < L$, with boundary conditions
-   $$u(0) = V, \qquad  u_x(L) = \gamma$$
-\item an \emph{elliptic} PDE boundary value problem
-\item $W(x)$, $\alpha(x)$, $\beta(x)$ are known functions in the SSA context:
-  \begin{itemize}
-  \item[$\circ$] both $W(x)$ and $\alpha(x)$ come from previous iteration
-  \item[$\circ$] $\beta(x)$ is driving stress
-  \end{itemize}
-\end{itemize}
+\subsubsection*{Numerics of the ``inner'' linear problem}  Suppose we discretize the $x$-axis with equal spacing $\Delta x$ and index $j=1,2,\dots,J+1$, so that $x_1 = x_g$ and $x_{J+1} = x_c$ are endpoints.  The coefficient $W(x)$ is needed on the staggered grid.  The approximation of \eqref{innerlinear} is
+\begin{equation}
+  \frac{W_{j+1/2} (u_{j+1} - u_j) - W_{j-1/2} (u_{j} - u_{j-1})}{\Delta x^2} - \alpha_j u_j = \beta_j  \label{discreteinnerlinear}
+\end{equation}
+For the left end boundary condition we have $u_1 = V$ given; this will be easy to include in the linear system (below).
 
-where do you get an initial guess $u^{(0)}$?:
+For the right end boundary condition we have ``$u_x(L)=\gamma$'' given.  This requires more thought \cite{MortonMayers}.  First introduce a notional point $x_{J+2}$.  Now require $(u_{J+2} - u_J)/(2 \Delta x) = \gamma$.  Using equation \eqref{discreteinnerlinear} in $j=J+1$ case, we can now eliminate the $u_{J+2}$ variable ``by-hand'', before coding the numerics.
 
-\begin{itemize}
-\item \emph{for floating ice}, a possible initial guess for velocity comes from assuming a uniform strain rate:
-   $$u^{(0)}(x) = \gamma (x-x_g) + u_g$$
-where $\gamma$ is the value of $u_x$ found from calving front stress imbalance
-\item \emph{for grounded ice}, a possible initial guess for velocity is to assume ice is held by basal resistance only:
-   $$u^{(0)}(x) = \left(-C^{-1} \rho g H h_x\right)^{1/m}$$
-\end{itemize}
-
-numerics of the ``inner'' linear problem:
-
-\begin{itemize}
-\item suppose $j=1,2,\dots,J+1$, where $x_1 = x_g$ and $x_{J+1} = x_c$ are endpoints
-\item $W(x)$ is needed on the staggered grid; the approximation is:
-$$\frac{W_{j+1/2} (u_{j+1} - u_j) - W_{j-1/2} (u_{j} - u_{j-1})}{\Delta x^2} - \alpha_j u_j \stackrel{\ast}{=} \beta_j$$
-\item left-hand boundary condition: $u_1 = V$ given
-\item right-hand boundary condition (``$u_x(L)=\gamma$''):
-  \begin{itemize}
-  \item[$\circ$] introduce notional point $x_{J+2}$
-  \item[$\circ$]
-    $$\frac{u_{J+2} - u_J}{2 \Delta x} = \gamma$$
-  \item[$\circ$] using equation $\ast$ in $j=J+1$ case, eliminate $u_{J+2}$ variable ``by-hand'' before coding numerics \nocite{MortonMayers}
-  \end{itemize}
-\end{itemize}
-
-\begin{itemize}
-\item so SSA stress balance has form  \quad $A \mathbf{x} = \mathbf{b}$, \quad namely:
+Thus the SSA stress balance has the form
+  $$A \mathbf{x} = \mathbf{b}.$$
+That is, FIXME:
 $$
 \begin{bmatrix}
 1 &  &  &  &  \\
@@ -753,45 +694,29 @@ u_1 \\ u_2 \\ u_3 \\ \vdots \\ u_J \\ u_{J+1}
 0 \\ \beta_2 \Delta x^2 \\ \beta_3 \Delta x^2 \\ \vdots \\ \beta_J \Delta x^2 \\ b_{J+1}
 \end{bmatrix}
 $$
-\item with diagonal entries
+with diagonal entries
 $$A_{22} = -(W_{3/2}+W_{5/2}+\alpha_1 \Delta x^2)$$
 $$A_{33} = -(W_{5/2}+W_{7/2}+\alpha_2 \Delta x^2)$$
-and so on, up to $A_{JJ}$, 
-\item with special cases in last equation:
+and so on, up to $A_{JJ}$
+
+There are special cases in the last equation:
 $$A_{J+1,J} = 2 W_{J+1/2}$$
 $$A_{J+1,J+1} = -(2 W_{J+1/2}+\alpha_{J+1}\Delta x^2)$$
 $$b_{J+1} = -2 \gamma \Delta x W_{J+3/2} + \beta_{J+1} \Delta x^2$$
-\item this is a \emph{tridiagonal} system
-\end{itemize}
+This is a \emph{tridiagonal} system.
 
 \minput{flowline}
 
-\subsubsection*{Testing the parts}
+\subsubsection*{Testing the parts}  We test the ``inner'' linear code before proceeding to solve the nonlinear SSA problem.  We can test the ``abstracted'' code \texttt{flowline.m} by ``manufacturing'' solutions.  FIXME: See \texttt{testflowline.m}; not shown.  This shows (FIXME: not shown) that our implemented numerical scheme converges at the optimal rate $O(\Delta x^2)$.
 
-testing the ``inner'' linear code
-
-\begin{itemize}
-\item before proceeding to solve nonlinear SSA problem, we can test the ``abstracted'' code \texttt{flowline.m}
-\item test by ``manufacturing'' solutions
-  \begin{itemize}
-  \item[$\circ$] see \texttt{testflowline.m}; not shown
-  \end{itemize}
-\item results:
-  \begin{itemize}
-  \item[$\circ$] converges at optimal rate $O(\Delta x^2)$
-  \end{itemize}
-\end{itemize}
-
+The following code computes the thickness and velocity for a steady ice shelf numerically.  That is, it implements the Picard iteration to solve the nonlinear equation \eqref{ssa}.
 
 \minput{ssaflowline}
 
-\emph{numerical} thickness and velocity for steady ice shelf:
+A convergence analysis of \texttt{ssaflowline.m} using the van der Veen exact solution described above yields Figure \ref{fig:shelfconv}.  (See \texttt{testshelf.m}.)
 
-lines below are a convergence analysis of \texttt{testshelf.m}, which calls \texttt{ssaflowline.m}:
+\onefig{shelfconv}{FIXME}
 
-\begin{center}
-  \includegraphics[width=3.0in]{shelfconv}
-\end{center}
 
 \subsubsection*{realistic ice shelf modeling}
 
@@ -806,12 +731,7 @@ lines below are a convergence analysis of \texttt{testshelf.m}, which calls \tex
   \end{itemize}
 \end{itemize}
 
-\medskip
-\begin{center}
-  \includegraphics[width=3.0in]{marineice}
-  
-from Grosfeld \& Thyssen 1994 \nocite{GrosfeldThyssen1994}
-\end{center}
+\onefig{marineice}{FIXME: from Grosfeld \& Thyssen 1994} \nocite{GrosfeldThyssen1994}
 
 ice shelf modeling in 2D:
 
@@ -824,11 +744,7 @@ ice shelf modeling in 2D:
   \end{itemize}
 \end{itemize}
 
-\begin{center}
-  \includegraphics[width=2.5in]{rossquiver}
-  \quad
-  \includegraphics[width=2.5in]{rossscatter}
-\end{center}
+\twofig{rossquiver}{rossscatter}{Left: FIXME.  Right: FIXME.}
 
 
 \subsection{A summary of numerical solutions}
