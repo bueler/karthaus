@@ -229,10 +229,9 @@ We apply boundary conditions for these functions of $z$:
 The basal velocity $u_0$ will remain undetermined for now.  By integrating vertically, we get $w=0$, $p = \rho g \cos\theta (H-z)$, and a linear formula for the shear stress,
 	$$\tau_{13} = \rho g \sin\theta (H-z).$$
 Note that $H-z$ is the depth within the ice.  Finally we also get a formula for the horizontal velocity,
-\begin{align}
-u &= u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' \notag \\
-     &= u_0 + \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right) \label{uslab}
-\end{align}
+\begin{equation}
+u = u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' = u_0 + \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right) \label{uslab}
+\end{equation}
 
 Do we believe these equation \eqref{uslab}?  Figure \ref{fig:slabvel} compares the velocity from the equation to observations of a mountain glacier.  Thus we have done a credible job of capturing deformation flow velocity.  We do not yet have a model for the sliding velocity $u_0$.  
 
@@ -254,11 +253,9 @@ This mass continuity equation describes the change in the ice thickness in terms
 
 
 \subsection{Shallow ice sheets}  Our slab-on-a-slope example gives us a rough explanation of the shallow ice approximation (SIA), which is a model we will use more generally.  From the slab-on-slope velocity formula \eqref{uslab} in the $u_0=0$ case (non-sliding case) we get
-\begin{align*}
-\bar u H &= \int_0^H \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)\,dz \\
-	&= \frac{1}{2} A (\rho g \sin\theta)^3  \left(\frac{4}{5} H^5\right) \\
-	&= \frac{2}{5} A (\rho g \sin\theta)^3 H^5
-\end{align*}
+\begin{equation}
+\bar u H = \int_0^H \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)\,dz = \frac{2}{5} A (\rho g \sin\theta)^3 H^5. \label{siaubar}
+\end{equation}
 Note that $\sin \theta \approx \tan\theta = - h_x$.  Combining these with mass continuity \eqref{masscont1D} gives
 \begin{equation}
   H_t = M + \left(\frac{2}{5} (\rho g)^3 A H^5 |h_x|^2 h_x\right)_x. \label{sia1D}
