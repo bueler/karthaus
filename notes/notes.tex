@@ -625,7 +625,7 @@ Fast flow in ice sheets is associated with sliding and floating ice.  We address
 
 We now introduce a different method for computing the velocity in portions of ice sheets, namely the shallow shelf approximation (SSA) stress balance.  It applies to ice shelves, but it is not the complete Stokes stress balance, so it applies best to the parts of ice shelves which are some distance from grounding linesand calving fronts.  The SSA also applies reasonably well to ice streams like those shown in Figure \ref{fig:siple}.  Ice streams to which the SSA might apply have not-too-steep bed topography, and they have low basal resistance.  Again, because of the shallow approximations in the SSA, it is an imperfect stress balance near shear margins and grounding lines.
 
-\twofigsizes{siple}{streamisbrae}{Left:  The SSA model applies to ice streams, like these Siple Coast ice streams in Antarctica, shown by their radar-derived surface velocity.  Right: Figure 1 in \cite{TrufferEchelmeyer} plots cross sections of Jakobshavns Isbrae (above) and Whillans Ice Stream (below) \emph{without} vertical exaggeration.}{2.7in}{3.0in}
+\twofigsizes{siple}{streamisbrae}{Left:  The SSA model applies to ice streams like these Siple Coast ice streams in Antarctica.  Color shows their radar-derived surface speed.  Right: Cross sections of the Jakobshavns Isbrae outlet glacier (\textbf{a}) and the Whillans Ice Stream (\textbf{b}) \emph{without} vertical exaggeration shows the important differences in bedrock topography and aspect ratio between these fast flow types (Figure 1 in \cite{TrufferEchelmeyer}).}{2.8in}{2.9in}
 
 But what is, and is not, an ice stream?  Ice streams slide at $100$ to $1000 \,\text{m}\,\text{a}^{-1}$, they have a concentration of vertical shear in a thin layer near base, and liquid water at their beds plays a critical role.  But there are also fast flowing parts of ice sheets called ``outlet glaciers'', which also interact with the ocean and have contact with floating ice, like ice streams.  Outlet glaciers can have even faster surface speed (up to $10 \,\text{km}\,\text{a}^{-1}$), but it is typically uncertain how much of this speed is from sliding, and there is usually substantial vertical shear ``up'' in the ice column, sometimes caused by soft temperate ice making up a significant fraction of the ice column.  Finally and critically, outlet glaciers are strongly controlled by not-at-all-flat, typically fjord-like, bed topography.  Figure \ref{fig:siple} (right) compares the shallowness and bedrock topography of an outlet glacier and an ice stream.  Few simplifying assumptions are appropriate for outlet glaciers, and it is not clear that the SSA is a good model.
 
@@ -633,44 +633,17 @@ But what is, and is not, an ice stream?  Ice streams slide at $100$ to $1000 \,\
 \begin{equation}
   \left({\color{red}2 A^{-1/n} H |u_x|^{1/n - 1} u_x}\right)_x {\color{blue} - C|u|^{m-1}u} = {\color{green}\rho g H h_x} \label{ssa}
 \end{equation}
-The {\color{red} red term} is the vertically-integrated ``longitudinal'' or ``membrane'' stress, the {\color{blue} blue term} is basal resistance, and the negative of the {\color{green} green term} is the driving stress.
+The {\color{red} \textbf{red} term} is the vertically-integrated ``longitudinal'' or ``membrane'' stress, the {\color{blue} \textbf{blue} term} is the basal resistance, and the negative of the {\color{green} \textbf{green} term} is the driving stress.  Thus we can say that the SSA is stress balance where longitudinal stresses are determined by the slipperyness of the bed (i.e.~the coefficient $C$) and the geometry of the ice sheet (i.e.~the thickness $H$ and the surface slope $h_x$).
 
-How should we think about this equation, and solve it numerically?
+How should we think about this equation?  How should we solve it numerically?  We address these questions, though not exhaustively, below.
 
-FIXME:  flow line model: from stream to shelf:
-\begin{align*}
-  u = u_0 & \qquad \text{ at } x = 0 \\
-  \left.\begin{array}{r}
-  \left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x - C|u|^{m-1}u = \rho g H h_x \\
-  h = H + b
-  \end{array}\right\}& \qquad \text{ on } 0 < x < x_g \\
-  \left.\begin{array}{r}
-  \left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x + 0 = \rho g H h_x \\
-  h = (1-\rho/\rho_w) H
-  \end{array}\right\}& \qquad \text{ on } x_g < x < x_c \\
-  2 A^{-1/n} H |u_x|^{1/n - 1} u_x = \frac{1}{2}\rho (1-\rho/\rho_w) g H^2 & \qquad \text{ at } x = x_c
-\end{align*}
+\subsubsection*{Flotation and grounding lines}  The equation simplifies if the ice is floating, because we assume zero resistance is applied by the ocean (and the atmosphere, for that matter).  Also the ice surface elevation is determined by flotation.  The inequality ``$\rho H < - \rho_w b$'' is sometimes called the \emph{flotation criterion}.  At the grounding line $x=x_g$ the inequality switches.  On the grounded side we know $\rho H > - \rho_w b$ and that the driving stress is $\rho g H h_x = \rho g H (H_x + b_x)$.  On the floating side we know $\rho H < - \rho_w b$ and that $h = (1-\rho/\rho_w) H$ so the driving stress is $\rho g H h_x = \rho(1-\rho/\rho_w) g H H_x$.  Thus the SSA becomes
+\begin{equation}
+   \left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x = \rho g (1-\rho/\rho_w) H H_x \label{ssafloat}
+\end{equation}
+for floating ice.  A useful observation about equation \eqref{ssafloat} is that both left and right sides are derivatives, because $(H^2)_x = 2 H H_x$; we'll use this below.
 
-\subsubsection*{flotation criterion and grounding lines}
-
-\begin{itemize}
-\item the inequality ``$\rho H < - \rho_w b$'' is the \alert{flotation criterion}
-\item at the grounding line $x=x_g$ the above inequality switches
-\item \dots and the driving stress switches form:
-  \begin{itemize}
-  \item[$\circ$] on the grounded side we know $\rho H > - \rho_w b$ so
-  	$$\rho g H h_x = \rho g H (H_x + b_x)$$
-  \item[$\circ$] on the floating side we know $\rho H < - \rho_w b$ so $h = (1-\rho/\rho_w) H$ and so
-  	$$\rho g H h_x = \rho(1-\rho/\rho_w) g H H_x$$
-  \end{itemize}
-\item also: $H,u,u_x$ are all continuous at $x=x_g$
-\item best numerical models for moving grounding lines still an open question (e.g.~MISMIP and all that)
-\end{itemize}
-
-
-\subsubsection*{ice shelf flow line solution}
-
-exact velocity and thickness for steady ice shelf:
+\subsubsection*{Steady ice shelf exact solution}  exact velocity and thickness for steady ice shelf:
 \begin{itemize}
 \item limited goal here: describe a steady state, 1D ice shelf
 \item there is this nice \alert{by-hand} result (next slide): the thickness and velocity in the ice shelf can be completely determined \cite{MacAyealBarcilon,vanderVeen83} in terms of the 
@@ -997,6 +970,7 @@ Stokes equations and solvers:
 \end{itemize}
 
 
+\small
 \subsection{Notes and references} \label{sec:nr}
 
 The SIA model is derived by scaling the Stokes equations using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension \cite{Fowler}; this is a ``small-parameter argument''.  Then you drop the terms that are small, noting that in one such derivation this means dropping only terms of $\eps^2$ and smaller.  It was derived by several authors \cite{FowlerLarson1978,MorlandJohnson,Hutter}.  
@@ -1004,6 +978,8 @@ The SIA model is derived by scaling the Stokes equations using smallness of $\ep
 The SSA model was derived by \cite{Morland} for ice shelves and \cite{MacAyeal} for ice streams.  A review is given by \cite{WeisGreveHutter}.  A well-posed steady whole ice sheet model using only the SSA is in \cite{SchoofStream}.  As noted, basal water is required for ice streaming.  One must compute the ice base temperature and the basal melt rate through the energy conservation equation in order to model evolving ice streams \cite{Clarke05,Raymondenergy}.  Evidence that outlet glaciers have thick temperate ice is in \cite{Luethietal2009}.
 
 One of the most significant issues in modeling ice sheets is modeling the ``switch'', in space and time, between shear-dominated and longitudinal-stress-dominated flow.  It is not a good idea to abruptly switch from the SIA model to the SSA model at the edge of an ice stream, by whatever criterion that switch might be applied, though it had been attempted \cite{HulbeMacAyeal,Ritzetal2001}.  Shallow hybrid schemes which ``glue together'' the SIA and SSA everywhere in the ice sheet, without such a switch, are in \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used at high spatial resolution and long time scales because the SSA model is an easier distributed stress balance to solve than the 3D alternatives.
+
+Which are the best numerical models for moving grounding lines, even when the minimal SSA stress balance is used, is still an open question \cite{SchoofMarine1,MISMIP2012}.  The physics requires at least that the quantities $H,u,u_x$ are all continuous at $x=x_g$.
 
 There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  As both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, one might ask whether there a common shallow antecedent model.  To which Schoof and Hindmarsh \cite{SchoofHindmarsh} answer that the model derived by Blatter \cite{Blatter}---see also \cite{Pattyn03}---is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter-Pattyn ``higher-order'' model, then get either SIA or SSA by additional small-parameter limits.  Computational limitations generally restrict either the spatial extent, the spatial resolution, or the model run duration of these more complete continuum models.  Questions remain about what is lost, relative to the Stokes model, in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
 
