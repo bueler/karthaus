@@ -28,9 +28,9 @@ figures := iceshelfedge.jpg polarbear.jpg flowline.png fofv.png \
 	slabfigs.pdf  slabmasscontfig.pdf athabasca_deform.pdf \
 	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf shelfnumsoln.pdf \
 	petscwww.pdf antinitial.png antfinal.png antvol.pdf green_transect.pdf \
-	initialheat.pdf finalheat.pdf stability.pdf instability.pdf
+	initialheat.pdf finalheat.pdf stability.pdf instability.pdf slab.pdf
 epsfigures := diffstencil mahaffystencil sshape heatscaling siascaling \
-        expstencil impstencil cnstencil exp2dstencil AofT slab
+        expstencil impstencil cnstencil exp2dstencil AofT
 svgfigures := coffee heatconduction Rocket_nozzle_expansion
 minputs := heat heatadapt halfar diffusion siaflat flowline \
 	convanalysis ssaflowline ssainit testshelf verifysia
