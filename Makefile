@@ -1,20 +1,20 @@
-# Copyright 2009--2010  Ed Bueler
+# Copyright 2009--2012  Ed Bueler
 
-all: lecture.pdf exers.pdf refs.pdf
+all: slides.pdf
 
 zips: all
 	rm -rf bueler_karthaus/  # clean out if prior existence
 	mkdir bueler_karthaus/
-	cp lecture.pdf exers.pdf refs.pdf bueler_karthaus/
-	cp README bueler_karthaus/
-	svn export mfiles/ bueler_karthaus/mfiles/
-	(cd bueler_karthaus/mfiles/ && rm -rf nonpublic/)
-	svn export petsc/ bueler_karthaus/petsc/
+	make clean
+	cp slides.pdf README.md bueler_karthaus/
+	cp notes/notes.pdf bueler_karthaus/
+	cp -rf mfiles/ bueler_karthaus/mfiles/
+	(cd bueler_karthaus/mfiles/ && rm -rf other/)
+	cp -rf petsc/ bueler_karthaus/petsc/
 	(cd bueler_karthaus/petsc/ && cp notes/jacobiannotes.pdf .)
 	(cd bueler_karthaus/petsc/ && rm -rf notes/)
 	zip -r bueler_karthaus.zip bueler_karthaus/
 	tar -cvzf bueler_karthaus.tar.gz bueler_karthaus/*
-	rm -rf bueler_karthaus/
 
 # list file names
 figures := iceshelfedge.jpg polarbear.jpg flowline.png fofv.png \
@@ -47,23 +47,11 @@ minputs := $(addsuffix .m, $(addprefix mfiles/, $(minputs)))
 mslim := $(subst .m,.slim.m,$(minputs))
 
 # presentation
-lecture.aux:  lecture.tex $(texinputs) \
+slides.aux:  slides.tex $(texinputs) \
 	      $(epsfigures) $(svgfigures) $(figures) $(animfigures) $(mslim)
-	pdflatex lecture
-lecture.pdf:  lecture.aux
-	pdflatex lecture
-
-# exercises to accompany
-exers.pdf:  exers.tex
-	pdflatex exers
-	pdflatex exers
-
-# references to accompany; to create capture_bbl do this by hand:
-#    make            # <-- creates lecture.aux
-#    bibtex lecture
-#    cp lecture.bbl capture_bbl  # <-- overwrites svn-controlled file
-refs.pdf:  refs.tex capture_bbl
-	pdflatex refs
+	pdflatex slides
+slides.pdf:  slides.aux
+	pdflatex slides
 
 pdffigs/%.pdf: pdffigs/%.eps
 	epstopdf $< --outfile=$@

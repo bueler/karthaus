@@ -83,3 +83,15 @@ print -dpdf antvol.pdf
   function vol = printvolume(time,dx,dy,thk)
     vol = sum(sum(thk)) * dx * dy;
     fprintf('  ice volume at time %7.3fka  is %.4e km^3\n',time/1000.0,vol/1.0e9)
+  end
+
+  function h = getsurface(H,b,rho,rhow)
+    % GETSURFACE  Helper function to build surface elevations carefully,
+    % according to grounded or floating.
+    f = rho / rhow;                     % fraction of floating ice below surface
+    h = H + b;                          % only valid where H > 0 and grounded
+    h(H <= 0) = max(b(H <= 0),0.0);     % if no ice
+    floating = (H > 0) & (b < - f * H); % points where flotation criterion
+    h(floating) = (1-f) * H(floating);  %   ... is applied
+  end
+end

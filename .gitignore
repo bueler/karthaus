@@ -26,12 +26,11 @@
 *.mtc
 *.mtc0
 *~
-lecture.pdf
-exers.pdf
-refs.pdf
+slides.pdf
 notes/notes.pdf
 *.slim.m
 pdffigs/*.pdf
 anim/*.png
 ice_bib.bib
 mfiles/*.nc
+bueler_karthaus/*
