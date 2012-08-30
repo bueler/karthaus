@@ -22,16 +22,14 @@ function u = flowline(L,J,gamma,W,alpha,beta,V0)
 
 dx = L / J;
 rhs = dx^2 * beta(:); % a (J+1) length column vector
-rhs(1) = V0;
-rhs(J+1) = rhs(J+1) - 2 * gamma * dx * W(J+1);
+rhs(1) = V0;   rhs(J+1) = rhs(J+1) - 2 * gamma * dx * W(J+1);
 
 A = sparse(J+1,J+1);  % allocates no space yet
 A(1,1) = 1.0;
 for j=2:J   % fill by rows
   A(j,j-1:j+1) = [ W(j-1), -(W(j-1) + W(j) + alpha(j) * dx^2), W(j) ];
 end
-A(J+1,J) = W(J) + W(J+1);
-A(J+1,J+1) = - (W(J) + W(J+1) + alpha(J+1) * dx^2);
+A(J+1,J) = W(J) + W(J+1);   A(J+1,J+1) = - (W(J) + W(J+1) + alpha(J+1) * dx^2);
 %spy(A)   % uncomment to see that shape of A is tridiagonal (in small J cases)
 %full(A)  % uncomment to see values (in small J cases)
 
@@ -42,4 +40,3 @@ rhs = rhs ./ scale;
 
 % solve by Matlab/Octave default methods
 u = A \ rhs;
-

@@ -59,7 +59,6 @@ while maxdiff > tol
   u = unew;
   fprintf('.')
 end
-
 %STRIPFROMHERE    (hide helper functions in lecture.pdf)
 
   function fav = stagav(f)
@@ -76,4 +75,3 @@ end
   % compute staggered grid values of slope  f_x = f'
   % if length(h)=J+1, returns vector with length J
   slope = (f(2:end) - f(1:end-1)) / dx;
-
