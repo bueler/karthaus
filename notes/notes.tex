@@ -638,7 +638,7 @@ But what is, and is not, an ice stream?  Ice streams slide at $100$ to $1000 \,\
 \begin{equation}
   \left({\color{red} 2 B H |u_x|^{1/n - 1} u_x}\right)_x {\color{blue} - C|u|^{m-1}u} = \rho g H h_x \label{ssaearly}
 \end{equation}
-The {\color{red} \textbf{red} term} is the vertically-integrated ``longitudinal'' or ``membrane'' stress, the {\color{blue} \textbf{blue} term} is the basal resistance, and the negative of the term on the right is the driving stress.  Thus we can say that the SSA is stress balance where longitudinal stresses are determined by the slipperyness of the bed (i.e.~by the coefficient $C$ and the power $m$) and the geometry of the ice sheet (i.e.~the thickness $H$ and the surface slope $h_x$).
+The {\color{red} \textbf{red} term} is the vertically-integrated longitudinal stress (``membrane'' stress when there are two horizontal variables), the {\color{blue} \textbf{blue} term} is the basal resistance, and the negative of the term on the right is the driving stress.  Thus we can say that the SSA is stress balance where longitudinal stresses are determined by the slipperyness of the bed (i.e.~by the coefficient $C$ and the power $m$) and the geometry of the ice sheet (i.e.~the thickness $H$ and the surface slope $h_x$).
 
 In \eqref{ssaearly} the velocity $u(x)$ is independent of the vertical coordinate $z$.  We assume that the ice hardness $B=A^{-1/n}$ is also independent of depth here, though in general we might use the vertical average of the local hardness.  The basal resistance term $- C|u|^{m-1}u$ is often called a ``sliding law'' in power law form.
 
@@ -744,109 +744,16 @@ Nonetheless ``diagnostic'' (i.e.~fixed geometry) ice shelf modeling in two horiz
 \twofigsizes{rossquiver}{rossscatter}{Left: Observed radar-derived (white) and modeled (black) ice velocities are nearly coincident across the whole Ross ice shelf.  The grounding line, at which observed velocities were applied as boundary conditions, is a thin black curve.  Right: This scatter plot results from tuning the single, constant ice hardness parameter.}{2.7in}{3.0in}
 
 
-\subsection{A summary of numerical solutions}
-
-\subsubsection*{numerical solution of stress balances: a summary}
-
+\subsection{A summary of numerical ice sheet modelling}  General principles:
 \begin{itemize}
-\item stress balance equations (e.g.~SSA) determine horizontal velocity from geometry and boundary conditions
-  \begin{itemize}
-  \item[$\circ$] nonlinear so iteration is necessary
-  \item[$\circ$] at each iteration a sparse matrix ``inner'' problem is solved
-  \item[$\circ$] give the ``inner'' problem to a matrix solver software package
-  \end{itemize}
-\item general principles: \emph{modularize your code} and \emph{test the parts}
+\item Do you understand the continuum model?
+\item Modularize your code.
+\item Test the parts: Is the component robust? Does it show convergence to exact solutions?
 \end{itemize}
 
-\subsubsection*{numerical solution of the mass continuity equation: a summary}
+Distributed stress balance equations like the SSA determine horizontal velocity from geometry and boundary conditions.  These equations are nonlinear so iteration is necessary.  At each iteration a sparse matrix ``inner'' problem is solved; non-experts should give this matrix problem to a solver package.  The SIA is not horizontally distributed in this way, and velocity follows immediately by integration.
 
-\begin{itemize}
-\item the \emph{mass continuity equation} is
-  $$H_t = M - \nabla \cdot (\mathbf{u} H)$$
-\item the numerical nature of this equation depends on the stress balance:
-  \begin{itemize}
-  \item[$\circ$] the equation is a diffusion for frozen bed, large scale flows (i.e.~SIA)
-  \item[$\circ$] it is \emph{not} very diffusive for membrane stresses and no basal resistance (e.g.~SSA for ice shelves)
-  \item[$\circ$] it is significantly diffusive for ice streams (but how much?)
-  \item[$\circ$] there is not much helpful theory on to solve this transport problem
-  \item[$\circ$] maybe \emph{you} will help find this theory!
-  \end{itemize}
-\end{itemize}
-
-
-\subsection{Next steps}
-
-
-
-
-\subsubsection*{some omitted models}
-
-thermomechanical coupling:
-
-\begin{itemize}
-\item ice softness $A(T)$ varies by $10^3$ in relevant temperature range
-\end{itemize}
-
-
-\begin{itemize}
-\item ice thermal state (temperature) gives ice sheet flows their ``long memory'' of past climate
-\item dissipation of gravitational potential energy is major part of basal melt
-  \begin{itemize}
-  \item[$\circ$] each year, Jakobshavn drainage basin in Greenland dissipates enough gravitational potential energy to melt $> 1\,\text{km}^3$ of ice
-  \item[$\circ$] geothermal flux also significant in slow parts
-  \end{itemize}
-\item so good ice sheet models need conservation of energy
-  \begin{itemize}
-  \item[$\circ$] ``enthalpy'' is good way to track energy content polythermally (Aschwanden et al.~2012)\nocite{AschwandenBuelerKhroulevBlatter}
-  \end{itemize}
-\end{itemize}
-
-solid Earth deformation:
-
-\begin{itemize}
-\item ice density is about $\frac{1}{3}$ that of rock in the Earth's mantle,
-  \begin{itemize}
-  \item[$\circ$] 1000 m of ice depresses the Earth's crust about 300 m
-  \item[$\circ$] \dots if allowed enough time
-  \item[$\circ$] how much time is determined by \emph{upper mantle viscosity}
-  \item[$\circ$] \dots which is not perfectly known
-  \end{itemize}
-\item Earth deformation changes bed topography and thus ice flow
-\item modeling Earth deformation is most important to modeling ice flow over long time scales (Peltier, 1998)\nocite{Peltier1998review}
-\end{itemize}
-
-
-spin-up:
-
-\begin{itemize}
-\item direct observations are not enough to initialize an ice sheet flow model
-  \begin{itemize}
-  \item[$\circ$] because ice temperature is a ``hidden variable'', and
-  \item[$\circ$] because sliding depends on additional liquid water ``hidden variables'' at base
-  \end{itemize}
-\item two options exist to initialize:
-  \small
-  \begin{enumerate}
-  \item \emph{traditional choice}: use low-dimensional time series data from physical surrogates (e.g. $\delta \phantom{|}^{18}O$ record from ice cores) for paleoclimate record; hope a long model run ends with a good current state
-  \item \emph{promising alternative}:  use rich and spatially-distributed mostly-surface observations of present ice sheet state to reconstruct initial state using ``inversion'' of PDEs
-  \normalsize
-  \end{enumerate}
-\end{itemize}
-
-
-
-
-Stokes equations and solvers:
-
-\begin{itemize}
-\item the Stokes model itself, without shallow assumptions, can be solved numerically, \alert{but}:
-  \begin{itemize}
-  \item[$\circ$] many equations in many unknowns, especially in 3D
-  \item[$\circ$] requires explicit accounting for incompressibility---a constraint on the flow---through a pressure variable
-  \item[$\circ$] ice sheets are \emph{actually} shallow, and the aspect ratio of grid elements can be a problem
-  \end{itemize}
-\item much of the success so far is at a smaller scale
-\end{itemize}
+The mass continuity equation has a time-derivative and describes how the ice geometry evolves.  The numerical nature of this equation depends on which is the stress balance which supplies the velocity.  It is a diffusion for frozen bed, large scale flows (i.e.~SIA).  It is \emph{not} very diffusive for membrane stresses, especially with no basal resistance as in ice shelves.  It has some diffusiveness for ice streams (but how much?), and more for outlet glaciers.  Unfortunately, there is not much helpful theory on to solve this transport problem.
 
 
 \small
@@ -858,13 +765,17 @@ The SSA model was derived by \cite{Morland} for ice shelves and \cite{MacAyeal} 
 
 One of the most significant issues in modeling ice sheets is modeling the ``switch'', in space and time, between shear-dominated and longitudinal-stress-dominated flow.  It is not a good idea to abruptly switch from the SIA model to the SSA model at the edge of an ice stream, by whatever criterion that switch might be applied, though it had been attempted \cite{HulbeMacAyeal,Ritzetal2001}.  Shallow hybrid schemes which ``glue together'' the SIA and SSA everywhere in the ice sheet, without such a switch, are in \cite{PollardDeConto,BBssasliding,Goldberg2011}.  Roughly speaking, these shallow hybrids can be used at high spatial resolution and long time scales because the SSA model is an easier distributed stress balance to solve than the 3D alternatives.
 
-There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  As both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, one might ask whether there a common shallow antecedent model.  To which Schoof and Hindmarsh \cite{SchoofHindmarsh} answer that the model derived by Blatter \cite{Blatter}---see also \cite{Pattyn03}---is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter-Pattyn ``higher-order'' model, then get either SIA or SSA by additional small-parameter limits.  Computational limitations generally restrict either the spatial extent, the spatial resolution, or the model run duration of these more complete continuum models.  Questions remain about what is lost, relative to the Stokes model, in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.
+There are ``higher-order'' approximations of the Stokes equations which are, nonetheless, shallow approximations.  As both the SIA and the SSA are derived by small-parameter arguments from the Stokes equations, one might ask whether there a common shallow antecedent model.  To which Schoof and Hindmarsh \cite{SchoofHindmarsh} answer that the model derived by Blatter \cite{Blatter}---see also \cite{Pattyn03}---is such an antecedent.  That is, one can use small-parameter arguments to derive the Blatter-Pattyn ``higher-order'' model, then get either SIA or SSA by additional small-parameter limits.
+
+Computational limitations generally restrict either the spatial extent, the spatial resolution, or the model run duration of the more complete ``higher-order'' and Stokes models.  Questions remain about what is lost, relative to the Stokes model, in both the higher-order and shallow hybrid models \cite[for example]{ISMIPHOM}.  Solving the Stokes model requires explicit accounting for incompressibility---a constraint on the flow---through a pressure variable.
 
 Which are the best numerical models for moving grounding lines?  Even when the minimal SSA stress balance is used, this is still an open question \cite{SchoofMarine1,MISMIP2012}.  The physics requires at least that the quantities $H$ and $u$ are continuous at $x=x_g$.
 
-Where to get exact solutions for ice flow models?  The textbook Greve and Blatter \cite{GreveBlatter2009} has a few.  The similarity solutions to SIA from Halfar \cite{Halfar81,Halfar83} were generalized to non-zero mass balance cases by Bueler et al \cite{BLKCB}.  There are manufactured solutions to the thermomechanically-coupled SIA in  \cite{BBL}.  There are flowline \cite{vanderVeen83} and cross-flow \cite{SchoofStream} solutions to the SSA model.  There are flowline Blatter model solutions \cite{GlowinskiRappaz}.  For the Stokes equations themselves there are flowline Stokes solutions for constant viscosity \cite{BaliseRaymond1985} and manufactured solutions for the Glen flow law \cite{JouvetRappaz2011,SargentFastook2010}, in addition to our slab-on-a-slope solution.
+Where to get exact solutions for ice flow models?  The textbook Greve and Blatter \cite{GreveBlatter2009} has a few.  The similarity solutions to SIA from Halfar \cite{Halfar81,Halfar83} were generalized to non-zero mass balance cases by Bueler et al \cite{BLKCB}.  There are manufactured solutions to the thermomechanically-coupled SIA in  \cite{BBL}.  There are flowline \cite{vanderVeen83} and cross-flow \cite{SchoofStream} solutions to the SSA model.  There are flowline Blatter model solutions \cite{GlowinskiRappaz}.  For the Stokes equations themselves there are flowline Stokes solutions for constant viscosity case \cite{BaliseRaymond1985} and manufactured solutions for the Glen flow law case \cite{JouvetRappaz2011,SargentFastook2010}, in addition to our slab-on-a-slope solution.
 
-The following important modelling topics are \emph{not} covered here: thermomechanical coupling \cite{BBL}, polythermal ice \cite{Greve,AschwandenBuelerKhroulevBlatter}, subglacial hydrology and processes \cite{Clarke05}, mass balance and snow/firn process modeling, constitutive relations other than Glen isotropic, grounding lines, calving fronts, ocean-ice interaction, paleo-climate and ``spin-up'', earth deformation under ice sheet load.
+A key modeling issue omitted in this chapter is thermomechanical coupling.  This is important because the ice softness $A(T)$ varies by $10^3$ in the temperature range relevant to ice sheet modeling, ice temperature gives ice sheets a long memory of past climate, and geothermal flux is significant in slow flowing parts of ice sheets.  Equally important, dissipation of gravitational potential energy is major part of basal melt.  (For example, each year the Jakobshavn drainage basin in Greenland dissipates enough gravitational potential energy to melt more than $1\,\text{km}^3$ of ice.)  ``Enthalpy'' is good way to track energy content polythermally \cite{AschwandenBuelerKhroulevBlatter}, but it is not the only way \cite{Greve}.
+
+The following additional modelling topics are \emph{not} covered here: subglacial hydrology and processes \cite{Clarke05}, mass balance and snow/firn process modeling, constitutive relations other than Glen isotropic, grounding lines \cite{SchoofMarine1}, calving fronts \cite{Albrechtetal2011}, ocean-ice interaction, paleo-climate and ``spin-up'', earth deformation under ice sheet load \cite{Peltier1998review}.
 
 The finite difference material in this Chapter should be read with a reference like \cite{MortonMayers} in hand.  Alternative numerical discretization techniques which are not mentioned here include the finite element, finite volume, and spectral methods.  We do not address advanced methods for solving the discretized equations, such as multigrid and parallel methods.
 
