@@ -6,7 +6,7 @@ zips: all
 	rm -rf bueler_karthaus/  # clean out if prior existence
 	mkdir bueler_karthaus/
 	make clean
-	cp slides.pdf README.md bueler_karthaus/
+	cp slides.pdf README.md index.html bueler_karthaus/
 	cp notes/notes.pdf bueler_karthaus/
 	cp -rf mfiles/ bueler_karthaus/mfiles/
 	(cd bueler_karthaus/mfiles/ && rm -rf other/)
