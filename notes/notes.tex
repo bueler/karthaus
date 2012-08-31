@@ -341,7 +341,6 @@ f(x+2\Delta) &= f(x) + 2 f'(x) \Delta + 2 f''(x) \Delta^2 + \frac{4}{3} f'''(x) 
 The idea for constructing finite difference schemes is to combine expressions like those above to give approximations of derivatives.  Thereby one combines values of the unknown quantity from  locations on a grid.
 
 Here we want partial derivative approximations, so we apply the Taylor's expansions one variable at a time.  For example with a general function $u=u(t,x)$ we can write these approximations:
-% EXERCISE:  derive some of these
 \begin{align*}
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} + O(\Delta t), \\
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t-\Delta t,x)}{2\Delta t} + O((\Delta t)^2), \\
@@ -349,8 +348,6 @@ u_x(t,x) &= \frac{u(t,x+\Delta x) - u(t,x-\Delta x)}{2\Delta x} + O((\Delta x)^2
 u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2\, u(t,x) + u(t,x-\Delta x)}{\Delta x^2} + O((\Delta x)^2)
 \end{align*}
 Note that ``$+O(\Delta^2)$'' is better, in the sense that the approximation is closer, than ``$+O(\Delta)$'' if $\Delta$ is a small number.
-%EXERCISE  Sometimes we also want a derivative in-between grid points:
-%	$$u_x(t,x+(\Delta x/2)) = \frac{u(t,x+\Delta x) - u(t,x)}{\Delta x} + O((\Delta x)^2)$$
 
 \subsubsection*{Explicit scheme for the heat equation}  Now we can state the simplest ``explicit'' scheme for the 1D heat equation, namely PDE \eqref{heat1D} which is $T_t = D\, T_{xx}$.  In terms of the values of the solution $T(t,x)$ we would say
 	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2\, T(t,x) + T(t,x-\Delta x)}{\Delta x^2}.$$
@@ -404,10 +401,11 @@ The second run shows instability!  Both runs compute temperature $T$ on the same
 \subsubsection*{Stability criteria}  How to avoid the instability?  We need to understand the scheme better.  It turns out we have not made an implementation error, but we must be more careful with the size of space and time steps.
 
 Recall the 1D explicit scheme \eqref{heat1Dfd}: $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$.  The new value $T_j^{n+1}$ is an average of the old values, in the sense that the coefficients add to one.  Or rather, it is an average \emph{if} the middle coefficient is positive, because a linear combination with coefficients which add to one is not really an average if any coefficients are negative.\footnote{We would not accept 13 as an ``average'' of 5 and 7, but of course we can write $13 = -3 \times 5 + 4 \times 7$.}
-%EXERCISE: The other two coefficients are positive because we step forward in time (so $\mu= D \Delta t / (\Delta x)^2>0$).\footnote{Running the heat equation backward in time, or using a negative value for $D$, are bad ideas.  Try it and see!}
 
 Heuristically, averaging is stable because averaged wiggles are always smaller than the original wiggles.  We want this property.  So we ask what would be implied by requiring the middle coefficient to be positive?:
-	$$1 - 2 \mu \ge 0 \quad \iff \quad \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}.$$
+\begin{equation}
+   1 - 2 \mu \ge 0 \quad \iff \quad \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}.  \label{stabcrit}
+\end{equation}
 This condition on the size of $\Delta t$ is a \emph{sufficient} stability criterion: it is enough to guarantee stability even though something weaker might do.  Shortening the time step enough so that $\Delta t \le \Delta x^2/(2 D)$ will imply that the scheme is an averaging process.
 
 Applying this same idea to the 2D heat equation \eqref{heat2D} leads to the stability condition that $1-2\mu^x-2\mu^y \ge 0$ where $\mu^x = D \Delta t / (\Delta x^2)$ and $\mu^y = D \Delta t / (\Delta y^2)$.  In the cases shown in Figure  \ref{fig:stability}, with $\Delta x=\Delta y$, this condition requires $D \Delta t /(\Delta x^2) \le 0.25$.  This precisely distinguishes between the two parts of the Figure.  In summary, the right-hand result in the Figure was unstable because the time step was too big.
@@ -419,13 +417,14 @@ To show how easy it is to implement, see \texttt{heatadapt.m} below.  It is the 
 \minput{heatadapt}
 
 \subsubsection*{Implicit schemes}  There is an alternative stability fix, namely ``implicitness.''  For example, the finite difference scheme
-   $$\frac{T_j^{n+1} - T_j^n}{\Delta t} = D\,\frac{T_{j+1}^{n+1} - 2\, T_j^{n+1} + T_{j-1}^{n+1}}{\Delta x^2}$$
+\begin{equation}
+  \frac{T_j^{n+1} - T_j^n}{\Delta t} = D\,\frac{T_{j+1}^{n+1} - 2\, T_j^{n+1} + T_{j-1}^{n+1}}{\Delta x^2} \label{implicit1D}
+\end{equation}
 is an $O(\Delta t,(\Delta x)^2)$ accurate implicit scheme for Equation \eqref{heat1D}.
-%EXERCISE: When written as a formula for $T_j^{n+1}$ there are only positive coefficients, so no stability criterion needs to be satisfied for the scheme to be an average.
 
 Implicit schemes for the heat equation exist which are stable for \emph{any} positive time step $\Delta t>0$ (``unconditionally stable'').  A well-know example implicit scheme is \emph{Crank-Nicolson}.  It is unconditionally stable for the heat equation and it also has smaller error than the schemes considered so far; the error is $O((\Delta t)^2,(\Delta x)^2)$.
 
-But implicit schemes are a bit harder to implement.  The values of the unknown (i.e.~$T$) at time step $t_{n+1}$ are generally treated as a vector of unknowns in a large system of equations.  This system must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a highly nonlinear diffusion (heat) equation---the system of equations may be hard to solve.  For these notes we stick with the adaptive explicit idea, and it works fine.  More generally there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.\footnote{Computer scientist Donald Knuth has advice for ice sheet modellers, among other people: ``We should forget about small efficiencies \dots: premature optimization is the root of all evil.''}
+But implicit schemes are a bit harder to implement.  The values of the unknown (i.e.~$T$) at time step $t_{n+1}$ are generally treated as a vector of unknowns in a large system of equations.  This system must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a highly nonlinear diffusion equation---the system of equations may be hard to solve.  So for these notes we stick with the adaptive explicit idea, and it works fine.  More generally there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.\footnote{Computer scientist Donald Knuth has advice for ice sheet modellers, among other people: ``We should forget about small efficiencies \dots: premature optimization is the root of all evil.''}
 
 \subsubsection*{Numerical solution of diffusion equations}  Recall we are trying to numerically model ice flows, not heat conduction.  We have an analogy, however, which says that the SIA is like the heat equation, as both are diffusions.  In fact the heat equation \eqref{heat} has the more common name of ``diffusion equation,'' as the unknown may not be a temperature.  In this section, because we wish to solve the SIA on real bedrock, we construct a numerical scheme for an even more general diffusion which has a ``shift'' inside the gradient, namely
 \begin{equation}
@@ -475,10 +474,8 @@ The Green's function of the heat equation is ``self-similar'' over time, in the 
 In particular, the Green's function of the 1D heat equation is $T(t,x) = (4 \pi D t)^{-1/2}\, e^{-x^2/(4Dt)}$.  ``Similarity'' variables for this solution, namely the above-mentioned scalings, are
 	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad T(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s).$$
 That is, the shape which is the same at each time is $\phi(s) = (4 \pi D)^{-1/2}\, e^{-s^2/(4D)}$, and the entire time-dependence is from the input and output scalings.
-%EXERCISE: check the above claims
 
 For a sufficiently long interval, so that zero boundary conditions are nearly exact, a numerical solver for the 1D heat equation should produce numbers which are close to this exact solution.  Instead of pursuing that, we move on to the analogous SIA solution.
-% EXERCISE: do this 1D heat equation verification
 
 \subsubsection*{Halfar's exact ``similarity'' solution to the SIA}  Now we jump forward from 1830 to 1981, to the year in which P.~Halfar published the similarity solution of the SIA in the case of flat bed and no surface mass balance.  Halfar's solution to the 2D SIA model \eqref{sia}, using a Glen exponent $n=3$, has scalings
 \begin{equation}
@@ -493,7 +490,6 @@ The full formula for the Halfar solution to the SIA is remarkably simple,
 H(t,r) = H_0 \left(\frac{t_0}{t}\right)^{1/9} \left[1 - \left(\left(\frac{t_0}{t}\right)^{1/18} \frac{r}{R_0}\right)^{4/3}\right]^{3/7} \label{halfar}
 \end{equation}
 where the ``characteristic time'' is $t_0 = (18 \Gamma)^{-1} (7/4)^3 R_0^4 H_0^{-7}$.  Thus if we choose central height $H_0$ and ice cap radius $R_0$ then the characteristic time $t_0$ is determined, and, at that time $t=t_0$, the Halfar solution has height $H_0$ and radius $R_0$.  This time- and space-dependent formula for thickness $H(t,r)$ is plotted in Figure \ref{fig:siascaling}.  We see clear that for times significantly greater than $t_0$, i.e.~when $t/t_0 \gg 1$, the solution changes very slowly.  The change between years $1$ and $100$ is comparably large with that between years $1000$ and $10000$.
-%EXERCISE: verify these simple claims
 
 \subsubsection*{Using Halfar's solution}  Formula \eqref{halfar} is simple enough to use for verifying time-dependent SIA models, and so we use it that way.  Among the distributed codes is \texttt{verifysia.m}, which takes as input the number of grid points in each ($x,y$) direction.  It uses the Halfar solution at 200 a as the initial condition, does a numerical run to time 20000 a, with \texttt{siaflat.m} above, and then compares to the Halfar formula for that time:
 \small
@@ -509,8 +505,6 @@ average thickness error     = 1.059
 \end{verbatim}
 \normalsize
 We see that the thickness error, the absolute value of the difference between the numerical and exact thickness solutions at $t=20000$ a, is shrinking with increasing grid resolution.  This is as expected for a correctly-implemented code.  What is less obvious, perhaps, is that almost any numerical implementation mistake---almost any bug---will break this property, and these errors will not shrink.
-%EXERCISE: try this
-%EXERCISE: some output from verifysia.m supressed; e.g. the max thickness error does not shrink monotonically; why?  why the spatial distribution of max error?
 
 You might ask, is the Halfar solution also good for modelling real ice masses?  John Nye and others (2000; \cite{NyeIcarus2000}) compared the long-time consequences of different flow laws for the South Mars Polar Cap.  In particular, they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters by comparing the long-time behavior of the corresponding Halfar solutions.  Their conclusions:
   \begin{quote}
@@ -566,7 +560,6 @@ Thus the kinematical equations describe the movement (if any) of the ice upper s
 The mass continuity equation is often written in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{u}\,dz = \bar{\mathbf{u}}\,H$, which has units $\text{m}^2\,\text{s}^{-1}$.  Thus \eqref{masscont} is $H_t = M - \Div \bq$.
 
 One proves the claim about equivalence by using the incompressibility of ice \eqref{incompressible} and the Leibniz rule for differentiating integrals.\footnote{I.e.~the equation $\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy$.}  The details are left for exercises.
-% EXERCISE: do it
 
 The air above an ice sheet provides little resistance to movement of the upper surface, while the bedrock is often regarded as so strong as to be fixed: $b_t=0$.  Thus the basal kinematical equation is often not explicitly mentioned in ice sheet modelling, and instead one gets a simplified view like ``because there is no sliding, the basal value of the vertical velocity equals the basal melt rate,'' for example, a simplification which corresponds to $b_t=0$ and $\mathbf{U}\big|_b=0$ so that $w\big|_b=-s$.
 
@@ -617,17 +610,14 @@ Equation \eqref{ssa} simplifies if the ice is floating, because we assume zero r
    \left(2 \,\bar\nu\, H u_x\right)_x = \rho g (1-\rho/\rho_w) H H_x \label{ssafloat}
 \end{equation}
 for floating ice.  A useful observation about equation \eqref{ssafloat} is that both left and right-hand expressions are derivatives; we'll use this fact next.
-% EXERCISE: as first part of below derivation of van der Veen solution, note $(H^2)_x = 2 H H_x$
 
 \subsubsection*{Steady ice shelf exact solution}  For a steady 1D ice shelf, for which $H_t=0$, the mass continuity equation \eqref{masscont} reduces to $M=(uH)_x$.  Because this is simple, and because of the relative simplicity of the SSA equation \eqref{ssafloat} for 1D floating ice, the exact velocity and thickness for a steady ice shelf can be computed \cite{vanderVeen83}.  This exact solution depends on the ice thickness $H_g$ and velocity $u_g$ at the grounding line, and it requires a suitable surface mass balance $M$ which we choose to be a positive constant $M_0$, but these determine a unique solution.  The derivation of this solution, which is left to the exercises, uses the above-mentioned ``useful observation.''
-%EXERCISE: do it
 
 Supposing $H_g=500$ m, $u_g = 50 \,\text{m}\,\text{a}^{-1}$, and $M_0=30 \,\text{cm}\,\text{a}^{-1}$ we get the results in Figure \ref{fig:steadyshelfprofile}.  We will use this exact solution to verify a numerical SSA code.  Note that near the grounding line there are the highest driving stresses, thus the highest longitudinal stresses and strain rates, and thus the most rapid thinning rates.
 
 \twofig{steadyshelfprofile}{steadyshelfvelocity}{Results from \texttt{exactshelf.m}.  The upper and lower surface elevation (m; left) of the exact ice shelf solution and its velocity (m/a; right).  Distance $x$ is measured from the grounding line.}
 
 \subsubsection*{Numerical solution of the SSA}  We will describe a numerical method for an ice shelf or stream, but only give a Matlab code in the ice shelf case.  The ice stream modifications are an exercise.
-% EXERCISE: make those modifications
 
 Suppose the ice thickness is a fixed function $H(x)$.  To find the velocity we must solve the nonlinear PDE \eqref{ssa} for the unknown $u(x)$.  When we do this numerically an iteration is needed because of the nonlinearity.  The simplest iteration idea is to use an initial guess at the velocity, which allows us to compute an effective viscosity and then get a new velocity solution from a linear PDE problem.  Then we recompute the effective viscosity, solve for a new velocity, and repeat until things stop changing.  This is a ``Picard'' iteration, which we use in these notes.
 
@@ -752,30 +742,51 @@ The finite difference material in this Chapter should be read with a reference l
 
 \newcommand{\exer}[2]{\medskip\noindent \textbf{#1.}\quad #2}
 
-\exer{1}{Derive the Green's function of the heat equation.}
+Note:  \emph{At Karthaus 2012 there is no dedicated time for these exercises.  They are suitable for the needs of careful readers of these notes, however, because they fill in missing material, and they help make the main ideas concrete.}
 
-\exer{2}{Assume $u$ has continuous second derivatives.  Show
-  $$u_x(t,x) = \frac{u(t,x+\Delta x) - u(t,x-\Delta x)}{2\Delta x} + O(\Delta x^2).$$
-}
+
+\exer{1}{Assume $f$ has continuous derivatives of all orders.  Show
+  $$f'(x) = \frac{f(x+\Delta) - f(x-\Delta)}{2\Delta} + O(\Delta^2) \quad \text{and} \quad f''(x) = \frac{f(x+\Delta) - 2 f(x) + f(x-\Delta)}{\Delta^2} + O(\Delta^2)$$
+using Taylor's theorem with remainder.}
+
+\exer{2}{Sometimes we want finite difference approximations to derivatives in-between grid points.  Continuing exercise \textbf{1}, show $f'(x+(\Delta/2)) = (f(x+\Delta) - f(x))/\Delta + O(\Delta^2)$.}
 
 \exer{3}{Rewrite \texttt{heat.m} using \texttt{for} loops instead of colon notation.}
+
+\exer{4}{The 1D explicit scheme \eqref{heat1Dfd} for the heat equation, namely $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$, is an average if stability criterion \eqref{stabcrit} holds.  But of course we must be stepping \emph{forward} in time also ($\Delta t>0$)!  Show, by contrast, that if the time step is negative then the scheme is not an average (= positive coefficients which sum to one) for any values of $\Delta t$ and $\Delta x$.  Also, try running \texttt{heat.m} backward in time to see what happens.  In conclusion, \emph{there are no stable numerical schemes for unstable PDE problems}.}
+
+\exer{5}{Show that when written as a formula for $T_j^{n+1}$, scheme \eqref{implicit1D} has only positive coefficients.  By looking into the literature as needed, explain why this implies that it is unconditionally stable.}
 
 \exer{4}{\emph{This exercise concerns the numerical treatment of ``$\Div\left(D\,\grad\right)$''.} 
 \renewcommand{\labelenumi}{(\alph{enumi})}
 \begin{enumerate}
 \item Show that if $D=D(x,y)$ and $u=u(x,y)$ then $\Div \left(D\, \grad u\right) = D \grad^2 u + \grad D \cdot \grad u$.
-\item Write down the obvious $O(\Delta t)+O(\Delta x^2)$ explicit finite difference method for the equation $u_t = D_0 u_{xx} + E_0 u_x$, assuming $D_0>0$ and $E_0$ are constant.  (\emph{You will need to use a centered approximation for $u_x$.})
-\item The explicit method for the heat equation is solved for the unknown $u_j^{n+1}$.  Do the same for your explicit method from part (b). 
-\item Stability for your method will occur if the right hand side from part (c) has all positive coefficients.  If $|E_0| \gg D_0$, what does this say about $\Delta t$?
+\item Write down the centered $O(\Delta t)+O(\Delta x^2)$ explicit finite difference method for the equation $u_t = D_0 u_{xx} + E_0 u_x$, assuming $D_0>0$ and $E_0$ are constant.  Solve the scheme for the unknown $u_j^{n+1}$. 
+\item Stability for your method will occur if the right hand side from the last answer in part (b) has all positive coefficients.  If $|E_0| \gg D_0$, what does this say about $\Delta t$?
 \item Why we keep ``$\Div\left(D\,\grad\right)$'' in that form and use the staggered grid?
 \end{enumerate}
 }
 
-\exer{5}{Is P.~Halfar male or female, and what does the first initial ``P.'' stand for?}
+\exer{5}{Derive the Green's function of the heat equation, namely $T = (4 \pi D t)^{-1/2}\, e^{-x^2/(4Dt)}$ as a solution to $T_t=D T_{xx}$.  Start by supposing there is a solution of the form $T(t,x) = t^{-1/2} \phi(s)$ where $s=t^{-1/2}x$ is the similarity variable.  Thereby write down an ordinary differential equation and solve it.}
 
-\exer{6}{The code \texttt{verifysia.m} also shows the numerical error in the ice thickness in a map-plane view.  Near the grounded margin of an ice sheet this error is much larger than elsewhere.  Why?}
+\exer{6}{In the text, and in code \texttt{verifysia.m}, we used Halfar's solution to verify our numerical scheme \texttt{siaflat.m}.  Create the analogous code \texttt{verifyheat.m} to use the Green's function of the 2D heat equation \eqref{heat2D}, namely $T(t,x,y) = (4 \pi D t)^{-1}\, e^{-(x^2+y^2)/(4Dt)}$, to verify \texttt{heatadapt.m}.  You can use the high quality approximation $e^{-A^2}\approx 0$ for $|A|>10$ to choose a rectangular domain in space for which you may use $T=0$ Dirichlet boundary conditions.}
 
-\exer{7}{Get the surface kinematical equation from the mass continuity and basal kinematical equations.}
+\exer{7}{Is P.~Halfar male or female, and what does the first initial ``P.'' stand for?}
 
+\exer{8}{Show that formula \eqref{halfar} solves \eqref{sia} in the case of flat bed (so $h=H$) and zero climatic mass balance ($M=0$).  You will want to express divergence and gradient in polar coordinates.}
+
+\exer{9}{In the text it is claimed that any modification of \texttt{siaflat.m} will make the output of \texttt{verifysia.m} show non-convergence, e.g.~the reported average thickness error will not go to zero as the grid is refined.  By randomly altering lines of \texttt{siaflat.m}, evaluate this claim.}
+
+\exer{10}{Some output from \texttt{verifysia.m} has been suppressed in the text.  It also shows the numerical ice thickness error in map-plane view.  Near the grounded margin of an ice sheet this error is much larger than elsewhere.  Why?}
+
+\exer{11}{Get the surface kinematical equation \eqref{surfkine} from the mass continuity \eqref{masscont} and basal kinematical \eqref{basekine} equations.  Do one more permutation too.}
+
+\exer{12}{Let $C_s = A (\rho g (1-r)/4)^n$ and assume $x_g=0$ is the location of the grounding line.  Derive the two parts of the van der Veen exact ice shelf solution, namely
+\begin{align*}
+  u &= \left[ u_g^{n+1} + (C_s/M_0) \left((M_0 x + u_g H_g)^{n+1} - (u_g H_g)^{n+1}\right) \right]^{1/(n+1)}, \quad H = (M_0 x + u_g H_g) / u,
+\end{align*}
+Start from equation \eqref{ssafloat} and $M=(uH)_x$, and use the fact $(H^2)_x = 2 H H_x$ to generated the first integral of \eqref{ssafloat}.  These exact solutions are used in code \texttt{exactshelf.m}.}
+
+\exer{13}{Modify the code \texttt{ssaflowline} to solve the ice stream version of the SSA \eqref{ssa}.  For boundary conditions it would be reasonable to have fixed velocity at the upstream end and keep the calving front boundary condition at the downstream end, as in thec case that the calving front is at the point where the ice stream reaches flotation.  Build a test case; can you find an exact solution?}
 
 \end{document}
