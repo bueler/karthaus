@@ -256,19 +256,17 @@ Note that $\sin \theta \approx \tan\theta = - h_x$.  Combining these with mass c
   H_t = M + \left(\frac{2}{5} (\rho g)^3 A H^5 |h_x|^2 h_x\right)_x. \label{sia1D}
 \end{equation}
 
-Equation \eqref{sia1D} is the main SIA equation.  It determines the evolution of ice sheets in terms of mass balance, ice softness, and bed elevation; note $h=H+b$.  Additional arguments are needed to actually show that the SIA is ``general purpose'' and not special to a simple slab.  Such arguments derive the SIA model from the Stokes equations, under the assumption that slopes and the depth-to-width ratio are small; see Notes and References.
+Equation \eqref{sia1D} is the main SIA equation.  It determines the evolution of ice sheets in terms of mass balance, ice softness, and bed elevation.  (Note $h=H+b$.)  Additional arguments are needed to actually show that the SIA is ``general purpose'' and not special to a simple slab.  Such arguments reduce the Stokes equations carefully, under the assumption that the surface and bed slopes are small, and that the depth-to-width ratio is small.  See Notes and References.
 
-We will numerically solve the SIA equation in section \ref{sec:numericalsia}.  First we seek to understand it better, and we will state it in two horizontal dimensions.
+We will numerically solve the SIA equation in section \ref{sec:numericalsia}.  First we seek to understand it better, and state it in two horizontal dimensions.
 
-\subsubsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they sometimes experience contact slip.  The first ice flow model we consider is the non-sliding, isothermal shallow ice approximation or ``SIA'' for short.  It applies to small depth-to-width ratio (``shallow'') grounded ice sheets on not-too-rough bed topography, whose flow is not dominated by sliding at the base.
+\subsubsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they sometimes experience contact slip (basal sliding).  The first ice flow model we consider addresses (\emph{i})--(\emph{iii}).  It is the non-sliding, isothermal SIA.
 
-Regarding ``shallow'', Figure \ref{fig:green_transect} shows a no-vertical-exaggeration version cross section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is far more familiar in the glaciological literature.  Remember that ice sheets are actually thin.
+Regarding (\emph{ii}) shallow, Figure \ref{fig:green_transect} shows a no-vertical-exaggeration cross-section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is more familiar in the glaciological literature.  Thus: Remember that ice sheets are actually thin.
 
-\onefig{green_transect}{A vertically-exaggerated cross section of the Greenland ice sheet ($71^\circ$ N) is shown by the vertical axis labels and the green and blue curves.  The version without such exaggeration is in red.}
+\onefig{green_transect}{A vertically-exaggerated cross-section of the Greenland ice sheet ($71^\circ$ N) is shown by the green and blue curves.  The version without such exaggeration appears as a red horizontal line.}
 
-The SIA uses the formulas from slab-on-a-slope, generalized to two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The SIA uses a shear stress approximation
-	$$(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h.$$
-From Equation \eqref{flowlaw}, and further approximation of the shear strain rates in planes parallel to the geoid, we get a formula for a strain rate,
+The SIA uses the formulas from slab-on-a-slope, generalized to two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The shear stress approximation is $(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$.  From Equation \eqref{flowlaw}, and further approximation of the shear strain rates in planes parallel to the geoid, we get a formula for certain strain rates,
 \begin{equation*}
 \mathbf{U}_z \approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) = - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h.
 \end{equation*}
@@ -281,12 +279,14 @@ Mass continuity in two horizontal dimensions, which generalizes the 1D version \
 \begin{equation}
     H_t = M - \Div\left(\bar{\mathbf{U}} H\right)  \label{masscont}
 \end{equation}
+The mass continuity equation is often written in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{U}\,dz = \bar{\mathbf{U}}\,H$.  Thus \eqref{masscont} is also $H_t = M - \Div \bq$.
+
 Combining Equations \eqref{siavelocity} and \eqref{masscont} and defining a positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$, we get an equation for the rate of thickness change in terms of mass balance $M$, thickness, and surface slope $\grad h$:
 \begin{equation}
 H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 \end{equation}
 
-Fulfilling an earlier promise, if we just solve \eqref{sia} numerically then we get a usable model for the Barnes ice cap in Canada, see for example \cite{Mahaffy}.  The Barnes ice cap is a particularly simple, but real, ice sheet on a very flat bed.
+Fulfilling an earlier promise, if we can solve \eqref{sia} numerically then we have a usable model for the Barnes ice cap in Canada \cite{Mahaffy}.  The Barnes ice cap is a particularly simple ice sheet on a rather flat bed.
 
 \subsubsection*{Analogy with the heat equation}  An obligatory step toward understanding the SIA model is recognizing that Equation \eqref{sia} is analogous to the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
 
@@ -553,8 +553,6 @@ and the base kinematical equation is
 b_t = s - \mathbf{U}\big|_b \cdot \grad b + w\big|_b.  \label{basekine}
 \end{equation}
 Thus the kinematical equations describe the movement (if any) of the ice upper surface and base, as it relates to the velocity of the ice and the mass balance.
-
-The mass continuity equation is often written in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{u}\,dz = \bar{\mathbf{u}}\,H$, which has units $\text{m}^2\,\text{s}^{-1}$.  Thus \eqref{masscont} is $H_t = M - \Div \bq$.
 
 One proves the claim about equivalence by using the incompressibility of ice \eqref{incompressible} and the Leibniz rule for differentiating integrals.\footnote{I.e.~the equation $\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy$.}  The details are left for exercises.
 
