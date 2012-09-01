@@ -2,34 +2,36 @@ function heatstencils
 % HEATSTENCILS   Plot the kind of stencils used for explicit, implicit,
 % and Crank-Nicolson methods on 1D heat equation  u_t = D u_xx.
 
-msize=40;
+msize=20;
 
 basic(1) % stencil for explicit
 hold on
-plot([-1 0 1], [0 0 0], 'sk', 'Markersize',msize)
-plot([0], [1], 'dk', 'Markersize',msize)
+plot([-1 0 1], [0 0 0], 'dk', 'Markersize',msize)
+plot([0], [1], 'sk', 'Markersize',msize)
 hold off
 % to create .eps in Octave:
 %print -depsc2 ../pdffigs/expstencil.eps
 
+return
+
 basic(2) % stencil for implicit
 hold on
-plot([0], [0], 'sk', 'Markersize',msize)
-plot([-1 0 1], [1 1 1], 'dk', 'Markersize',msize)
+plot([0], [0], 'dk', 'Markersize',msize)
+plot([-1 0 1], [1 1 1], 'sk', 'Markersize',msize)
 hold off
 %print -depsc2 ../pdffigs/impstencil.eps
 
 basic(3) % stencil for Crank-Nicolson
 hold on
-plot([-1 0 1], [0 0 0], 'sk', 'Markersize',msize)
-plot([-1 0 1], [1 1 1], 'dk', 'Markersize',msize)
+plot([-1 0 1], [0 0 0], 'dk', 'Markersize',msize)
+plot([-1 0 1], [1 1 1], 'sk', 'Markersize',msize)
 hold off
 %print -depsc2 ../pdffigs/cnstencil.eps
 
    function basic(i)
 
    lwidth = 8.0;
-   fsize = 30;
+   fsize = 20;
 
    figure(i), clf
 

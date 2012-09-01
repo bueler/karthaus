@@ -288,54 +288,50 @@ H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 
 Fulfilling an earlier promise, if we can solve \eqref{sia} numerically then we have a usable model for the Barnes ice cap in Canada \cite{Mahaffy}.  The Barnes ice cap is a particularly simple ice sheet on a rather flat bed.
 
-\subsubsection*{Analogy with the heat equation}  An obligatory step toward understanding the SIA model is recognizing that Equation \eqref{sia} is analogous to the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
+\subsubsection*{Analogy with the heat equation}  A step toward understanding the SIA model is to recognize that it is analogous to the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
 
-Recall first that the heat equation comes from simple empirical observations like Newton's law of cooling, the ordinary differential equation $dT/dt = -K (T-T_{\text{ambient}})$, 
-where $T$ is the object's temperature and $K$ relates to its material and geometric properties (consider a cup of coffee \dots).  That is, Newton observed that the temperature of an object tends to decay exponentially to the temperature of its surroundings.  One way to derive the heat equation, a partial differential equation (PDE), is to argue that the segments of a rod also satisfy Newton's law of cooling.  Segment $j$ with temperature $T_j$ sees an ambient temperature which is the average of the segment's neighbors:
-   $$\frac{dT_j}{dt} = -K \left(T_j - \frac{1}{2} (T_{j-1} + T_{j+1}) \right) = \frac{K}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right).$$
-As segment lengths $\Delta x$ shrink to zero we see an approximation of the second derivative with respect to $x$ on the right because $K$ scales with $\Delta x^2$.  Thus the distributed temperature of a rod satisfies
+Recall that the temperature $T(t,x)$ of a conducting rod satisfies the 1D heat equation
 \begin{equation}
   T_t = D T_{xx}. \label{heat1D}
 \end{equation}
-This is the one dimensional heat equation, at least when material properties are constant.  The constant $D$ is the ``diffusivity''.
+This equation applies when material properties are constant; the constant $D$ is the ``diffusivity''.  This equation has a smoothing effect on the solution $T$ as it evolves in time, because at any local maximum the temperature is flattened (i.e.~$T_{xx}<0$ means $T$ decreases), while at any local minimum the temperature is also flattened (i.e.~$T_{xx}>0$ means $T$ increases).
 
-The more complete 2D version of the heat equation describes the temperature $T(t,x,y)$ at position $x,y$ in an object and at time $t$.  Fourier's law, which is the formula $\mathbf{Q} = - k \grad T$ for heat flux, and conservation of energy replace the above ad hoc Newton's law of cooling argument.  If we allow an additional heat source $f$, conservation of energy says $\rho c T_t = f - \Div \mathbf{Q}$.  Combining these we get:
+The 2D version of the heat equation describes the temperature $T(t,x,y)$ at position $x,y$ in an object and at time $t$.  Recall Fourier's law is the formula $\mathbf{Q} = - k \grad T$ for heat flux.  If we allow an additional heat source $f$, conservation of internal energy says $\rho c T_t = f - \Div \mathbf{Q}$.  Combining these we get:
 	$$\rho c T_t = f + \Div (k \grad T).$$
-Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.  Now define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F = f/(\rho c)$.  Then the heat equation is
+Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.  Assuming $\rho c$ is constant, define the ``diffusivity'' $D=k/(\rho c)$ and source term $F = f/(\rho c)$.  Then the heat equation is
 \begin{equation}
 T_t = F + \Div (D\, \grad T). \label{heat}
 \end{equation}
 Figure \ref{fig:initialheat} shows a solution of the heat equation, where the initial condition is a localized ``hot spot''.  Solutions of the heat equation involve the spreading, in all directions, of any local heat maxima or minima, that is, diffusion.
 
-\twofigsizes{initialheat}{finalheat}{A solution of the heat equation.  Left: Initial condition $T(0,x,y)$.   Right: Solution $T(t,x,y)$, computed numerically by \texttt{heat.m} below, at $t=0.02$.}{2.8in}{2.8in}
+\twofigsizes{initialheat}{finalheat}{A solution of the heat equation \eqref{heat} with $D=1$ and $F=0$.  Left: Initial condition $T(0,x,y)$.   Right: Solution $T(t,x,y)$ at $t=0.02$.}{2.8in}{2.8in}
 
-The SIA equation \eqref{sia} and the heat equation \eqref{heat} are each diffusive, time-evolving partial differential equations.  A side-by-side comparison is illuminating:
+The SIA equation \eqref{sia} and the heat equation \eqref{heat} are each diffusive, time-evolving partial differential equations (PDEs).  A side-by-side comparison is illuminating:
 \begin{center}
 \begin{tabular}{cc}
 SIA:\, $H$ is ice thickness & \phantom{foo bar} heat: $T$ is temperature\phantom{foo bar}  \\
 	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
 \end{tabular}
 \end{center}
-Notice that the number of derivatives (one time and two space derivatives) and the signs are the same in these equations.  Mass balance $M$ is analogous to the (scaled) heat source $F$.  
+Notice that the number of derivatives (one time and two space derivatives) and the signs are the same in these equations.  Mass balance $M$ is analogous to the heat source $F$.  
 
 The analogy allows us to identify the diffusivity in the SIA:
 	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
-The non-sliding shallow ice flow \emph{diffuses} the ice sheet.  When $\Gamma$ or $H$ or $|\grad h|$ are large, the diffusion acts more quickly.  This model (analogy) explains generally why the surfaces of ice sheets are quite smooth, at least if we ignor the non-fluid processes of crevassing and wind-driven snow.  There are, however, some issues with this analogy:  (\emph{i})  The thickness $H$ and surface elevation $h$ are not the same unless the bed is flat.  (\emph{ii})  The diffusivity $D$ depends on the solution $H$.  (\emph{iii}) The diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
+The non-sliding shallow ice flow \emph{diffuses} the ice sheet.  When $\Gamma$ or $H$ or $|\grad h|$ are large, the diffusion acts more quickly because $D$ is larger.  This analogy explains generally why the surfaces of ice sheets are smooth, at least if we ignore non-fluid processes like crevassing and wind-driven snow.  There are, however, some issues with this analogy:  (\emph{i})  The thickness $H$ and surface elevation $h$ are not the same unless the bed is flat.  (\emph{ii})  The diffusivity $D$ depends on the solution $H$.  (\emph{iii}) The diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
 
 
 \subsection{Finite difference numerics} 
 
-As already noted, numerical schemes for the heat equation are a good starting place for solving the SIA equation \eqref{sia} numerically, which is our goal.  Here we describe only finite difference schemes, with numerical alternatives left to the Notes and References.
+As already noted, numerical schemes for the heat equation are a good starting place for solving the SIA equation \eqref{sia} numerically.  Here we describe only finite difference schemes, with alternative numerical approaches left to the Notes and References.
 
-Finite difference schemes replace derivatives in the differential equation by arithmetic.  The basic fact is \emph{Taylor's theorem}.  It says that for a smooth function $f(x)$,
+Finite difference schemes replace derivatives in a differential equation by arithmetic.  The basic fact is \emph{Taylor's theorem}, which says that for a smooth function $f(x)$,
 	$$f(x+\Delta) = f(x) + f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 + \frac{1}{3!} f'''(x) \Delta^3 + \dots$$
 You can replace ``$\Delta$'' by its multiples, for example:
 \begin{align*}
 f(x-\Delta) &= f(x) - f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 - \frac{1}{3!} f'''(x) \Delta^3 + \dots \\
 f(x+2\Delta) &= f(x) + 2 f'(x) \Delta + 2 f''(x) \Delta^2 + \frac{4}{3} f'''(x) \Delta^3 + \dots
 \end{align*}
-
-The idea for constructing finite difference schemes is to combine expressions like those above to give approximations of derivatives.  Thereby one combines values of the unknown quantity from  locations on a grid.
+The idea for constructing finite difference schemes is to combine expressions like these to give approximations of derivatives.  Thereby values of the unknowns on a grid are combined to approximate the differential equation.
 
 Here we want partial derivative approximations, so we apply the Taylor's expansions one variable at a time.  For example with a general function $u=u(t,x)$ we can write these approximations:
 \begin{align*}
@@ -344,21 +340,21 @@ u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t-\Delta t,x)}{2\Delta t} + O((\Delta t)^2
 u_x(t,x) &= \frac{u(t,x+\Delta x) - u(t,x-\Delta x)}{2\Delta x} + O((\Delta x)^2), \\
 u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2\, u(t,x) + u(t,x-\Delta x)}{\Delta x^2} + O((\Delta x)^2)
 \end{align*}
-Note that ``$+O(\Delta^2)$'' is better, in the sense that the approximation is closer, than ``$+O(\Delta)$'' if $\Delta$ is a small number.
+Note that if $\Delta$ is a small number then ``$+O(\Delta^2)$'' is better, in the sense that the approximation is closer, than ``$+O(\Delta)$''
 
-\subsubsection*{Explicit scheme for the heat equation}  Now we can state the simplest ``explicit'' scheme for the 1D heat equation, namely PDE \eqref{heat1D} which is $T_t = D\, T_{xx}$.  In terms of the values of the solution $T(t,x)$ we would say
+\subsubsection*{Explicit scheme for the heat equation}  Now we can state the simplest ``explicit'' scheme for the 1D heat equation \eqref{heat1D}:
 	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2\, T(t,x) + T(t,x-\Delta x)}{\Delta x^2}.$$
-The finite difference scheme is not just an approximation of the PDE, but an actual method for computing numbers on a grid.  Let $(t_n,x_j)$ denote the time-space grid points.  Denote our approximation of the solution value on the grid $T(t_n,x_j)$ by $T_j^n$.\footnote{Evaluating the exact solution at a grid point gives a different value from the one we compute!}  Then the finite difference scheme is
+The finite difference scheme is not just an approximation of the PDE, but an actual method for computing numbers on a grid.  Let $(t_n,x_j)$ denote the time-space grid points.  Denote our approximation of the solution value on the grid $T(t_n,x_j)$ by $T_j^n$.\footnote{Evaluating the exact solution at a grid point gives a different value from the approximate one we compute by the scheme!  Of course we plan that these numbers will be close, but that needs checking.}  Then the finite difference scheme is
 	$$\frac{T_j^{n+1} - T_j^n}{\Delta t} = D\,\frac{T_{j+1}^n - 2\, T_j^n + T_{j-1}^n}{\Delta x^2}.$$
 To get a simple, computable formula, let $\mu = D \Delta t / (\Delta x)^2$ and solve for $T_j^{n+1}$:
 \begin{equation}
   T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n \label{heat1Dfd}
 \end{equation}
-The scheme is ``explicit'' because we have been able to solve it for the next value we will compute.  Figure \ref{fig:expstencil} shows the ``stencil'' for scheme \eqref{heat1Dfd}: we use three values at the current time $t_n$ to update the one value at the next time $t_{n+1}$.
+The scheme is ``explicit'' because we have been able to solve it for $T_j^{n+1}$ in terms of values at time $t_n$.  Figure \ref{fig:expstencil} shows the ``stencil'' for scheme \eqref{heat1Dfd}: three values at the current time $t_n$ are combined to update the one value at the next time $t_{n+1}$.
 
-How accurate is \eqref{heat1Dfd}?  The above construction tells us that the difference between the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t,(\Delta x)^2)$.  This difference between equations goes to zero as we refine the grid in space and time (``consistency'').  With care about the smoothness of boundary conditions, and using mathematical facts about the heat equation itself, the theory of finite difference schemes shows that the difference between $T_j^n$ and $T(t_n,x_j)$ is also $O(\Delta t,(\Delta x)^2)$ (``convergence''); see Notes and References.  However, to get convergence, the PDE must be well understood and the scheme \eqref{heat1Dfd} must be stable, which we address below.  In any case, the main theorem for numerical PDE schemes is ``consistency plus stability implies convergence''.  We leave such theory for the reader to pursue elsewhere; see Notes and References.
+How accurate is \eqref{heat1Dfd}?  The above construction tells us that the difference between the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t,(\Delta x)^2)$.  This difference between scheme and PDE goes to zero as we refine the grid in space and time (``consistency'').  With care about the smoothness of boundary conditions, and using mathematical facts about the heat equation itself, one can show that the difference between $T_j^n$ and $T(t_n,x_j)$ is also $O(\Delta t,(\Delta x)^2)$, which is ``convergence''; see Notes and References.  However, to get convergence, the PDE must be well understood and the scheme \eqref{heat1Dfd} must be stable, which we address below.  The main theorem for numerical PDE schemes is ``consistency plus stability implies convergence''; see Notes and References.
 
-\subsubsection*{A first implemented scheme}  For the first Matlab implementation we go directly to the heat equation in two spatial dimensions, Equation \eqref{heat}, but with $D$ constant and $F=0$.  The PDE is
+\subsubsection*{A first implemented scheme}  For the first Matlab implementation we extend to the heat equation in two spatial dimensions, Equation \eqref{heat}, with $D$ constant and $F=0$:
 \begin{equation}
 T_t = D (T_{xx}+T_{yy}).\label{heat2D}
 \end{equation}
@@ -368,9 +364,9 @@ In two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$.  The 2D exp
 \end{equation}
 The stencil for the right-hand spatial derivative approximation is in Figure \ref{fig:expstencil}.
 
-\twofig{expstencil}{exp2dstencil}{Left: Space-time stencil for the explicit scheme \eqref{heat1Dfd} for the 1D heat equation.  Right: Two spatial dimension stencil for scheme \eqref{heat2dexplicit}.}
+\twofigsizes{expstencil}{exp2dstencil}{Left: Space-time stencil for the explicit scheme \eqref{heat1Dfd} for the 1D heat equation.  Right: Two spatial dimension stencil for scheme \eqref{heat2dexplicit}.}{2.0in}{2.1in}
 
-Scheme \eqref{heat2dexplicit} has implementation \texttt{heat.m} given below.  It numerical solves PDE \eqref{heat2D} on the square $-1 < x < 1$, $-1 < y < 1$, with zero boundary values, using a gaussian initial condition: $T(0,x,y) = \exp(-30 (x^2+y^2))$.  The code uses ``colon notation'' to remove loops over spatial variables.  Here is an example run:
+Scheme \eqref{heat2dexplicit} has implementation \texttt{heat.m} below.  It numerical solves PDE \eqref{heat2D} on the square $-1 < x < 1$, $-1 < y < 1$, with zero boundary values, using a gaussian initial condition: $T(0,x,y) = \exp(-30 (x^2+y^2))$.  The code uses Matlab ``colon notation'' to remove loops over spatial variables.  Here is an example run:
 \begin{Verbatim}
 >>  heat(1.0,30,30,0.001,20);
 \end{Verbatim}
@@ -378,12 +374,12 @@ This approximates $T$ on a $30\times 30$ spatial grid, with diffusivity $D=1$ an
 
 \minput{heat}
 
-Very similar runs seem to fail, however.  The results from these calls are shown in Figure \ref{fig:stability}:
+Very similar runs seem to fail, however.  Results from these calls are in Figure \ref{fig:stability}:
 \begin{Verbatim}
->> heat(1.0,40,40,0.0005,100);
->> heat(1.0,40,40,0.001,50);
+>> heat(1.0,40,40,0.0005,100);    % Figure 7, left
+>> heat(1.0,40,40,0.001,50);      % Figure 7, right
 \end{Verbatim}
-The second run shows instability!  Both runs compute temperature $T$ on the same spatial grid, at the same final time, but they have different time steps.
+The second run shows instability.  Both runs compute temperature $T$ on the same spatial grid, at the same final time, but they have different time steps.
 
 \twofig{stability}{instability}{Numerically-computed temperature at time $t_f=0.05$ on $40\times 40$ grids.  Everything in these two runs is the same, except the left figure has $\Delta t=0.0005$ so $D\Delta t/(\Delta x)^2= 0.2$, while the right has $\Delta t=0.001$ so $D\Delta t/(\Delta x)^2= 0.4$.}
 %>> heat(1.0,40,40,0.001,50);
@@ -395,21 +391,19 @@ The second run shows instability!  Both runs compute temperature $T$ on the same
 %  nu = 1 * dt / dx^2 = 0.20000
 %>> print -dpdf stablilty.pdf
 
-\subsubsection*{Stability criteria}  How to avoid the instability?  We need to understand the scheme better.  It turns out we have not made an implementation error, but we must be more careful with the size of space and time steps.
+\subsubsection*{Stability criteria}  How to avoid the instability?  We need to understand the scheme better.  It turns out we have not made an implementation error, but we must be more careful with choice of space and time steps.
 
-Recall the 1D explicit scheme \eqref{heat1Dfd}: $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$.  The new value $T_j^{n+1}$ is an average of the old values, in the sense that the coefficients add to one.  Or rather, it is an average \emph{if} the middle coefficient is positive, because a linear combination with coefficients which add to one is not really an average if any coefficients are negative.\footnote{We would not accept 13 as an ``average'' of 5 and 7, but of course we can write $13 = -3 \times 5 + 4 \times 7$.}
+Recall the 1D explicit scheme \eqref{heat1Dfd}: $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$.  The new value $T_j^{n+1}$ is an average of the old values, in the sense that the coefficients add to one.  Actually, this is an average \emph{if} the middle coefficient is positive, because a linear combination with coefficients which add to one is not really an average if any coefficients are negative.  (For example, we would not accept 13 as an ``average'' of 5 and 7, but of course we can write $13 = -3 \times 5 + 4 \times 7$.)
 
-Heuristically, averaging is stable because averaged wiggles are always smaller than the original wiggles.  We want this property.  So we ask what would be implied by requiring the middle coefficient to be positive?:
+Averaging is stable because averaged wiggles are always smaller than the original wiggles.  We want this property.  So we ask what would be implied by requiring the middle coefficient to be positive?:
 \begin{equation}
    1 - 2 \mu \ge 0 \quad \iff \quad \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}.  \label{stabcrit}
 \end{equation}
-This condition on the size of $\Delta t$ is a \emph{sufficient} stability criterion: it is enough to guarantee stability even though something weaker might do.  Shortening the time step enough so that $\Delta t \le \Delta x^2/(2 D)$ will imply that the scheme is an averaging process.
+This condition on the size of $\Delta t$ is a \emph{sufficient} stability criterion: it is enough to guarantee stability, though something weaker might do.  Shortening the time step so that $\Delta t \le \Delta x^2/(2 D)$ will imply that the scheme is an averaging process.
 
-Applying this same idea to the 2D heat equation \eqref{heat2D} leads to the stability condition that $1-2\mu^x-2\mu^y \ge 0$ where $\mu^x = D \Delta t / (\Delta x^2)$ and $\mu^y = D \Delta t / (\Delta y^2)$.  In the cases shown in Figure  \ref{fig:stability}, with $\Delta x=\Delta y$, this condition requires $D \Delta t /(\Delta x^2) \le 0.25$.  This precisely distinguishes between the two parts of the Figure.  In summary, the right-hand result in the Figure was unstable because the time step was too big.
+Applying this same idea to the 2D heat equation \eqref{heat2D} leads to the stability condition that $1-2\mu^x-2\mu^y \ge 0$ where $\mu^x = D \Delta t / (\Delta x^2)$ and $\mu^y = D \Delta t / (\Delta y^2)$.  In the cases shown in Figure  \ref{fig:stability}, with $\Delta x=\Delta y$, this condition requires $D \Delta t /(\Delta x^2) \le 0.25$.  This precisely distinguishes between the two parts of the Figure.  In summary, instability in runs of \texttt{heat.m} happens if the time step $\Delta t$ is too big relative to the spacing $\Delta x$.
 
-\subsubsection*{Adaptive time stepping}  The stability criteria is easily satisfied by making each time step short enough.  This is an \textsl{adaptive} explicit implementation.  It has guaranteed stability.  It is simple to implement.  However, if the diffusivity $D$ is very large or the spatial steps $\Delta x$, $\Delta y$ are very small, then this explicit, adaptive implementation must take very short time steps to assure stability.
-
-To show how easy it is to implement, see \texttt{heatadapt.m} below.  It is the same as \texttt{heat.m} except that the time step is chosen from the stability criterion.  It will never generate the instability seen in Figure \ref{fig:stability}.
+\subsubsection*{Adaptive time stepping}  The stability criterion above is easily satisfied by making each time step shorter.  Doing this in a program gives an \textsl{adaptive} implementation.  It has guaranteed stability.  It is simple to implement.  However, if the diffusivity $D$ is large or the spatial steps $\Delta x$, $\Delta y$ are small, then this explicit, adaptive implementation must take short time steps to assure stability.  To show how easy it is to implement, \texttt{heatadapt.m} below is the same as \texttt{heat.m} except that the time step is chosen from the stability criterion.  It will not generate the instability seen in Figure \ref{fig:stability}.
 
 \minput{heatadapt}
 
@@ -419,11 +413,11 @@ To show how easy it is to implement, see \texttt{heatadapt.m} below.  It is the 
 \end{equation}
 is an $O(\Delta t,(\Delta x)^2)$ accurate implicit scheme for Equation \eqref{heat1D}.
 
-Implicit schemes for the heat equation exist which are stable for \emph{any} positive time step $\Delta t>0$ (``unconditionally stable'').  A well-know example implicit scheme is \emph{Crank-Nicolson}.  It is unconditionally stable for the heat equation and it also has smaller error than the schemes considered so far; the error is $O((\Delta t)^2,(\Delta x)^2)$.
+Such implicit schemes for the heat equation are stable for \emph{any} positive time step $\Delta t>0$ (``unconditionally stable'').  Another well-known example implicit scheme is \emph{Crank-Nicolson}, which is unconditionally stable for the heat equation and which also has smaller error than the schemes considered so far.
 
-But implicit schemes are a bit harder to implement.  The values of the unknown (i.e.~$T$) at time step $t_{n+1}$ are generally treated as a vector of unknowns in a large system of equations.  This system must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a highly nonlinear diffusion equation---the system of equations may be hard to solve.  So for these notes we stick with the adaptive explicit idea, and it works fine.  More generally there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.\footnote{Computer scientist Donald Knuth has advice for ice sheet modellers, among other people: ``We should forget about small efficiencies \dots: premature optimization is the root of all evil.''}
+But implicit schemes are a bit harder to implement.  The values of the unknown at time step $t_{n+1}$ are generally treated as a vector in a large system of equations.  This system must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a highly nonlinear diffusion equation---then the system of equations may be hard to solve.  So for these notes we stick with the adaptive explicit idea, and it works fine.  More generally there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.\footnote{Computer scientist Donald Knuth has advice for ice sheet modellers, among other people: ``We should forget about small efficiencies \dots: premature optimization is the root of all evil.''}
 
-\subsubsection*{Numerical solution of diffusion equations}  Recall we are trying to numerically model ice flows, not heat conduction.  We have an analogy, however, which says that the SIA is like the heat equation, as both are diffusions.  In fact the heat equation \eqref{heat} has the more common name of ``diffusion equation,'' as the unknown may not be a temperature.  In this section, because we wish to solve the SIA on real bedrock, we construct a numerical scheme for an even more general diffusion which has a ``shift'' inside the gradient, namely
+\subsubsection*{Numerical solution of diffusion equations}  Recall we are trying to numerically model ice flows, not heat.  We have an analogy, however, which says that the SIA is like the heat equation: both are diffusions.  Heat equation \eqref{heat} is called the ``diffusion equation'' if the unknown is not a temperature.  In this section, because we wish to solve the SIA on real bedrock, we construct a numerical scheme for a generalized diffusion which has a ``shift'' inside the gradient, namely
 \begin{equation}
   T_t = F + \Div \left(D \grad (T + b)\right). \label{gendiffusion}
 \end{equation}
@@ -437,7 +431,7 @@ An adaptive explicit method for the diffusion equation is conditionally stable, 
 \end{align*}
 Figure \ref{fig:diffstencil} shows the stencil for this diffusion equation approximation---the staggered grid points are shown with triangles.
 
-\twofig{diffstencil}{mahaffystencil}{Left:  Spatial stencil for staggered grid evaluation of diffusivity in the diffusion equation \eqref{gendiffusion}.  Right: Stencil showing how the staggered-grid diffusivity can be evaluated in the SIA.  Both:  Triangles are the staggered grid locations where $D$ is evaluated or computed.}
+\twofigsizes{diffstencil}{mahaffystencil}{Left:  Spatial stencil for staggered grid evaluation of diffusivity in the diffusion equation \eqref{gendiffusion}.  Right: Stencil showing how the staggered-grid diffusivity can be evaluated in the SIA.  Both:  Triangles are the staggered grid locations where $D$ is evaluated or computed.}{2.2in}{2.2in}
 
 Code \texttt{diffusion.m} below solves the general diffusion equation \eqref{gendiffusion}.  The user supplies the diffusivity $D(x,y)$ on the staggered grid, and the initial temperature $T(0,x,y)$, the source term $F(x,y)$, and the ``shift'' $b(x,y)$ on the regular (i.e.~non-staggered) grid.  When using this code for heat conduction we would take $b=0$.
 
