@@ -1,6 +1,8 @@
-\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
+\documentclass[titlepage,a4paper,final,12pt]{scrartcl}
+\usepackage[total={6.2in,9.4in},top=1.2in,left=1.05in]{geometry}
 
-\usepackage[total={6.2in,9.0in},top=1.1in,left=1.2in]{geometry}
+%\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
+%\usepackage[total={6.2in,9.0in},top=1.1in,left=1.2in]{geometry}
 
 % this lets us avoid the scrartcl/hyperref conflict...
 %\let\ifvtex\relax
@@ -506,18 +508,18 @@ This theoretical result has been confirmed by the observation and sampling of th
 
 Finally, are exact solutions always available when needed?  No.  But sometimes this means that not enough thought has gone into the meaning of the continuum model itself.  In any case, many ice flow models already have exact solutions which are relevant to verification.  We will use van der Veen's solution for ice shelves in a later section, for example.  Sources of, and techniques for generating, exact solutions are listed in Notes and References.
 
-
-\subsection{Applying our numerical ice sheet model}
-
 \subsubsection*{A test of robustness}  Verification is a reasonable start to testing a code.  Another kind of test is for ``robustness'': does the model break when you ask it to do hard things?  Unlike for verification, we might not have precise knowledge of what it should do, but we know the program should act in a ``reasonable'' way.
 
 The robustness test in the program \texttt{roughice.m} (not shown) demonstrates that \texttt{siaflat.m} can handle an ice sheet with extraordinarily large driving stresses.  (Recall that glaciological ``driving stress'' is $\tau_d = \rho g H \grad h$.  This appears in the slab-on-a-slope example, and in the SIA model, as the value of the shear stress $(\tau_{13},\tau_{23})$ at the base of the ice.)  We give \texttt{siaflat.m} a randomly-generated initial ice sheet which is of the worst possible sort.  It is both thick---mean thickness 3000 m---and it has large surface slopes.  Such an initial sheet is shown in the left side of Figure \ref{fig:roughinitial}.  During the run of 50 model years, the time step is determined adaptively, increasing from 0.0002 years to close to the user-chosen maximum time step of 0.2 years.  The maximum value of the driving stress decreases from $5.7\times 10^6$ Pa to $3.6\times 10^5$ Pa.  At the end of the run the ice cap has the shape shown at right in Figure \ref{fig:roughinitial}.  The shape is rather close to a Halfar solution; indeed Halfar proved that all solutions of the SIA on a flat bed with no mass balance asymptotically approach the Halfar solution.
 
 \twofig{roughinitial}{roughfinal}{\texttt{siaflat.m} evolves the worst-possible initial ice sheet (left), an ice cap with huge driving stresses, to the ice cap at right after 50 model years.}
 
-\twofigsizes{antinitial}{antfinal}{Left: Initial surface elevation (m) of Antarctic ice sheet.  Right: Final surface elevation at end of 40 ka model run on 50 km grid.}{2.55in}{3.2in}
 
-\subsubsection*{A first model for the Antarctic ice sheet}  Finally we apply the model to the Antarctic ice sheet.  First we modify \texttt{siaflat.m} to allow bedrock elevation $b(x,y)$, time-independent surface mass balance $M(x,y)$, and to calve any floating ice.  Also we enforce non-negative thickness at each timestep.  The new code is \texttt{siageneral.m}.
+\subsection{Applying our numerical ice sheet model}
+
+Finally we apply the model to the Antarctic ice sheet.  First we modify \texttt{siaflat.m} to allow bedrock elevation $b(x,y)$, time-independent surface mass balance $M(x,y)$, and to calve any floating ice.  Also we enforce non-negative thickness at each timestep.  The new code is \texttt{siageneral.m}.
+
+\twofigsizes{antinitial}{antfinal}{Left: Initial surface elevation (m) of Antarctic ice sheet.  Right: Final surface elevation at end of 40 ka model run on 50 km grid.}{2.55in}{3.2in}
 
 Also we use measured accumulation, bedrock elevation, and surface elevation from ALBMAPv1 data \cite{LeBrocqetal2010}.  No melt is considered, so the surface mass balance is the accumulation rate.  These input data are read from a NetCDF file by additional codes \texttt{buildant.m} and \texttt{netcdf.m} (not shown).
 
@@ -530,18 +532,18 @@ Figure \ref{fig:antvol} shows the ice volume time series for this 50 km run, but
 
 \subsection{Mass continuity and kinematical equations}
 
-The previous SIA discussion combines two equations which we will now think about separately, namely the ``stress balance'' and mass continuity equations.  In the SIA the stress balance is the formula \eqref{siavelocity} for the velocity, which combines with the mass continuity equation \eqref{masscont} to give model \eqref{sia} for the ice sheet thickness.  In this section we consider the mass continuity equation more generally.  In the next section we describe a different stress balance in which a differential equation must be solved to determine ice velocity.
+The previous SIA discussion combines two equations which we will now think about separately, namely the ``stress balance'' and mass continuity equations.  In the SIA the stress balance is the formula \eqref{siavelocity} for the velocity, which combines with the mass continuity equation \eqref{masscont} to give model \eqref{sia} for the ice sheet thickness.  In this section we consider the mass continuity equation more generally.
 
-The most basic shallow assumption made by ice flow theories\footnote{There are many inequivalent shallow theories: SIA, SSA, hybrids, Blatter-Pattyn, \dots} is that the surface and base of the ice are given by differentiable functions $z=h(t,x,y)$ and $z=b(t,x,y)$.  In which case surface overhang is not allowed.  (By contrast, the Stokes theory of slow viscous fluids only needs some boundary surface for the fluid, i.e.~a surface in three-dimensional space.)  Thus most ice sheet and glacier models take a map-plane perspective and they have a well-defined ice thickness.
+The most basic shallow assumption made by ice flow theories\footnote{There are many inequivalent shallow theories: SIA, SSA, hybrids, Blatter-Pattyn, \dots} is that the surface and base of the ice are given by differentiable functions $z=h(t,x,y)$ and $z=b(t,x,y)$.  Thus surface overhang is not allowed, for example.  By contrast, the Stokes theory of slow viscous fluids only needs some boundary surface for the fluid, i.e.~a surface in three-dimensional space.  But most ice sheet and glacier models take a map-plane perspective, so they have a well-defined ice thickness.
 
-We can already state an important mathematical fact, namely that the ``surface kinematical'' and mass continuity equations are equivalent under the above basic assumption.  More precisely, any pair of these equations \emph{implies the third}:
+We can already state an important mathematical fact which follows from this basic assumption, namely that the ``surface kinematical'' and mass continuity equations are equivalent under the above basic assumption.  More precisely, any pair of these equations \emph{implies the third}:
   \begin{itemize}
   \item the surface kinematical equation \eqref{surfkine} (below),
   \item the base kinematical equation \eqref{basekine} (below), and
   \item the map-plane mass continuity equation \eqref{masscont}.
   \end{itemize}
 
-What are these kinematical equations?  Let $a$ be the upper surface mass balance function ($a>0$ is accumulation) and $s$ be the basal melt rate function ($s>0$ is basal melting).  The map-plane mass balance is $M=a-s$.  Then the surface kinematical equation is 
+What are the kinematical equations?  Let $a$ be the upper surface mass balance function ($a>0$ is accumulation) and $s$ be the basal melt rate function ($s>0$ is basal melting).  The map-plane mass balance is $M=a-s$.  The surface kinematical equation is 
 \begin{equation}
 h_t = a - \mathbf{U}\big|_h \cdot \grad h + w\big|_h,  \label{surfkine}
 \end{equation}
@@ -551,11 +553,11 @@ b_t = s - \mathbf{U}\big|_b \cdot \grad b + w\big|_b.  \label{basekine}
 \end{equation}
 Thus the kinematical equations describe the movement (if any) of the ice upper surface and base, as it relates to the velocity of the ice and the mass balance.
 
-One proves the claim about equivalence by using the incompressibility of ice \eqref{incompressible} and the Leibniz rule for differentiating integrals.\footnote{I.e.~the equation $\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy$.}  The details are left for exercises.
+One proves the claim about equivalence by using the incompressibility of ice \eqref{incompressible} and the Leibniz rule for differentiating integrals.\footnote{I.e. $\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy$.}  The details are left for exercises.
 
 The air above an ice sheet provides little resistance to movement of the upper surface, while the bedrock is often regarded as so strong as to be fixed: $b_t=0$.  Thus the basal kinematical equation is often not explicitly mentioned in ice sheet modelling, and instead one gets a simplified view like ``because there is no sliding, the basal value of the vertical velocity equals the basal melt rate,'' for example, a simplification which corresponds to $b_t=0$ and $\mathbf{U}\big|_b=0$ so that $w\big|_b=-s$.
 
-Most ice sheet models use the mass continuity equation to describe change in ice sheet geometry, but generally they could instead use the surface kinematical equation instead.  The ice sheet modelling literature is full of calculations which can be interpreted as mixing the above equivalences with small-parameter arguments about shallow stress balances.
+Most ice sheet models use the mass continuity equation to describe change in ice sheet geometry, but generally they could use the surface kinematical equation instead.  The ice sheet modelling literature is full of calculations which can be interpreted as mixing the above equivalences with small-parameter arguments about shallow stress balances.
 
 To conclude this short section we sketch a standard prognostic ice sheet model.  Each time step follows this recipe:
   \begin{itemize}
