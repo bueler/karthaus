@@ -11,6 +11,10 @@ The Karthaus website is at
 
 http://www.projects.science.uu.nl/iceclimate/karthaus/
 
+These materials are posted at
+
+http://www.dms.uaf.edu/~bueler/karthaus/
+
 The notes (`notes.pdf`) are suitable for printing and off-line study.
 The slides for the lectures (`slides.pdf`) are also here.
 

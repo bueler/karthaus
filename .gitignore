@@ -33,4 +33,6 @@ pdffigs/*.pdf
 anim/*.png
 ice_bib.bib
 mfiles/*.nc
+mfiles/other/*.nc
 bueler_karthaus/*
+
