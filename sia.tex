@@ -7,7 +7,7 @@
 \begin{frame}{similarity solution to the SIA}
 
 \begin{itemize}
-\item jump forward to 1981 \dots breaking news: \quad P.~Halfar finds the fundamental solution of the SIA! \quad [Halfar, 1981; 1983]\nocite{Halfar81,Halfar83}
+\item jump forward to 1981 \dots breaking news: \quad P.~Halfar finds the fundamental solution of the SIA! \quad [Halfar, 1981; 1983]
 \item when $n=3$, Halfar's 2D solution for Glen flow law has scalings
    $$H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r$$
 \item \dots therefore, if an ice sheet starts steep and it flows without additional accumulation then its thinning \emph{really} slows down as the shape flattens out
@@ -46,7 +46,7 @@ and $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \end{itemize}
 
 \begin{center}
-\tiny  more on this in [Nye, 2000]\nocite{Nye00} and [Bueler and others, 2005]\nocite{BLKCB}
+\tiny  more on this in [Nye, 2000] and [Bueler and others, 2005]
 \end{center}
 \end{frame}
 
@@ -70,7 +70,7 @@ and $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \item write as formula for $H(t,r)$, on previous slide, by solving boxed equations above to get $\alpha=1/9$, $\beta = 1/18$
 \item margin location equation $\phi(t_0^{-\beta} R_0)=0$ gives formula for $t_0$ on previous slide
 \mode<article>{
-\item cases $n\ne 3$, isostatic bed shape, and $M\ne 0$ generalizations in [Bueler and others, 2005]\nocite{BLKCB}
+\item cases $n\ne 3$, isostatic bed shape, and $M\ne 0$ generalizations in [Bueler and others, 2005]
 }
 \end{itemize}
 \end{frame}
@@ -90,13 +90,13 @@ and $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \begin{frame}{is the Halfar solution \emph{good for any modeling}?}
 
 \begin{itemize}
-\item Nye and others [2000]\nocite{NyeIcarus2000} compared the long-time consequences of different flow laws for the South Mars Polar Cap
+\item Nye and others [2000] compared the long-time consequences of different flow laws for the South Mars Polar Cap
 \item they compared the long-time behavior of the corresponding \emph{Halfar solutions} for the different flow laws, with both $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice parameters
 \item conclusions:
   \begin{quote}
   \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
   \end{quote}
-\item in 2008, NASA's Phoenix lander found water ice in the north polar cap on Mars\footnote{\tiny P.~Smith and 35 others, 2009.  ``$\text{H}_2\text{O}$ at the Phoenix landing site,'' \emph{Science} \textbf{325}(5936), 58--61.}
+\item in 2008, NASA's Phoenix lander found water ice in the north polar cap on Mars
 \end{itemize}
 \end{frame}
 
@@ -139,7 +139,7 @@ $H$ is continuous \\ but $\grad h$ is singular
 \begin{column}{0.6\textwidth}
 \begin{itemize}
 \item for numerical stability we want $D = \Gamma H^{n+2} |\grad h|^{n-1}$ on the staggered grid
-\item various schemes proposed; stencil for Mahaffy [1976]\nocite{Mahaffy} scheme at right
+\item various schemes proposed; stencil for Mahaffy [1976] scheme at right
 \item all schemes involve
   \begin{itemize}
   \item[$\circ$] averaging $H$
@@ -187,25 +187,8 @@ to put $D$ on the staggered grid
   \begin{enumerate}
   \item  don't make any mistakes
   \item  ``eyeball'' the results when you change the code \dots if it looks right it is right
-  \item  from the beginning, build-in a comparison to an exact solution
+  \item  from the beginning, build-in a comparison to an exact solution (= verification)
   \end{enumerate}
-\item where to get exact solutions for ice flow models?
-
-\bigskip
-
-  \scriptsize
-  \begin{tabular}{|ll|}\hline
-  similarity solutions to SIA & [Halfar, 1983; Bueler and others, 2005]\nocite{Halfar83,BLKCB} \\ \hline
-  manufactured solutions to SIA; some include & [Bueler and others 2005; 2007]\nocite{BLKCB,BBL} \\
-  \qquad thermo-coupling & \\ \hline
-  SSA solutions in flow line and & [Schoof, 2006; van der Veen, 1985]\nocite{SchoofStream,vanderVeen85} \\
-  \qquad cross-flow cases & \\ \hline
-  Blatter solution in flow line & [Glowinski and Rappaz, 2003]\nocite{GlowinskiRappaz} \\ \hline
-  flow line Stokes solutions in constant & [Ladyzhenskaya, 1963]\nocite{Ladyzhenskaya}\\
-  \qquad  viscosity case \quad ($\nabla^4\psi=0$) & \\ \hline
-  manufactured solutions to Stokes & [Sargent and Fastook, 2010]\nocite{SargentFastook2010} \\
-  \qquad  equations with variable viscosity &  \\ \hline
-  \end{tabular}
 \end{itemize}
 \end{frame}
 
@@ -280,7 +263,7 @@ maximum thickness error  = 94.561
 
 \includegraphics[width=0.95\textwidth]{photos/eismintone}
 
-\scriptsize \emph{figure 2 in [Huybrechts and others, 1996]}\nocite{EISMINT96}
+\scriptsize \emph{figure 2 in [Huybrechts and others, 1996]}
 \end{column}
 \end{columns}
 \end{frame}
@@ -307,7 +290,7 @@ voldiff = 1.50000000000000e+00
 \normalsize
 \item huh?  how can it be that good?
   \begin{itemize}
-  \item[$\circ$] the Mahaffy [1976]\nocite{Mahaffy} scheme has local numerical mass conservation
+  \item[$\circ$] the Mahaffy [1976] scheme has local numerical mass conservation
   \item[$\circ$] but what about the margin where $H\to 0$?
   \item[$\circ$] \texttt{siaflat.m} implements boundary condition \quad ``$H\ge 0$''
   \item[$\circ$] apparently this boundary condition produces global numerical mass conservation to rounding error!
@@ -381,7 +364,7 @@ initial (observed) surface elevation
 \begin{itemize}
 \item I used $A = 3\times 10^{-16}\,\text{Pa}^{-3}\,\text{a}^{-1}$ 
   \begin{itemize}
-  \item[$\circ$] which is an ``enhancement factor'' of 3, \scriptsize relative to the EISMINT I [Huybrechts and others, 1996]\nocite{EISMINT96} value of $A=10^{-16}$ used earlier\small
+  \item[$\circ$] which is an ``enhancement factor'' of 3, \scriptsize relative to the EISMINT I [Huybrechts and others, 1996] value of $A=10^{-16}$ used earlier\small
   \end{itemize}
 \item an enhancement factor of 24 would make the volume level out at about the present-day value
 \item \emph{pop quiz}:  why is that not a good idea?
@@ -505,28 +488,6 @@ H_t = M - u\big|_h h_x - v\big|_h h_y + u\big|_b b_x + v\big|_b b_y - \int_b^h (
 \end{frame}
 
 
-\begin{frame}{origin of SIA}
-
-where does the ``shallow ice approximation'' come from?
-\begin{itemize}
-\item \emph{historically}: 
-  \begin{itemize}
-    \item Fowler and Larson [1978]\nocite{FowlerLarson1978}, Morland and Johnson [1980]\nocite{MorlandJohnson}, and Hutter [1983]\nocite{Hutter}
-    \item fairly recent compared to the flow law of ice (1950s) and Stokes linearly-viscous model ($\sim$1860)
-  \end{itemize}
-\item \emph{logically}:
-  \begin{itemize}
-    \item by a ``small-parameter argument''---depth-to-width ratio is small---to rescale the Stokes model
-    \item analogous to an old argument giving shallow water equations from Navier-Stokes
-  \end{itemize} 
-\item \emph{more precisely}:
-  \begin{itemize}
-    \item as sketched in the next slides, for the $x,z$ plane flow case only
-  \end{itemize}
-\end{itemize}
-\end{frame}
-
-
 \subsection{flowline Stokes}
 
 \begin{frame}{Stokes equations in $x,z$ plane flow case}
@@ -613,7 +574,7 @@ p + \tau_{11} + \tau_{13} h_x &= 0
 \label{slide:siascalings}
 
 \begin{itemize}
-\item following Chapter 18 of [Fowler, 1997]\nocite{Fowler}, \emph{Mathematical Models in the Applied Sciences}
+\item following Chapter 18 of [Fowler, 1997], \emph{Mathematical Models in the Applied Sciences}
   \begin{itemize}
     \scriptsize
     \item which does a much more general job than here: 3D case with conservation of energy, while we only do 2D isothermal case
@@ -640,7 +601,7 @@ A &= [A] A^*  & p - \rho g (h-z) &= \eps [\tau] p^*
 \begin{itemize}
 \item we will necessarily choose relations among the scales
 \item the choice of such relations affects the outcome and is subject to ``scientific judgment'' (i.e.~controversy)
-\item ``\dots the purpose is to attain `properly scaled' equations in which the largest dimensionless parameters are numerically of order one \dots'' [Fowler, 1997]\nocite{Fowler}
+\item ``\dots the purpose is to attain `properly scaled' equations in which the largest dimensionless parameters are numerically of order one \dots'' [Fowler, 1997]
 \item \emph{method}: we rewrite the Stokes equations and the boundary conditions in the newly (starred) variables, \emph{then} check that the scaling relations give reasonable values, \emph{then} remove terms to get a new, more-solvable model, the SIA
 \item the scaling relations used here are:
 \begin{align*}
@@ -837,7 +798,7 @@ $D=D(x,y)$ & $\leftrightarrow$ & $D = \Gamma H^{n+2} |\grad h|^{n-1}$ \\
 	$$\theta(x) = \left(\fint_{-\lambda}^\lambda \left(1 - \frac{\tilde b(x,\xi)}{H(x)}
                            \right)^{-(n+2)/n}\,d\xi\right)^{-1/n}$$
 \normalsize
-\item using a multiple-scales analysis, Schoof [2003]\nocite{Schoofbasaltopg2003} says you will get closer to solving the Stokes equations by making these two modifications of the SIA:
+\item using a multiple-scales analysis, Schoof [2003] says you will get closer to solving the Stokes equations by making these two modifications of the SIA:
   \begin{itemize}
   \item[$\circ$] smooth the bed, \qquad \tiny \emph{(modelers want to do that anyway)} \small
   \item[$\circ$] but don't lose track of the smoothed-away local bed roughness; use it to reduce the diffusivity:
@@ -861,4 +822,3 @@ we assume that the basal resistance term balances the driving stress:
 \item this ``outer problem'' is part of a matched asymptotic expansion that \emph{does a good job of tracking the grounding line in a marine ice sheet} [Schoof, 2007]
 \end{itemize}
 \end{frame}
-

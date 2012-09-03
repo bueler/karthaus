@@ -1,4 +1,4 @@
-% Copyright 2009--2010  Ed Bueler
+% Copyright 2009--2012  Ed Bueler
 
 \section{shelves and streams}
 
@@ -42,7 +42,7 @@ SSA also applies reasonably well to ice streams
 
 \bigskip\bigskip
 \small
-\emph{comment}:  energy conservation issues---both ice temperature and basal melt rate---are a major part of ice stream flow modeling [Raymond, 2000]\nocite{Raymondenergy}, \emph{but they are not addressed in these lectures}
+\emph{comment}:  energy conservation issues---both ice temperature and basal melt rate---are a major part of ice stream flow modeling [Raymond, 2000], \emph{but they are not addressed in these lectures}
 \end{frame}
 
 
@@ -55,7 +55,7 @@ SSA also applies reasonably well to ice streams
   \small
   \begin{itemize}
   \item[$\circ$] low bed resistance and
-  \item[$\circ$] a critical role of \emph{liquid water} at bed [Clarke, 2005]\nocite{Clarke05}
+  \item[$\circ$] a critical role of \emph{liquid water} at bed [Clarke, 2005]
   \end{itemize}
   \normalsize
 \item ``outlet glaciers'' may have the same properties, but they have substantial vertical shear and proportionally less sliding
@@ -75,7 +75,7 @@ SSA also applies reasonably well to ice streams
 Cross sections of Jakobshavns Isbrae (\textbf{a}) and
 Whillans Ice Stream (\textbf{b}).  Plotted
 without vertical exaggeration in order to better illustrate
-the difference between the two types.  (\tiny Figure 1 in [Truffer and Echelmeyer, 2003]\nocite{TrufferEchelmeyer})
+the difference between the two types.  (\tiny Figure 1 in [Truffer and Echelmeyer, 2003])
 }
 \end{column}
 \end{columns}
@@ -87,7 +87,7 @@ the difference between the two types.  (\tiny Figure 1 in [Truffer and Echelmeye
   \includegraphics[width=0.96\textwidth]{photos/flowline}
 
 \bigskip
-\tiny \emph{figure modified from} [Schoof, 2007]\nocite{SchoofMarine1}
+\tiny \emph{figure modified from} [Schoof, 2007]
 \end{center}
 \end{frame}
 
@@ -100,15 +100,9 @@ the difference between the two types.  (\tiny Figure 1 in [Truffer and Echelmeye
 \begin{empheq}[box=\fbox]{equation}
   \left({\color{blue}2 A^{-1/n} H |u_x|^{1/n - 1} u_x}\right)_x - C|u|^{m-1}u - \rho g H h_x = 0 \label{ssa}
 \end{empheq}
-  \begin{itemize}
-  \scriptsize
-  \item[$\circ$] derived originally by Morland [1987]\nocite{Morland}, MacAyeal [1989]\nocite{MacAyeal}
-  \item[$\circ$] references: Weis and others [1999]\nocite{WeisGreveHutter}, Schoof [2006; 2007]\nocite{SchoofStream,SchoofMarine1}
-  \normalsize
-  \end{itemize}
 \item the {\color{blue} blue term} inside parentheses is the vertically-integrated ``longitudinal'' or ``membrane'' stress
 
-%\item two horizontal dimension ($x$ and $y$) version of this equation is significantly harder to solve numerically (Goldberg et al. 2009\cite{Goldbergetal2009})
+%\item two horizontal dimension ($x$ and $y$) version of this equation is significantly harder to solve numerically (Goldberg et al. 2009)
 \item \emph{how to solve this equation numerically}?
 \item \emph{how to think about it}?
 \end{itemize}
@@ -141,7 +135,7 @@ here is a full flow line context:
 \end{align*}
 \small
 \begin{itemize}
-\item this is the default model in the Marine Ice Sheet Model Intercomparison Project [MISMIP; Schoof and others, 2008]\nocite{MISMIPwebpage}
+\item this is the default model in the Marine Ice Sheet Model Intercomparison Project [MISMIP; Schoof and others, 2008]
 \item \emph{effectively an open problem}:  what is best numerical treatment of grounding line movement in above model?
 \end{itemize}
 \end{frame}
@@ -155,7 +149,7 @@ here is a full flow line context:
 \begin{itemize}
 \item we need a more limited goal!
 \item \emph{first goal}:  solve the steady state ice shelf in the isothermal, plane flow, and Glen law case
-\item for this nice situation, there is a nice result: the thickness and velocity in the ice shelf can be completely determined\footnote{e.g.~[van der Veen, 1985]\nocite{vanderVeen85}} from:
+\item for this nice situation, there is a nice result: the thickness and velocity in the ice shelf can be completely determined\footnote{e.g.~[van der Veen, 1983]} from:
   \begin{enumerate}
   \item ice thickness $H_g$ at the grounding line,
   \item ice velocity $u_g$ at the grounding line,
@@ -297,7 +291,7 @@ $$\frac{W_{j+1/2} (u_{j+1} - u_j) - W_{j-1/2} (u_{j} - u_{j-1})}{\Delta x^2} - \
   \item[$\circ$] introduce notional point $x_{J+2}$
   \item[$\circ$]
     $$\frac{u_{J+2} - u_J}{2 \Delta x} = \gamma$$
-  \item[$\circ$] using equation $\ast$ in $j=J+1$ case, eliminate $u_{J+2}$ variable ``by-hand'' [Morton and Mayers, 2005]\nocite{MortonMayers}
+  \item[$\circ$] using equation $\ast$ in $j=J+1$ case, eliminate $u_{J+2}$ variable ``by-hand'' [Morton and Mayers, 2005]
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -411,15 +405,15 @@ loglog(dxkm,maxerr,'0-','markersize',16)
 \item velocity measurements are available for validation
   \begin{itemize}
   \scriptsize
-  \item[$\circ$] Ross ice shelf example based on [RIGGS; Bentley, 1974]\nocite{RIGGS1} data below: model (\alert{red} arrows) vs observations (\textbf{black} arrows)
-  \item[$\circ$] this is PISM but many models can do it [MacAyeal and others, 1996]\nocite{MacAyealetal}
+  \item[$\circ$] Ross ice shelf example based on FIXME data below: model (\alert{red} arrows) vs observations (\textbf{black} arrows)
+  \item[$\circ$] this is PISM but many models can do it [MacAyeal and others, 1996]
   \item[$\circ$] something of a mystery why regular grid methods do well!
   \small
   \end{itemize}
 \end{itemize}
 
 \begin{center}
-  \includegraphics[width=0.6\textwidth]{photos/PISM_ross_speeds}
+  \includegraphics[width=0.6\textwidth]{photos/rossquiver}
 \end{center}
 \end{frame}
 
@@ -429,7 +423,7 @@ loglog(dxkm,maxerr,'0-','markersize',16)
 \begin{frame}{numerical solution of SSA: a summary}
 
 \begin{itemize}
-\item SSA and Blatter [1995]\nocite{Blatter} stress balance equations each
+\item SSA and Blatter [1995] stress balance equations each
    \begin{itemize}
    \item[$\circ$]  determine horizontal velocity from geometry and b.c.s
    \item[$\circ$]  are nonlinear problems: require iterative linearization
@@ -485,7 +479,7 @@ loglog(dxkm,maxerr,'0-','markersize',16)
   \item[$\circ$] this iteration converges linearly, if it converges:  $\|\bu^{(k+1)} - \bu^{(k)}\| \le \gamma \|\bu^{(k)} - \bu^{(k-1)}\|$, where $0<\gamma<1$
   \item[$\circ$] it can be robust, but it is not fast
   \end{itemize}	
-\item Newton's method (e.g.~[Press and others, 1992])\nocite{Pressetal} also solves $\bbF(\bu) = 0$ iteratively, but by linearization:
+\item Newton's method (e.g.~[Press and others, 1992]) also solves $\bbF(\bu) = 0$ iteratively, but by linearization:
 \begin{gather*}
 J(\bu^{(k-1)})\,\bw = - \bbF(\bu^{(k-1)}), \\
 \bu^{(k)} = \bu^{(k-1)} + \bw
@@ -499,62 +493,4 @@ where
   \item[$\circ$] much faster!
   \end{itemize}	
 \end{itemize}
-\end{frame}
-
-
-\begin{frame}{scaling-up the numerical solution of stress balances 3}
-
-\begin{itemize}
-\item big computers still take a long time to solve SSA equations when grids are $\sim 2$ km for Greenland
-  \begin{itemize}
-  \item[$\circ$] Antarctica is $10\times$ the area, and that much worse!
-  \end{itemize}
-\item there are various numerical paradigms for discretizing (finite difference, finite element, spectral, \dots), but choosing among these is \emph{not} the major scalability issue
-\item effective scalability of 3D stress balances (e.g.~Blatter \& Stokes) at high spatial resolution, on large parallel machines \textbf{requires}:
-  \begin{itemize}
-  \item[$\circ$] the ``inner'' linear solve must be iterative--not by Gaussian elimination---and must be preconditioned
-  \item[$\circ$] the ``outer'' nonlinear iteration must offer faster-than-linear convergence
-  \item[$\circ$] because the exact Jacobian is too hard to evaluate---certainly so with coupling to other physics (e.g.~thermo-)---the method must allow approximated Jacobians
-  \end{itemize}
-\item this is the promise of ``preconditioned matrix-free Newton-Krylov'' (e.g.~[Knoll and Keyes, 2004]\nocite{KnollKeyes2004}) as a paradigm for big, nasty nonlinear problems
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}{scaling-up the numerical solution of stress balances 4}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{itemize}
-\small
-\item the PETSc [Balay and others, 2010]\nocite{petsc-user-ref} library has evolved into a Newton-Krylov toolkit \quad $\to$
-\item my online materials turn \texttt{ssaflowline.m} into a C PETSc example \texttt{ssaflowline.c}:
-  \begin{itemize}
-  \small
-  \item[$\circ$] parallel over an arbitrary number of processors
-  \item[$\circ$] uses Newton method (or Picard)
-  \item[$\circ$] try matrix-free, different preconditioners, \dots
-  \item[$\circ$] result from \texttt{ssaflowline.c} is at lower-right:
-     \begin{itemize}
-     \scriptsize
-     \item[$\ast$] evidence of super-linear convergence from Newton method
-     \item[$\ast$] on coarsest grids, $10$ or $100$ points, get rapid convergence to $10^{-13}$ of the initial residual norm
-     \end{itemize}
-  \end{itemize}
-\end{itemize}
-\end{column}
-\begin{column}{0.6\textwidth}
-\begin{center}
-\includegraphics[width=0.65\textwidth]{photos/petscwww}
-\end{center}
-
-\begin{center}
-\includegraphics[width=0.85\textwidth]{petsc/notes/quadconv}
-\end{center}
-
-\scriptsize
-
-\end{column}
-\end{columns}
-
 \end{frame}

@@ -1,4 +1,4 @@
-% Copyright 2009--2010  Ed Bueler
+% Copyright 2009--2012  Ed Bueler
 
 %\documentclass[10pt,hyperref={pdfpagelabels=false}]{beamer}
 \documentclass[10pt]{beamer}
@@ -31,14 +31,10 @@
 \usepackage{verbatim}
 \usepackage{hyperref}
 
-% we can generate a reference list if bibtex is applied to this .tex,
-%   and here's the style:
-\usepackage{natbib}
-
 
 \title[Numerical modelling]{
 Numerical modelling \\ 
-of ice sheets and ice shelves}
+of ice sheets, streams, and shelves}
 
 \author{Ed Bueler}
 
@@ -50,7 +46,7 @@ University of Alaska, Fairbanks}
 \lecture[1]{Numerical modelling of ice sheets and ice shelves}{lecture-text}
 
 
-\date{September 2010 \\ Karthaus Summer School}
+\date{September 2012 \\ Karthaus Summer School}
 
 
 % remove this when printing out:
@@ -96,9 +92,9 @@ University of Alaska, Fairbanks}
 
 \newcommand{\mname}[1]{\href{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1}{\texttt{#1}}}
 
-\newcommand{\txtinput}[1]{ \scriptsize \verbatiminput{#1} }
+\newcommand{\txtinput}[1]{ \scriptsize \verbatiminput{#1} } %a
 
-\newcommand{\txtinputtiny}[1]{ \tiny \verbatiminput{#1} }
+\newcommand{\txtinputtiny}[1]{ \tiny \verbatiminput{#1} } %a
 
 \newcommand{\mmessage}[1]{\begin{center}
 \emph{see code} \url{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1.m}
@@ -110,7 +106,7 @@ University of Alaska, Fairbanks}
 
 
 \newcommand{\minput}[1]{
-\scriptsize \verbatiminput{mfiles/#1.slim.m}
+\scriptsize \verbatiminput{mfiles/#1.slim.m} %a
 \vspace{-0.2in}
 \tiny \mmess{#1}
 \normalsize
@@ -118,7 +114,7 @@ University of Alaska, Fairbanks}
 
 
 \newcommand{\minputtiny}[1]{
-\tiny \verbatiminput{mfiles/#1.slim.m}
+\tiny \verbatiminput{mfiles/#1.slim.m} %a
 \vspace{-0.16in}
 \mmess{#1}
 \normalsize
@@ -144,19 +140,10 @@ University of Alaska, Fairbanks}
 \input{next.tex}
 
 
-\begin{comment}
-REMEMBER TO THINK ABOUT THESE THINGS:
-* SSA numerics use matrix solution: point out general sparseness and methods?  exercise related to methods?
-* attempt to use Green's function to understand diffusivity of 1D SSA?
-* why is ice sheet modeling a "1 bar subject"?
-* ED: make sure to test codes in Matlab
-* add slide for SIA: "careful with the smoothness of the bed ... because you are differentiating it"   show equation   H_t = M + \Div (D \grad H) + \Div(D \grad b)
-* Walt-style props
-   -- bicycle for plastic till analogy
-   -- membrane and grid for free boundary
-   -- silly putty
-\end{comment}
+\begin{frame}{The End}
 
+FIXME
+\end{frame}
 
 % extra slides on free-boundary problems:
 %   put these in when building refs
@@ -164,24 +151,7 @@ REMEMBER TO THINK ABOUT THESE THINGS:
 %   do not put these in when printing out
 \input{freebdry.tex}
 
-\begin{frame}{The End}
 
-\begin{center}
-\mode<presentation>{\includegraphics[width=0.7\textwidth]{photos/polarbear}}
-
-\alert{Thanks for bearing with me!}
-\end{center}
-\end{frame}
-
-% bibliography will actually not appear in slides unless bibtex is run
-%   (i.e. not normally)
-
-\newpage
-\bigskip
-
-\small
-\bibliography{ice_bib}
-\bibliographystyle{igs}
 
 
 \end{document}

@@ -1,32 +1,4 @@
-% Copyright 2009--2010  Ed Bueler
-
-\begin{frame}{notation} 
-
-\begin{center}
-  \includegraphics[width=0.8\textwidth]{photos/flowline}
-
-\vspace{-0.1in}
-\tiny \emph{figure modified from} [Schoof, 2007]\nocite{SchoofMarine1} \normalsize
-\end{center}
-
-\scriptsize
-  \begin{itemize}
-  \item coordinates $t,x,y,z$ \hfill  ($z$ is vertical, positive upward)
-  \item subscripts for partial derivatives: $u_x = \partial u/\partial x$
-  \item $h=$ ice surface elevation, \quad $b=$ bedrock elevation
-  \item $H=$ ice thickness
-  \item $T=$ ice temperature
-  \item $(u,v,w)=$ ice velocity
-  \item $\rho=$ density of ice, \quad $\rho_w=$ density of ocean water
-  \item $g=$ acceleration of gravity
-  \item $\strainrate_{ij}=$ strain rate tensor
-  \item stress tensors: $\sigma_{ij}=$ Cauchy and $\tau_{ij}=$ deviatoric
-  \item \alert{please ask about notation!} \qquad \scriptsize \dots there are no stupid questions \small
-  \end{itemize}
-
-\emph{notation here is generally consistent with  [Bueler and others, 2005]\nocite{BLKCB}, [Bueler and Brown, 2009]\nocite{BBssasliding}, [Fowler, 1997]\nocite{Fowler}, [Greve and Blatter, 2009]\nocite{GreveBlatter2009}, [Schoof, 2006; 2007]\nocite{SchoofStream,SchoofMarine1}}
-\end{frame}
-
+% Copyright 2009--2012  Ed Bueler
 
 \begin{frame}{scope}
 
@@ -303,7 +275,7 @@ u(z) &= u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' \\
 
 \medskip
 \scriptsize
-Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry.  [Savage and Paterson, 1963]\nocite{SavagePaterson}
+Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry.  [Savage and Paterson, 1963]
 \end{column}
 \end{columns}
 \end{frame}
@@ -388,7 +360,7 @@ is a model which applies reasonably well to
 \begin{center}
   \includegraphics[width=0.7\textwidth]{photos/polaris}
 
-\tiny ``Polaris Glacier,'' northwest Greenland, photo 122, [Post and LaChapelle, 2000]\nocite{PostLaChapelle}
+\tiny ``Polaris Glacier,'' northwest Greenland, photo 122, [Post and LaChapelle, 2000]
 \end{center}
 \item might apply to the above
 \end{itemize}
@@ -409,7 +381,7 @@ H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
   \item[$\circ$] recall Glen flow law: $\strainrate_{ij} = A(T) \devstress^{n-1} \devstress_{ij}$
   \item[$\circ$] $\Gamma$ is a positive constant
   \end{itemize}
-\item \begin{minipage}[t]{2.5in}\emph{numerically solve equation \eqref{sia}, and you have a usable model for ice flow in the Barnes Ice Cap} [Mahaffy, 1976]\nocite{Mahaffy}\end{minipage}
+\item \begin{minipage}[t]{2.5in}\emph{numerically solve equation \eqref{sia}, and you have a usable model for ice flow in the Barnes Ice Cap} [Mahaffy, 1976]\end{minipage}
 \, \begin{minipage}[t]{1.1in}\vspace{-10pt}\includegraphics[width=1.0in]{photos/barnes}\end{minipage}
 \item questions:
   \begin{itemize}

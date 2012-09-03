@@ -1,4 +1,4 @@
-% Copyright 2009--2010  Ed Bueler
+% Copyright 2009--2012  Ed Bueler
 
 \section{heat analogy \& numerics}
 
@@ -268,7 +268,7 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \item the 1D first-order explicit scheme in the form 
 	$$u_j^{n+1} = \nu u_{j+1}^n + (1 - 2 \nu) u_j^n + \nu u_{j-1}^n$$
 gives new value $u_j^{n+1}$ as an \emph{average} of old values,
-\item but it is only an average if the middle coefficient is positive:\footnote{recommended basic reference for finite differences, including stability: [Morton and Mayers, 2005]\nocite{MortonMayers}}
+\item but it is only an average if the middle coefficient is positive:\footnote{recommended basic reference for finite differences, including stability: [Morton and Mayers, 2005]}
 	$$1 - 2 \nu = 1 - 2 \frac{D\Delta t}{\Delta x^2} \ge 0$$
 \item true averaging is always stable because averaged wiggles are smaller than the previous wiggles
 \item ``positive coefficients'' is a \emph{sufficient} stability criterion
@@ -385,7 +385,7 @@ in stencil at right:
   \normalsize
   \end{itemize}
 \item exact solutions are exact predictions of the model, but not exact predictions about nature
-\item if we can only \emph{approximately} find solutions of a model then knowing a few exact solutions can help test and maintain the quality of the actual code that does the approximation \dots this is \emph{verification} [Wesseling, 2001]\nocite{Wesseling}
+\item if we can only \emph{approximately} find solutions of a model then knowing a few exact solutions can help test and maintain the quality of the actual code that does the approximation \dots this is \emph{verification} [Wesseling, 2001]
 \end{itemize}
 \end{frame}
 
