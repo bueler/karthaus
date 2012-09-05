@@ -5,8 +5,8 @@
 \begin{frame}{\emph{POSTSCRIPT} on free boundary value problems}
 
 \begin{itemize}
-\item ice sheet/shelf modeling means free boundary problems
-\item Hutter [1999] identifies some below
+\item ice sheet/shelf modelling means free boundary problems
+\item Hutter [1999] identifies some:
 \end{itemize}
 \begin{center}
   \includegraphics[width=0.8\textwidth]{photos/freehutter}
@@ -20,8 +20,8 @@
 \item a \emph{free boundary} for a PDE is an unknown location at which there is a boundary condition
   \begin{itemize}
   \item[$\circ$] the location of the free boundary must be found at the same time as one solves the PDE problem
-  \item[$\circ$] in addition to the information which would already be present at a fixed-location boundary, there must be enough additional information at a free boundary to determine its location
-  \item[$\circ$] all free boundary problems are nonlinear, regardless of the linearity of the PDE
+  \item[$\circ$] there must be enough additional information at a free boundary to determine its location
+  \item[$\circ$] all free boundary problems are nonlinear, even if the PDE is linear
   \end{itemize}
 \item classic \emph{example}:  consider an elastic membrane attached to a wire frame and stretched over an obstacle:
 \end{itemize}
@@ -50,14 +50,13 @@ in locations where $u>\psi$, solve:
 \begin{itemize}
 \item by volume, majority of ice sheet is \emph{cold} ($T < 0\phantom{|}^\circ\text{C}$)
 \item \dots but there is some ice which is \emph{temperate}, where $T = 0\phantom{|}^\circ\text{C}$ \emph{and} there is a positive liquid fraction within the ice matrix
-\item \dots so ice sheets are \emph{polythermal}
+\item ice sheets are \emph{polythermal}
 \item boundary between cold and temperate ice is ``CTS'' (= cold-temperate transition surface):
   \begin{itemize}
   \item[$\circ$] must be found, as free boundary, when solving conservation of energy equation (``Stefan problem'')
   \item[$\circ$] can be tracked explicitly [Greve, 1997]
   \item[$\circ$] or treated as a level surface of the enthalpy variable [Aschwanden et al, 2012]
   \end{itemize}
-%\item \emph{side note}: for temperate ice there must be some dependence of ice strength (e.g.~softness $A$ in Glen law), but only one reference we can find [Lliboutry and Duval, 1985]
 \end{itemize}
 
 \begin{center}
@@ -75,7 +74,7 @@ in locations where $u>\psi$, solve:
 \text{well-posed free boundary problem} \\ \text{for location \emph{and} velocity of sliding}
 \end{pmatrix} $$
 \item ``plastic till'' means the basal strength (resistance) is given by a yield stress $\tau_c$:  \qquad $\vec\tau_b = \tau_c \mathbf{v}_b / |\mathbf{v}_b|$
-\item Schoof's scheme is a \emph{whole ice sheet form} of MacAyeal's [1989] individual ice stream models
+\item Schoof's scheme is a \emph{whole ice sheet form} of MacAyeal's [1989] individual ice stream model
 \end{itemize}
 
 \begin{columns}
@@ -124,9 +123,8 @@ where $h>b$, solve steady SIA:
 \end{frame}
 
 
-\begin{frame}{free boundary problems: \emph{so what}?}
+\begin{frame}{free boundary problems: why do they matter?}
 \begin{itemize}
-\item why does it matter that many glaciological problems are free boundary problems in their mathematical form?
 \item the location of the free boundary may \emph{be} the glaciological question
 \item free boundaries are always locations of \emph{loss of smoothness} relative to fixed boundary solutions
      \begin{itemize}

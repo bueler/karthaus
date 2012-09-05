@@ -49,14 +49,14 @@ University of Alaska, Fairbanks}
 \date{September 2012 \\ Karthaus Summer School}
 
 
-% remove this when printing out:
-\AtBeginSection[]
-{
-  \begin{frame}<beamer>
-    \frametitle{Outline}
-    \tableofcontents[currentsection,hideallsubsections]
-  \end{frame}
-}
+% optional outline at start of each section
+%\AtBeginSection[]
+%{
+%  \begin{frame}<beamer>
+%    \frametitle{Outline}
+%    \tableofcontents[currentsection,hideallsubsections]
+%  \end{frame}
+%}
 
 
 % If you wish to uncover everything in a step-wise fashion, uncomment:
@@ -123,6 +123,8 @@ University of Alaska, Fairbanks}
 
 \begin{document}
 
+\graphicspath{{photos/}{pdffigs/}}
+
 \begin{frame}
   \maketitle
 \end{frame}
@@ -131,13 +133,11 @@ University of Alaska, Fairbanks}
 
 \input{intro.tex}
 
-\input{heatnum.tex}
-
 \input{sia.tex}
 
-\input{ssa.tex}
+\input{masscont.tex}
 
-\input{next.tex}
+\input{ssa.tex}
 
 
 \begin{frame}{The End}
@@ -145,11 +145,13 @@ University of Alaska, Fairbanks}
 FIXME
 \end{frame}
 
-% extra slides on free-boundary problems:
-%   put these in when building refs
-%   put these in for actual lecture
-%   do not put these in when printing out
-\input{freebdry.tex}
+% extra slides:
+
+\input{ps-techskills.tex}
+
+\input{ps-oversold.tex}
+
+\input{ps-freebdry.tex}
 
 
 

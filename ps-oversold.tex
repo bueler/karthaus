@@ -1,0 +1,63 @@
+% Copyright 2009--2012  Ed Bueler
+
+\begin{frame}{\textsl{POSTSCRIPT}  have I oversold diffusivity?} 
+
+\begin{itemize}
+\item I have asserted that the default model for ice sheets, the SIA, is a \emph{diffusion} like the heat equation
+\item recall the analogy:
+
+\bigskip
+\begin{tabular}{ccc}
+\emph{heat eqn} & $\leftrightarrow$ & \emph{SIA} \\ \hline
+$T_t = \Div\left(D \grad T\right)$ & $\leftrightarrow$ & $H_t = M + \Div\left(D \grad h\right)$ \\
+$D=D(x,y)$ & $\leftrightarrow$ & $D = \Gamma H^{n+2} |\grad h|^{n-1}$ \\
+\end{tabular}
+
+\bigskip
+\item have I oversold this diffusivity analogy?
+  \begin{itemize}
+  \item[$\circ$] possibly
+  \item[$\circ$] I've acknowledged there are ``issues''
+  \end{itemize}
+\item but it turns out there is some robustness to the analogy
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{have I oversold diffusivity? 2}
+
+\emph{DIFFUSIVE IDEA 1}: rough beds have the effect of \emph{reducing} diffusivity
+\begin{itemize}
+\item define the local bed topography by removing the local mean over some range $\lambda \approx 10$ km:
+\small
+   $$\tilde b(x,\xi) = b(x+\xi) - \fint_{-\lambda}^\lambda b(x+\xi)\,d\xi$$
+\normalsize
+\item define this average of the local bed:
+\small
+	$$\theta(x) = \left(\fint_{-\lambda}^\lambda \left(1 - \frac{\tilde b(x,\xi)}{H(x)}
+                           \right)^{-(n+2)/n}\,d\xi\right)^{-1/n}$$
+\normalsize
+\item using a multiple-scales analysis, Schoof [2003] says you will get closer to solving the Stokes equations by making these two modifications of the SIA:
+  \begin{itemize}
+  \item[$\circ$] smooth the bed
+  \item[$\circ$] but don't lose track of the smoothed-away local bed roughness; use it to reduce the diffusivity:
+  \small
+  		$$D_{\text{new}} = \theta D \qquad \text{where } 0 \le \theta \le 1$$
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{have I oversold diffusivity? 3}
+
+\emph{DIFFUSIVE IDEA 2}: the large-scale effect of \emph{sliding} in ice streams (\emph{addressed in next section}), is also diffusive
+\begin{itemize}
+\item suppose that, for an ice stream modeled by the SSA equation
+   $$\left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x \right)_x - C|u|^{m-1}u = \rho g H h_x$$
+we assume that the basal resistance term balances the driving stress:
+   $$- C|u|^{m-1}u = \rho g H h_x$$
+\item then the ice stream geometry evolves by a non-SIA diffusion,
+	$$H_t = M + \Div\left(D\,\grad h\right) \qquad \text{where } D = C' H^{(1/m)+1}|\grad h|^{(1/m)-1}$$
+\item this ``outer problem'' is part of a matched asymptotic expansion that \emph{does a good job of tracking the grounding line in a marine ice sheet} [Schoof, 2007]
+\end{itemize}
+\end{frame}

@@ -34,7 +34,8 @@ epsfigures :=  sshape heatscaling siascaling \
 svgfigures := coffee heatconduction Rocket_nozzle_expansion
 minputs := heat heatadapt halfar diffusion siaflat flowline \
 	convanalysis ssaflowline ssainit testshelf verifysia
-texinputs := intro.tex heatnum.tex sia.tex freebdry.tex ssa.tex next.tex
+texinputs := intro.tex sia.tex masscont.tex ssa.tex \
+             ps-techskills.tex ps-oversold.tex ps-freebdry.tex
 
 # this is just the first in the list of generated files for the animation:
 animfigures := anim/heatmelt0.png anim/halfar0.png
