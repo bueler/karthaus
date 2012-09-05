@@ -28,6 +28,9 @@ scope:
     \item verification
     \end{itemize}
   \end{itemize}
+\medskip
+
+notation: see printed notes
 \end{frame}
 
 
@@ -52,46 +55,17 @@ scope:
 \end{frame}
 
 
-\begin{frame}{notation} 
-
-\begin{center}
-  \includegraphics[width=0.9\textwidth]{flowline}
-
-\tiny \emph{figure modified from} Schoof (2007)\nocite{SchoofMarine1}
-\end{center}
-
-\scriptsize
-  \begin{itemize}
-  \item coordinates $t,x,y,z$  (with $z$ vertical, positive upward)
-  \item subscripts for partial derivatives $u_x = \partial u/\partial x$
-  \item $H=$ ice thickness
-  \item $h=$ ice surface elevation
-  \item $b=$ bedrock surface elevation
-  \item $T=$ ice temperature
-  \item $\mathbf{u}=(u,v,w)=$ ice velocity
-  \item $\rho=$ density of ice
-  \item $\rho_w=$ density of ocean water
-  \item $g=$ acceleration of gravity
-  \item $n=3$ Glen flow law exponent $=3$
-  \item $A=A(T)=$ ice softness in Glen law ($\mathbf{D}_{ij} = A(T) \tau^{n-1} \tau_{ij}$)
-  \item \alert{please ask about notation!}  (stupid questions impossible)
-  \end{itemize}
-
-%notation generally consistent with these references
-\nocite{BLKCB,BBssasliding,Fowler,GreveBlatter2009,SchoofStream,SchoofMarine1}
-\end{frame}
-
-
 \begin{frame}{Matlab/Octave codes}
 
 \begin{itemize}
-\item lectures are structured around 14 ice flow codes
-\item each is $\sim$ 1/2 page of Matlab/Octave code
+\item lectures are structured around 16 Matlab codes
+\item they also work in Octave
+\item each is 1/2 to one page
 \item \texttt{.zip} and \texttt{.tar.gz} forms available from memory stick
 \item online:
 
 \bigskip\bigskip\small
-\centerline{\fbox{\url{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/}}}
+\centerline{\fbox{\url{http://www.dms.uaf.edu/~bueler/karthaus/}}}
 \end{itemize}
 \end{frame}
 
@@ -109,10 +83,11 @@ scope:
 \end{center}
 \bigskip
 
-\item to get to my goal I will quickly recall the continuum mechanics of ice flow
 \item a ``usable'' model is \emph{understood} more than it is \emph{correct}
+\item to get to my goal I will quickly recall some continuum mechanics of ice flow
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}{ice in glaciers is a \emph{fluid}}
 
@@ -120,12 +95,12 @@ scope:
 \item we describe fluids primarily by a \emph{velocity field} $\mathbf{u}(t,x,y,z)$
 \item if ice fluid were
   \begin{itemize}
-  \item[$\circ$] faster-moving than it actually is (e.g.: gravity stronger?), and
+  \item[$\circ$] faster-moving than it actually is, and
   \item[$\circ$] linearly-viscous like liquid water
   \end{itemize}
   
   then ice flow would be a more-familiar, ``typical'' fluid
-\item in that case we would all use the Navier-Stokes equations as our flow model:
+\item we would use the Navier-Stokes equations as our flow model:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 \rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nu \nabla^2 \mathbf{u} + \rho \mathbf{g} &&\text{\emph{force balance}}
@@ -150,7 +125,7 @@ is numerical ice flow modeling a part of computational fluid dynamics?
   \item[$\circ$] density/salinity variation
   \item[$\circ$] chemistry (methane, ozone, \dots)
   \end{itemize}
-\item none of the above list is relevant to ice flow
+\item none of the above is relevant to ice flow
 \item so what could be interesting about the flow of slow, cold, stiff, laminar, inert old ice?
 
  \qquad \dots \qquad it's \emph{ice dynamics!}
@@ -167,7 +142,7 @@ is numerical ice flow modeling a part of computational fluid dynamics?
   \emph{slow}: & $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$ \\
   \emph{non-Newtonian}: & viscosity $\nu$ is not constant
   \end{tabular}
-\item ``shear-thinning'' flow: bigger strain rate means smaller viscosity
+\item ``shear-thinning'' flow: larger strain rate means smaller viscosity
 \item the standard ``full'' model is Glen-law ($n=3$) Stokes:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
@@ -209,7 +184,8 @@ u_z + w _x &= 2 A \tau^2 \tau_{13} &&\text{\emph{flow law} (off-diagonal)} \nota
 \item $\tau_{13}$ is a ``vertical'' shear stress
 \item $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are deviatoric longitudinal stresses 
 \item we have five equations in five unknowns ($u,w,p,\tau_{11},\tau_{13}$)
-\item complicated enough \dots what about in a simplified situation?
+\item complicated enough \dots
+\item what about in a simplified situation?
 \end{itemize}
 \end{frame}
 
@@ -226,11 +202,11 @@ u_z + w _x &= 2 A \tau^2 \tau_{13} &&\text{\emph{flow law} (off-diagonal)} \nota
 \begin{column}{0.5\textwidth}
 \begin{itemize}
 \item rotated coordinates:
-  $$\mathbf{g} = g \sin\theta\, \hat x - g \cos \theta \,\hat z$$
+  $$\mathbf{g} = g \sin\alpha\, \hat x - g \cos \alpha \,\hat z$$
 \item so $p_x,p_z$ equations are now:
 \begin{align}
-p_x &= \tau_{11,x} + \tau_{13,z} + \rho g \sin\theta \notag \\
-p_z &= \tau_{13,x} - \tau_{11,z} - \rho g \cos\theta \notag
+p_x &= \tau_{11,x} + \tau_{13,z} + \rho g \sin\alpha \notag \\
+p_z &= \tau_{13,x} - \tau_{11,z} - \rho g \cos\alpha \notag
 \end{align}
 \end{itemize}
 \end{column}
@@ -247,8 +223,8 @@ p_z &= \tau_{13,x} - \tau_{11,z} - \rho g \cos\theta \notag
 \small
 \begin{empheq}[box=\fbox]{align}
 w_z &= 0 &   0 &= \tau_{11} \notag \\
-\tau_{13,z} &= - \rho g \sin\theta &   u_z &= 2 A \tau^2 \tau_{13} \notag \\
-p_z &= - \rho g \cos\theta \notag
+\tau_{13,z} &= - \rho g \sin\alpha &   u_z &= 2 A \tau^2 \tau_{13} \notag \\
+p_z &= - \rho g \cos\alpha \notag
 \end{empheq}
 \normalsize
 \end{itemize}
@@ -261,12 +237,12 @@ p_z &= - \rho g \cos\theta \notag
 \item add some boundary conditions:
 	$$w(\text{base})=0, \qquad p(\text{surface})=0, \qquad u(\text{base})=u_0$$
 \item by integrating vertically, get :
-  $$w=0, \qquad p = \rho g \cos\theta (H-z), \qquad \tau_{13} = \rho g \sin\theta (H-z)$$
+  $$w=0, \qquad p = \rho g \cos\alpha (H-z), \qquad \tau_{13} = \rho g \sin\alpha (H-z)$$
 \item and from ``$u_z = 2 A \tau^2 \tau_{13}$'' get
 \vspace{-0.05in}
 \begin{align*}
-u(z) &= u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' \\
-     &= u_0 + \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)
+u(z) &= u_0 + 2 A (\rho g \sin\alpha)^3 \int_0^z (H-z')^3\,dz' \\
+     &= u_0 + \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)
 \end{align*}
 \end{itemize}
 
@@ -296,7 +272,9 @@ u(z) &= u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' \\
 
 \medskip
 \scriptsize
-Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Savage and Paterson, 1963)\nocite{SavagePaterson}
+velocity profile of the Athabasca Glacier from inclinometry
+
+\tiny (Savage and Paterson, 1963)
 \end{column}
 \end{columns}
 \end{frame}
@@ -317,7 +295,7 @@ Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Sa
 \begin{itemize}
 \item consider change of area (ice volume in 3D) in the figure:
 	$$\frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2$$
-\item but, assuming width $dx=x_2-x_2$ is small, $A\approx dx\, H$; divide by $dx$ and get
+\item but, assuming width $dx=x_2-x_1$ is small, $A\approx dx\, H$; divide by $dx$ and get
    $$H_t = M - \left(\bar u H\right)_x$$
 \item this is a \emph{mass continuity equation}
 \item I'll return to this topic \dots
@@ -334,15 +312,17 @@ Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Sa
 
 \small
 \begin{itemize}
-\item from slab-on-slope velocity formula in $u_0=0$ case (``non-sliding SIA''),
+\item consider only $u_0=0$ case for now (``non-sliding SIA'')
+\item from slab-on-slope velocity formula
 \begin{align*}
-\bar u H &= \int_0^H \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)\,dz \\
-	&= \frac{1}{2} A (\rho g \sin\theta)^3  \left(\frac{4}{5} H^5\right) \\
-	&= \frac{2}{5} A (\rho g \sin\theta)^3 H^5
+\bar u H &= \int_0^H \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)\,dz \\
+	&= \frac{1}{2} A (\rho g \sin\alpha)^3  \left(\frac{4}{5} H^5\right) \\
+	&= \frac{2}{5} A (\rho g \sin\alpha)^3 H^5
 \end{align*}
-\item note $\sin \theta \approx \tan\theta = - h_x$
+\item note $\sin \alpha \approx \tan\alpha = - h_x$
 \item combine with mass continuity $H_t = M - \left(\bar u H\right)_x$:
   $$H_t = M + \left(\frac{2}{5} (\rho g)^5 A H^5 |h_x|^2 h_x\right)_x.$$
+\item this is SIA evolution equation for ice thickness
 \item I'll return to this topic \dots
 \end{itemize}
 \end{frame}
