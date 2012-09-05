@@ -20,23 +20,24 @@
 \begin{itemize}
 \item below in \alert{red} is a no-vertical-exaggeration cross section of Greenland at $71^\circ$
 \small
-\item green and blue: standard vertically-exaggerated cross section
-\item you can scale Stokes equation using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension, \dots (Fowler, 1997)\nocite{Fowler}
+  \begin{itemize}
+  \item[$\circ$] green and blue: standard vertically-exaggerated cross section
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{green_transect}
+  \end{center}
+\item you can scale Stokes equation using smallness of $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension, \dots
 \end{itemize}
-
-\begin{center}
-  \includegraphics[width=0.6\textwidth]{green_transect}
-\end{center}
 \end{frame}
 
 
 \subsection{shallow ice approx (SIA)}
 
-\begin{frame}{flow model I: non-sliding, isothermal shallow ice approximation = (SIA)}
+\begin{frame}{non-sliding, isothermal shallow ice approximation = (SIA)}
 
 a model which applies to
 \begin{itemize}
-\item small depth-to-width ratio (``shallow'') grounded ice sheets
+\item shallow grounded ice sheets
 \item on not-too-rough bed topography,
 \item whose flow is not dominated by sliding and/or liquid water at the base or margin
 \end{itemize}
@@ -53,22 +54,22 @@ a model which applies to
 \begin{frame}{SIA model equations}
 
 \begin{itemize}
-\item \small though the best explanation of the SIA is to use shallowness to simplify the Stokes equations, here we take the simple slogan:\normalsize
+\item \small here ``derive'' the SIA by the simple slogan:\normalsize
 
 \begin{center}
 \emph{the SIA uses the formulas from slab-on-a-slope}
 \end{center}
 \item shear stress approximation:
 	$$(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$$
-\item let $\mathbf{u} = (u,v)$, the horizontal velocity
+\item let $\mathbf{U} = (u,v)$, the horizontal velocity
 \item we further approximate
 \begin{align*}
-\mathbf{u}_z &\approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) \\
+\mathbf{U}_z &\approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) \\
      &= - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h
 \end{align*}
 \item by integrating vertically, in the non-sliding case,
-    $$\mathbf{u} = - \frac{2 A (\rho g)^n}{n+1} \left[H^{n+1} - (h-z)^{n+1}\right] |\nabla h|^{n-1} \nabla h$$
-\item but mass continuity remains, $H_t = M - \left(\overline{\mathbf{u}} H\right)_x$
+    $$\mathbf{U} = - \frac{2 A (\rho g)^n}{n+1} \left[H^{n+1} - (h-z)^{n+1}\right] |\nabla h|^{n-1} \nabla h$$
+\item but mass continuity remains, $H_t = M - \left(\overline{\mathbf{U}} H\right)_x$
 \end{itemize}
 \end{frame}
 
