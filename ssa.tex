@@ -11,11 +11,6 @@ SSA model applies very well to \alert{ice shelves}
 \item \dots for parts away from grounding lines
 \item \dots and away from calving fronts
 \end{itemize}
-
-%\begin{center}
-%  \includegraphics[width=0.7\textwidth]{ice_shelf_edge_hg}
-%\tiny edge of Ekstr\"om ice shelf, photo Hans Grobe
-%\end{center}
 \end{frame}
 
 
@@ -24,7 +19,7 @@ SSA model applies very well to \alert{ice shelves}
 SSA also applies reasonably well to \alert{ice streams}
 \begin{itemize}
 \item \dots with modest bed topography
-\item \dots and weak bed strength\footnote{energy conservation (= ice temperature and basal melt) is a major aspect of ice stream flow (Raymond, 2000)\nocite{Raymondenergy}, but not addressed here}
+\item \dots and weak bed strength\footnote{energy conservation (= ice temperature and basal melt) is a major aspect of ice stream flow, but not addressed here}
 \item imperfect near shear margins and grounding lines
 \end{itemize}
 
@@ -46,7 +41,7 @@ SSA also applies reasonably well to \alert{ice streams}
   \begin{itemize}
   \item[$\circ$] slide ($100$ to $1000 \,\text{m}\,\text{a}^{-1}$)
   \item[$\circ$] concentration of vertical shear in a thin layer near base
-  \item[$\circ$] \emph{liquid water} at bed plays a critical role (Clarke, 2005)\nocite{Clarke05}
+  \item[$\circ$] \emph{liquid water} at bed plays a critical role 
   \end{itemize}
   \normalsize
 \item ``outlet glaciers''
@@ -68,7 +63,7 @@ SSA also applies reasonably well to \alert{ice streams}
 \scriptsize 
 Cross sections of Jakobshavns Isbrae (\textbf{a}) and
 Whillans Ice Stream (\textbf{b}).  Plotted
-without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003), \emph{Of isbrae and ice streams}\scriptsize \nocite{TrufferEchelmeyer})
+without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003), \emph{Of isbrae and ice streams}\scriptsize)
 \end{column}
 \end{columns}
 \end{frame}
@@ -85,7 +80,7 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
 \item the {\color{red} red term} inside parentheses is the vertically-integrated ``longitudinal'' or ``membrane'' stress
 \item the {\color{blue} blue term} is basal resistance
 \item the {\color{green} green term} is  driving stress
-\item derived originally by Morland (1987)\nocite{Morland}, MacAyeal (1989)\nocite{MacAyeal}
+\item derived originally by Morland (1987), MacAyeal (1989)
 \item \emph{how to think about this equation}?
 \item \emph{how do you solve it numerically}?
 \end{itemize}
@@ -142,7 +137,7 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
 
 \begin{itemize}
 \item limited goal here: describe a steady state, 1D ice shelf
-\item there is this nice \alert{by-hand} result (next slide): the thickness and velocity in the ice shelf can be completely determined \nocite{MacAyealBarcilon,vanderVeen85} in terms of the 
+\item there is this nice \alert{by-hand} result (next slide): the thickness and velocity in the ice shelf can be completely determined in terms of the 
   \begin{enumerate}
   \item ice thickness $H_g$ at the grounding line and
   \item ice velocity $u_g$ at the grounding line
@@ -245,7 +240,7 @@ $$\frac{W_{j+1/2} (u_{j+1} - u_j) - W_{j-1/2} (u_{j} - u_{j-1})}{\Delta x^2} - \
   \item[$\circ$] introduce notional point $x_{J+2}$
   \item[$\circ$]
     $$\frac{u_{J+2} - u_J}{2 \Delta x} = \gamma$$
-  \item[$\circ$] using equation $\ast$ in $j=J+1$ case, eliminate $u_{J+2}$ variable ``by-hand'' before coding numerics \nocite{MortonMayers}
+  \item[$\circ$] using equation $\ast$ in $j=J+1$ case, eliminate $u_{J+2}$ variable ``by-hand'' before coding numerics
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -344,7 +339,7 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
   \includegraphics[width=0.5\textwidth]{marineice}
   
   \medskip
-  \tiny from Grosfeld \& Thyssen 1994 \nocite{GrosfeldThyssen1994}
+  \tiny from Grosfeld \& Thyssen 1994
 \end{center}
 \end{frame}
 
@@ -356,7 +351,7 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
 \item observed surface velocities should validate stress balance models
   \begin{itemize}
   \item[$\circ$] Ross ice shelf example below using PISM
-  \item[$\circ$] \dots but many models can do this (MacAyeal et al 1996\nocite{MacAyealetal})
+  \item[$\circ$] \dots but many models can do this
   \end{itemize}
 \end{itemize}
 
@@ -403,7 +398,7 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
 
 \begin{itemize}
 \item so how about ``gluing together'' SIA and SSA?
-\item there are multiple schemes for hybridization (Pollard and deConto, 2007\nocite{PollardDeConto}; Bueler and Brown, 2009\nocite{BBssasliding}; Goldberg 2011\nocite{Goldberg2011})
+\item there are multiple schemes for hybridization (Pollard and deConto, 2007; Bueler and Brown, 2009; Goldberg 2011)
 \item shallow hybrids can be used \emph{now} at high spatial resolution and paleoglacial time scales
 \item for example, we can compare observed (left) and 1km grid modeled (middle and right; model=PISM) surface velocity maps for the Greenland ice sheet
 \end{itemize}

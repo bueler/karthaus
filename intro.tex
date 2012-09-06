@@ -93,13 +93,13 @@ notation: see printed notes
 
 \begin{itemize}
 \item we describe fluids primarily by a \emph{velocity field} $\mathbf{u}(t,x,y,z)$
-\item if ice fluid were
+\item if the ice fluid were
   \begin{itemize}
   \item[$\circ$] faster-moving than it actually is, and
   \item[$\circ$] linearly-viscous like liquid water
   \end{itemize}
   
-  then ice flow would be a more-familiar, ``typical'' fluid
+  then ice flow would be a ``typical'' fluid
 \item we would use the Navier-Stokes equations as our flow model:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
@@ -142,17 +142,15 @@ is numerical ice flow modeling a part of computational fluid dynamics?
   \emph{slow}: & $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$ \\
   \emph{non-Newtonian}: & viscosity $\nu$ is not constant
   \end{tabular}
-\item ``shear-thinning'' flow: larger strain rate means smaller viscosity
+\item regarding ``slow'':
+  $$\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0 \qquad \iff \qquad \begin{pmatrix} \text{forces of inertia} \\ \text{are negligible} \end{pmatrix}$$
+\item regarding ``non-Newtonian'' flow:  in particular it is ``shear-thinning'', so larger strain rate means smaller viscosity
 \item the standard ``full'' model is Glen-law ($n=3$) Stokes:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance}} \\
-\mathbf{D}_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{flow law}}
+\mathbf{D}u_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{flow law}}
 \end{align*}
-\item these equations above are true at every instant, and
-  \begin{quote}
-  \emph{geometry, boundary stress, and ice viscosity determine velocity instantaneously}
-  \end{quote}
 \end{itemize}
 \end{frame}
 
@@ -160,11 +158,11 @@ is numerical ice flow modeling a part of computational fluid dynamics?
 \begin{frame}{ice is a slow fluid 2}
 
 \begin{itemize}
-\item ``slow'':
-  $$\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0 \qquad \iff \qquad \begin{pmatrix} \text{forces of inertia} \\ \text{are negligible} \end{pmatrix}$$
-\item a time-stepping ice sheet code recomputes the full velocity field at every time step, without requiring velocity from the previous step\footnote{to be a weatherman you've got to know which way the wind blows \dots but don't expect that from a glaciologist}
-\item thus no memory of previous momentum/velocity, so
-  \begin{quote}\emph{velocity is a ``diagnostic'' output of an ice flow model}\end{quote}
+\item equations on previous slide are true at every instant, and
+  \begin{quote}
+  \emph{geometry, boundary stress, and ice viscosity determine velocity instantaneously}
+  \end{quote}\item a time-stepping ice sheet code recomputes the full velocity field at every time step, without requiring velocity from the previous step\footnote{to be a weatherman you've got to know which way the wind blows \dots but don't expect that from a glaciologist}
+\item thus no memory of previous momentum/velocity, so velocity is a ``diagnostic'' output of an ice flow model
 \end{itemize}
 \end{frame}
 

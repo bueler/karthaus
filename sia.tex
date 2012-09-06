@@ -45,16 +45,16 @@ a model which applies to
 \begin{center}
   \includegraphics[width=0.65\textwidth]{polaris}
 
-\tiny ``Polaris Glacier,'' northwest Greenland, photo 122, Post \& LaChapelle (2000)\nocite{PostLaChapelle}
+\tiny ``Polaris Glacier,'' northwest Greenland, photo 122, Post \& LaChapelle (2000)
 \end{center}
 
 \end{frame}
 
 
-\begin{frame}{SIA model equations}
+\begin{frame}{SIA velocity equation}
 
 \begin{itemize}
-\item \small here ``derive'' the SIA by the simple slogan:\normalsize
+\item \small here we ``derive'' the SIA by the simple slogan:\normalsize
 
 \begin{center}
 \emph{the SIA uses the formulas from slab-on-a-slope}
@@ -77,9 +77,10 @@ a model which applies to
 \begin{frame}{SIA thickness equation}
 
 \begin{itemize}
-\item from last slide, we get the non-sliding, isothermal shallow ice approximation for how thickness changes:
-\begin{empheq}[box=\fbox]{equation}
-H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
+\item combine last two equations on last slide
+\item get the non-sliding, isothermal shallow ice approximation for thickness changes:
+\begin{empheq}[box=\fbox]{equation*}
+H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right)
 \end{empheq}
 
 \vspace{-2mm}
@@ -91,81 +92,100 @@ H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
   \item[$\circ$] $n$ is the exponent in the Glen flow law
   \item[$\circ$] $\Gamma = 2 A (\rho g)^n / (n+2)$ is a positive constant
   \end{itemize}
-\item numerically solve just equation (1), and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976)\nocite{Mahaffy}
 \end{itemize}
+\end{frame}
+
+
+\begin{frame}{SIA thickness equation 2}
+
+\begin{itemize}
+\item numerically solve this equation
+\begin{empheq}[box=\fbox]{equation}
+H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
+\end{empheq}
+and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976)
+\end{itemize} 
 \medskip
 
+\begin{columns}
+\begin{column}{0.5\textwidth}
 \noindent good questions:
 \begin{enumerate}
 \item where does equation (1) come from?
 \item how to solve it numerically?
 \item how to \emph{think} about it?
 \end{enumerate}  
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{barnes}
+\end{center}
+\end{column}
+\end{columns}
 \end{frame}
 
 
 \subsection{analogy w heat equation}
 
 \begin{frame}{heat equation}
-\label{slide:heatcompare}
 
 \small
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-\item for understanding SIA, recall heat equation
-\item recall Newton's law of cooling
-	$$\frac{dT}{dt} = -K (T-T_{\text{ambient}})$$
-where $T$ is object temperature and $K$ relates to material and geometry of object (e.g.~cup of coffee)
-\item Newton's law for segments of a rod:
+\item for understanding the SIA, recall the heat equation describing conduction
+\item here's one quick way to derive it \dots
+\item Newton's law of cooling for each segments of the rod:
 \begin{align*}
-\frac{dT_j}{dt} &= -K \left(T_j - \frac{1}{2} (T_{j-1} + T_{j+1}) \right) \\
-	&= \frac{K}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right) 
+\frac{dT_j}{dt} &= - C \left(T_j - \frac{1}{2} (T_{j-1} + T_{j+1}) \right) \\
+	&= \frac{C}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right) 
 \end{align*}
-\item this has limit as segments shrink:
+\item the limit as segments shrink $\Delta x\to 0$:
 	$$T_t = D T_{xx}$$
-\item compare: finite difference approximations to derivatives
+\item $D=$ diffusivity, with units $\text{m}^2\,\text{s}^{-1}$
 \end{itemize}
 \end{column}
 
 \begin{column}{0.4\textwidth}
 \hfill
-\includegraphics[width=0.5\textwidth]{coffee}
-\vspace{1.0in}
+%\includegraphics[width=0.5\textwidth]{coffee}
+\vspace{0.3in}
 \includegraphics[width=1.0\textwidth]{heatconduction}
 \end{column}
 \end{columns}
 \end{frame}
 
 
-\begin{frame}{more complete and 2D version of heat equation}
+\begin{frame}{more complete heat equation}
 
 \small
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-\item $u(t,x,y)$ is temperature in object at position $x,y$ and time $t$
-\item Fourier rewrote Newton's law as a rule for heat flux: $\mathbf{q} = - k \grad u$
+\item $T(t,x,y)$ is temperature in a 2D object at position $x,y$ and time $t$
+\item Fourier rewrote Newton's law as a rule for heat flux: $\mathbf{q} = - k \grad T$
 \item allow an additional heat source $f$
 \item coefficients: $\rho$ is density, $c$ is specific heat, $k$ is conductivity
-\item by conservation of energy get heat equation:
-	$$\rho c u_t = f + \Div (k \grad u)$$
+  \begin{itemize}
+  \item[$\circ$] let's assume $\rho$, $c$ are constant
+  \end{itemize}
+\item by conservation of energy:
+	$$\rho c T_t = f + \Div (k \grad T)$$
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
-\mode<presentation>{
 \animategraphics[autoplay,loop,height=2.5cm]{4}{anim/heatmelt}{0}{16}
-}
 \end{column}
 \end{columns}
 
 \begin{itemize}
-\item define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F := f/(\rho c)$
-\item for 2D object (e.g.~a plate):
+\item define the diffusivity $D=k/(\rho c)$ and also $F := f/(\rho c)$
+\item for 2D object (e.g.~a plate), the heat equation:
 \begin{equation}
-u_t = F + \Div (D\, \grad u) \label{heat}
+T_t = F + \Div (D\, \grad T) \label{heat}
 \end{equation}
-\item this is like the SIA model for ice sheets: temperature $u$ solves a \emph{diffusive, time-evolving partial differential equation (PDE)}
+\item the temperature $T$ solves a \emph{diffusive, time-evolving partial differential equation (PDE)} \dots just like thickness $H$ in SIA
 \end{itemize}
 \end{frame}
 
@@ -176,8 +196,8 @@ u_t = F + \Div (D\, \grad u) \label{heat}
 \item side-by-side comparison:
 \begin{center}
 \begin{tabular}{cc}
-\scriptsize SIA:\, $H(t,x,y)$ is ice thickness & \scriptsize heat: $u(t,x,y)$ is temperature \normalsize \\
-	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{u_t = F + \Div (D\, \grad u)}
+\scriptsize SIA:\, $H(t,x,y)$ is ice thickness & \scriptsize heat: $T(t,x,y)$ is temperature \normalsize \\
+	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
 \end{tabular}
 \end{center}
 
@@ -247,7 +267,7 @@ and so on
 \small
 	$$\frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} = D\,\frac{u(t,x+\Delta x) - 2 u(t,x) + u(t,x-\Delta x)}{\Delta x^2}$$
 \normalsize
-\item the difference between the equation $u_t = D u_{xx}$ and the scheme is $O(\Delta t,\Delta x^2)$ (Morton and Mayers, 2005)\nocite{MortonMayers}
+\item the difference between the equation $u_t = D u_{xx}$ and the scheme is $O(\Delta t,\Delta x^2)$
 \item notation: $(t_n,x_j)$ and $u_j^n \approx u(t_n,x_j)$
 \item let $\nu = D \Delta t / (\Delta x)^2$, so
 \small
@@ -533,7 +553,7 @@ in stencil at right:
 
 \begin{itemize}
 \item jump forward to 1981
-\item P.~Halfar found the similarity solution of the SIA in the case of flat bed and no surface mass balance \nocite{Halfar81,Halfar83}
+\item P.~Halfar found the similarity solution of the SIA in the case of flat bed and no surface mass balance
 \item Halfar's 2D solution for Glen flow law with $n=3$ has scalings
    $$H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r$$
 \item \dots so the diffusion of ice really slows down as the shape flattens out!
@@ -569,7 +589,7 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \begin{frame}{is the Halfar solution \emph{good for any modeling}?}
 
 \begin{itemize}
-\item John Nye and others (2000)\nocite{NyeIcarus2000} compared the long-time consequences of different flow laws for the South Mars Polar Cap
+\item John Nye and others (2000) compared the long-time consequences of different flow laws for the South Mars Polar Cap
 \item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters
 \item \dots by comparing the long-time behavior of the corresponding Halfar solutions
 \item conclusions:
@@ -613,7 +633,7 @@ $H$ is continuous \\ but $\grad h$ is singular
 
 \begin{itemize}
 \item for numerical stability we compute $D = \Gamma H^{n+2} |\grad h|^{n-1}$ on the staggered grid
-\item various schemes proposed \small (Mahaffy, 1976\nocite{Mahaffy}; van der Veen 1999\nocite{vanderVeen}; Hindmarsh and Payne 1996\nocite{HindmarshPayne})
+\item various schemes proposed
 \item all schemes involve
   \begin{itemize}
   \item[$\circ$] averaging $H$
@@ -655,13 +675,13 @@ to get the diffusivity on staggered grid
   \end{itemize}
 \item where to get exact solutions for ice flow models?
   \begin{itemize}
-  \item[$\circ$] textbook: Greve and Blatter (2009)\nocite{GreveBlatter2009}
-  \item[$\circ$] similarity solutions to SIA (Halfar 1983\nocite{Halfar83}; Bueler et al 2005\nocite{BLKCB})
-  \item[$\circ$] manufactured solutions to thermo-coupled SIA (Bueler et al 2007\nocite{BBL})
-  \item[$\circ$] flowline and cross-flow SSA solutions (van der Veen, 1985; Schoof, 2006)\nocite{SchoofStream,vanderVeen85}
-  \item[$\circ$] flowline Blatter solutions (Glowinski and Rappaz 2003)\nocite{GlowinskiRappaz}
-  \item[$\circ$] flowline Stokes solutions for constant viscosity (Ladyzhenskaya 1963\nocite{Ladyzhenskaya}, Balise and Raymond 1985\nocite{BaliseRaymond1985})
-  \item[$\circ$] manufactured solutions to the Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011)\nocite{JouvetRappaz2011,SargentFastook2010}
+  \item[$\circ$] textbook: Greve and Blatter (2009)
+  \item[$\circ$] similarity solutions to SIA (Halfar 1983; Bueler et al 2005)
+  \item[$\circ$] manufactured solutions to thermo-coupled SIA (Bueler et al 2007)
+  \item[$\circ$] flowline and cross-flow SSA solutions (van der Veen, 1985; Schoof, 2006)
+  \item[$\circ$] flowline Blatter solutions (Glowinski and Rappaz 2003)
+  \item[$\circ$] flowline Stokes solutions for constant viscosity (Ladyzhenskaya 1963; Balise and Raymond 1985)
+  \item[$\circ$] manufactured solutions to the Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011)
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -705,7 +725,7 @@ maximum abs error            = 109.466
 
 \includegraphics[width=1.0\textwidth]{eismintone}
 
-\scriptsize \emph{figure 2 in Huybrechts et al.~(1996)}\nocite{EISMINT96}
+\scriptsize \emph{figure 2 in Huybrechts et al.~(1996)}
 \end{column}
 \end{columns}
 \end{frame}
@@ -765,7 +785,7 @@ where does the ``shallow ice approximation'' come from?:
 \bigskip
 
 \begin{itemize}
-\item historically, Fowler and Larson (1978)\nocite{FowlerLarson1978}, Morland and Johnson (1980)\nocite{MorlandJohnson}, and Hutter (1983)\nocite{Hutter} \dots thus recent
+\item historically, Fowler and Larson (1978), Morland and Johnson (1980), and Hutter (1983) \dots thus recent
 \item logically, by a ``small-parameter argument'', based on a small depth-to-width ratio, from the more complete Stokes model for slow ice flow
 \item more precisely, by using the small aspect ratio \, $\eps = [H]/[L]$ \, of ice sheets to scale the Stokes model to see which terms make small contributions
 \end{itemize}
