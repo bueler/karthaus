@@ -96,18 +96,24 @@ University of Alaska, Fairbanks}
 
 \newcommand{\txtinputtiny}[1]{ \tiny \verbatiminput{#1} } %a
 
+%\newcommand{\mmessage}[1]{\begin{center}
+%\emph{see code} \url{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1.m}
+%\end{center}}
 \newcommand{\mmessage}[1]{\begin{center}
-\emph{see code} \url{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1.m}
+\emph{see code} \texttt{#1.m}
 \end{center}}
 
+%\newcommand{\mmess}[1]{\vspace{-0.1in}\begin{center}
+%\fbox{\url{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1.m}}
+%\end{center}}
 \newcommand{\mmess}[1]{\vspace{-0.1in}\begin{center}
-\fbox{\url{http://www.dms.uaf.edu/~bueler/karthaus/mfiles/#1.m}}
+\fbox{\texttt{#1.m}}
 \end{center}}
 
 
 \newcommand{\minput}[1]{
 \scriptsize \verbatiminput{mfiles/#1.slim.m} %a
-\vspace{-0.2in}
+%\vspace{-0.2in}
 \tiny \mmess{#1}
 \normalsize
 }
@@ -115,7 +121,7 @@ University of Alaska, Fairbanks}
 
 \newcommand{\minputtiny}[1]{
 \tiny \verbatiminput{mfiles/#1.slim.m} %a
-\vspace{-0.16in}
+%\vspace{-0.16in}
 \mmess{#1}
 \normalsize
 }

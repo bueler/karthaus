@@ -136,7 +136,7 @@ and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976
 \begin{itemize}
 \item for understanding the SIA, recall the heat equation describing conduction
 \item here's one quick way to derive it \dots
-\item Newton's law of cooling for each segments of the rod:
+\item Newton's law of cooling for each segment of the rod:
 \begin{align*}
 \frac{dT_j}{dt} &= - C \left(T_j - \frac{1}{2} (T_{j-1} + T_{j+1}) \right) \\
 	&= \frac{C}{2} \left(T_{j-1} - 2 T_j + T_{j+1}\right) 
@@ -144,6 +144,9 @@ and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976
 \item the limit as segments shrink $\Delta x\to 0$:
 	$$T_t = D T_{xx}$$
 \item $D=$ diffusivity, with units $\text{m}^2\,\text{s}^{-1}$
+\item $T_{xx}>0 \implies T(t)$ decreases
+\item $T_{xx}<0 \implies T(t)$ increases
+\item so $T(x)$ becomes smoother with time
 \end{itemize}
 \end{column}
 
@@ -217,21 +220,24 @@ T_t = F + \Div (D\, \grad T) \label{heat}
 
 \subsection{finite difference numerics}
 
-\begin{frame}{numerics for heat equation: basic ideas of finite differences}
+\begin{frame}{basic ideas of finite differences}
 
 \begin{itemize}
 \item numerical schemes for heat equation are good start for SIA
-\item for differentiable $f(x)$ and any $h$, \emph{Taylor's theorem} says
-	$$f(x+h) = f(x) + f'(x) h + \frac{1}{2} f''(x) h^2 + \frac{1}{3!} f'''(x) h^3 + \dots$$
+\item for differentiable $f(x)$ and any $\Delta$, \emph{Taylor's theorem} says
+	$$f(x+\Delta) = f(x) + f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 + \frac{1}{3!} f'''(x) \Delta^3 + \dots$$
 \normalsize
-\item you can replace ``$h$'' by multiples of $\Delta x$, e.g.:
+\item you can replace ``$\Delta$'' by its multiples, e.g.:
 \small
 \begin{align*}
-f(x-\Delta x) &= f(x) - f'(x) \Delta x + \frac{1}{2} f''(x) \Delta x^2 - \frac{1}{3!} f'''(x) \Delta x^3 + \dots \\
-f(x+2\Delta x) &= f(x) + 2 f'(x) \Delta x + 2 f''(x) \Delta x^2 + \frac{4}{3} f'''(x) \Delta x^3 + \dots
+f(x-\Delta) &= f(x) - f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 - \frac{1}{3!} f'''(x) \Delta^3 + \dots \\
+f(x+2\Delta) &= f(x) + 2 f'(x) \Delta + 2 f''(x) \Delta^2 + \frac{4}{3} f'''(x) \Delta^3 + \dots
 \end{align*}
 \normalsize
-\item \emph{combine expressions like these to give approximations of derivatives, from values on a grid}
+\item basic finite difference idea:
+\begin{quote}
+\emph{combine expressions like these to give approximations of derivatives from values of $f(x)$ on a grid}
+\end{quote}
 \end{itemize}
 \end{frame}
 
@@ -239,21 +245,20 @@ f(x+2\Delta x) &= f(x) + 2 f'(x) \Delta x + 2 f''(x) \Delta x^2 + \frac{4}{3} f'
 \begin{frame}{finite differences for partial derivatives}
 
 \begin{itemize}
-\item we want partial derivative expressions, for example with $u=u(t,x)$:
+\item we want partial derivative expressions, for example with some function $u=u(t,x)$:
 \small
 \begin{align*}
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} + O(\Delta t), \\
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t-\Delta t,x)}{2\Delta t} + O(\Delta t^2), \\
-u_x(t,x) &= \frac{u(t,x+\Delta x) - u(t,x-\Delta x)}{2\Delta x} + O(\Delta x^2), \\
+u_x(t,x) &= \frac{u(t,x+\Delta x) - u(t,x)}{\Delta x} + O(\Delta x), \\
 u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2 u(t,x) + u(t,x-\Delta x)}{\Delta x^2} + O(\Delta x^2)
 \end{align*}
 \normalsize
-and so on
 \item sometimes we want a derivative in-between grid points:
 \small
 	$$u_x(t,x+(\Delta x/2)) = \frac{u(t,x+\Delta x) - u(t,x)}{\Delta x} + O(\Delta x^2)$$
 \normalsize
-\item ``$+O(h^2)$'' is better than ``$+O(h)$'' if $h$ is a small number
+\item ``$+O(\Delta^2)$'' is better than ``$+O(\Delta)$'' if $\Delta$ is a small number
 \end{itemize}
 \end{frame}
 
@@ -262,16 +267,16 @@ and so on
 \label{slide:explicit}
 
 \begin{itemize}
-\item consider 1D heat equation $u_t = D u_{xx}$
+\item recall 1D heat equation $T_t = D T_{xx}$
 \item an \emph{explicit} scheme:
 \small
-	$$\frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} = D\,\frac{u(t,x+\Delta x) - 2 u(t,x) + u(t,x-\Delta x)}{\Delta x^2}$$
+	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} = D\,\frac{T(t,x+\Delta x) - 2 T(t,x) + T(t,x-\Delta x)}{\Delta x^2}$$
 \normalsize
-\item the difference between the equation $u_t = D u_{xx}$ and the scheme is $O(\Delta t,\Delta x^2)$
-\item notation: $(t_n,x_j)$ and $u_j^n \approx u(t_n,x_j)$
-\item let $\nu = D \Delta t / (\Delta x)^2$, so
+\item the difference between the equation $T_t = D T_{xx}$ and the scheme is $O(\Delta t,\Delta x^2)$
+\item notation: $(t_n,x_j)$ and $T_j^n \approx T(t_n,x_j)$
+\item let $\mu = D \Delta t / (\Delta x)^2$, so
 \small
-	$$u_j^{n+1} = \nu u_{j+1}^n + (1 - 2 \nu) u_j^n + \nu u_{j-1}^n$$
+	$$T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$$
 \normalsize
 \end{itemize}
 \begin{columns}
@@ -281,7 +286,7 @@ and so on
 \end{itemize}
 \end{column}
 \begin{column}{0.45\textwidth}
-\includegraphics[width=0.85\textwidth]{expstencil}
+\includegraphics[width=0.7\textwidth]{expstencil}
 \end{column}
 \end{columns}
 \end{frame}
@@ -290,16 +295,16 @@ and so on
 \begin{frame}{explicit scheme in two space dimensions}
 
 \begin{itemize}
-\item recall heat equation in 2D: $u_t = D(u_{xx} + u_{yy})$
-\item in two spatial variables we write $u_{jk}^n \approx u(t_n,x_j,y_k)$
+\item recall heat equation in 2D: $T_t = D(T_{xx} + T_{yy})$
+\item in two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$
 \item so the 2D explicit scheme is
 \small
-	$$\frac{u_{jk}^{n+1} - u_{jk}^n}{\Delta t} = D\,\left(\frac{u_{j+1,k}^n - 2 u_{jk}^n + u_{j-1,k}^n}{\Delta x^2} + \frac{u_{j,k+1}^n - 2 u_{jk}^n + u_{j,k-1}^n}{\Delta y^2}\right)$$
+	$$\frac{T_{jk}^{n+1} - T_{jk}^n}{\Delta t} = D\,\left(\frac{T_{j+1,k}^n - 2 T_{jk}^n + T_{j-1,k}^n}{\Delta x^2} + \frac{T_{j,k+1}^n - 2 T_{jk}^n + T_{j,k-1}^n}{\Delta y^2}\right)$$
 \end{itemize}
 
 \bigskip
 \begin{center}
-\includegraphics[width=0.45\textwidth]{exp2dstencil}
+\includegraphics[width=0.35\textwidth]{exp2dstencil}
 \end{center}
 \end{frame}
 
@@ -311,12 +316,12 @@ and so on
 
 \small
 \begin{itemize}
-\item solves $u_t = D(u_{xx} + u_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
-\item uses gaussian initial condition: $u_0(x,y) = e^{-30 r^2}$
+\item solves $T_t = D(T_{xx} + T_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
+\item uses gaussian initial condition: $T(0,x,y) = e^{-30 r^2}$
 \item uses ``colon notation'' to remove loops over spatial variables
 \item \texttt{>>  heat(1.0,30,30,0.001,20)}
 
-approximates $u$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$
+approximates $T$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$
 \end{itemize}
 \end{frame}
 
@@ -324,25 +329,27 @@ approximates $u$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $
 \begin{frame}{the look of success}
 
 \begin{itemize}
-\item solving $u_t = u_{xx} + u_{yy}$ on $30\times 30$ grid
+\item solving $T_t = T_{xx} + T_{yy}$ on $30\times 30$ grid
 \end{itemize}
 
-\bigskip\bigskip
+\bigskip
 \begin{columns}
 \begin{column}{0.5\textwidth}
-initial condition $u(0,x,y)$
+initial condition $T(0,x,y)$
+
+\phantom{foo}
 
 \bigskip
 \begin{center}
-\includegraphics[width=1.2\textwidth]{initialheat}
+\includegraphics[width=1.0\textwidth]{initialheat}
 \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
-approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$ 
+approximate solution $T(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$ 
 
 \bigskip
 \begin{center}
-\includegraphics[width=1.2\textwidth]{finalheat}
+\includegraphics[width=1.0\textwidth]{finalheat}
 \end{center}
 \end{column}
 \end{columns}
@@ -352,7 +359,7 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \begin{frame}{the look of instability}
 
 \begin{itemize}
-\item both figures are from solving $u_t = u_{xx} + u_{yy}$ on the same space grid, but with slightly different time steps
+\item figures below are from solving $T_t = T_{xx} + T_{yy}$ on the same space grid, but with slightly different time steps
 \end{itemize}
 
 \bigskip\bigskip
@@ -361,16 +368,14 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \begin{center}
 \includegraphics[width=1.0\textwidth]{stability}
 
-%$D=1,\Delta t = 0.00064286,\Delta x = \Delta y = 0.04$ so
-\uncover<2->{$$\frac{D\Delta t}{\Delta x^2}= 0.402$$}
+$$\frac{D\Delta t}{\Delta x^2}= 0.2$$
 \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
 \includegraphics[width=1.0\textwidth]{instability}
 
-%$D=1,\Delta t = 0.001,\Delta x = \Delta y = 0.04$ so
-\uncover<2->{$$\frac{D\Delta t}{\Delta x^2}= 0.625$$}
+$$\frac{D\Delta t}{\Delta x^2}= 0.4$$
 \end{center}
 \end{column}
 \end{columns}
@@ -378,27 +383,27 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 
 
 \begin{frame}{avoid the instability}
-\label{slide:maxprinc}
 
 \begin{itemize}
-\item recall 1D explicit scheme had the form 
-	$$u_j^{n+1} = \nu u_{j+1}^n + (1 - 2 \nu) u_j^n + \nu u_{j-1}^n$$
-\item thus the new value $u_j^{n+1}$ is an \emph{average} of the old values, \emph{if the middle coefficient is positive}:
-	$$1 - 2 \nu \ge 0 \quad \iff \quad  \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}$$
+\item recall 1D explicit scheme has form 
+	$$T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$$
+\item thus the new value $T_j^{n+1}$ is an \emph{average} of the old values, \emph{if the middle coefficient is positive}:
+	$$1 - 2 \mu \ge 0 \quad \iff \quad  \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}$$
 \item averaging is always stable because averaged wiggles are always smaller than the original wiggles
-\item \dots so this condition is a sufficient \emph{stability criterion}
-\item so:
-
-\begin{center}
-\emph{the result was unstable because the time step was too big}
-\end{center}
+\item this condition is a sufficient \emph{stability criterion}
+\item \emph{the result was unstable because the time step was too big}
+\item in 2D case with $\Delta x= \Delta y$ the condition is
+	$$\frac{D\Delta t}{\Delta x^2} \le \frac{1}{4}$$
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{\textsl{adaptive} implementation: guaranteed stability}
 
-\scriptsize\mmess{heatadapt}\normalsize
+\scriptsize
+%\mmess{heatadapt}
+\minput{heatadapt}
+\normalsize
 
 \begin{itemize}
 \item same as \texttt{heat.m} except
