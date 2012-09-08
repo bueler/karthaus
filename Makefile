@@ -23,11 +23,12 @@ figures := iceshelfedge.jpg flowline.png fofv.png \
 	freehutter.png capnonflatobs.pdf classicalobs.pdf brownian.pdf \
 	polythermal_types.pdf convanalysis.pdf eisIIF.png earthcompare.png \
 	NEgreenlandJoughin.png athabasca_cross.png hierarchy.pdf \
-	joughin.png g3km_3_10_98.png g3km_3_10_98_hist.png \
+	joughin.png g3km_3_10_98.png g3km_3_10_98_hist.png green_transect.pdf \
 	slabfigs.pdf  slabmasscontfig.pdf athabasca_deform.pdf \
 	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf shelfnumsoln.pdf \
-	antinitial.png antfinal.png antvol.pdf green_transect.pdf \
+	antinitial.png antfinal.png antvol.pdf antthickchange.png \
 	initialheat.pdf finalheat.pdf stability.pdf instability.pdf slab.pdf \
+	roughfinal.png roughinitial.png roughtimesteps.pdf \
 	expstencil.pdf exp2dstencil.pdf diffstencil.pdf mahaffystencil.pdf
 epsfigures :=  sshape heatscaling siascaling \
         impstencil cnstencil AofT

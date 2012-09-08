@@ -784,15 +784,18 @@ maximum abs error            = 109.466
 
 \normalsize
 \begin{itemize}
-\item with careful-but-small modifications of \texttt{siaflat.m}, which make a good exercise:
+\item careful-but-small modifications of \texttt{siaflat.m} give \texttt{siageneral.m}
   \begin{itemize}
-  \item[$\circ$] observed accumulation as surface mass balance,
-  \item[$\circ$] allow non-flat bed (so $H\ne h$),
-  \item[$\circ$] differentiate the surface correctly where floating, and
-  \item[$\circ$] calve at current calving front location
+  \item[$\circ$] allow non-flat bed
+  \item[$\circ$] calve floating ice (\emph{SIA can't handle it})
   \end{itemize}
-here are results from this \emph{toy} Antarctic flow model
-\item a 2000 model year run on a $\Delta x=50$ km grid; runtime a few seconds
+\item build a \emph{toy} Antarctic flow model
+  \begin{itemize}
+  \item[$\circ$] observed accumulation as surface mass balance, sans melt
+  \item[$\circ$] data from ALBMAPv1, a NetCDF file
+  \end{itemize}
+\item results from a 40 ka model run on a $\Delta x=50$ km grid below
+\item runtime four minutes on laptop
 \end{itemize}
 
 \bigskip
@@ -808,14 +811,22 @@ here are results from this \emph{toy} Antarctic flow model
 \end{frame}
 
 
-\begin{frame}{final comments on SIA: origin and rigor}
+\begin{frame}{model the Antarctic ice sheet 2}
 
-where does the ``shallow ice approximation'' come from?:
-\bigskip
-
+\normalsize
 \begin{itemize}
-\item historically, Fowler and Larson (1978), Morland and Johnson (1980), and Hutter (1983) \dots thus recent
-\item logically, by a ``small-parameter argument'', based on a small depth-to-width ratio, from the more complete Stokes model for slow ice flow
-\item more precisely, by using the small aspect ratio \, $\eps = [H]/[L]$ \, of ice sheets to scale the Stokes model to see which terms make small contributions
+\item left: thickness change
+\item right: volume time series from 50 km, 25 km, 15 km runs
 \end{itemize}
+
+\bigskip
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\includegraphics[height=1.75in]{antthickchange}
+\end{column}
+\begin{column}{0.55\textwidth}
+%\includegraphics[height=1.75in]{antvol}
+FIXME
+\end{column}
+\end{columns}
 \end{frame}
