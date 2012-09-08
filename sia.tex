@@ -710,6 +710,8 @@ to get the diffusivity on staggered grid
 
 \begin{columns}
 \begin{column}{0.6\textwidth}
+test program \texttt{verifysia.m} calls \texttt{siaflat.m}
+
 \scriptsize
 \begin{verbatim}
 octave:40> verifysia(20)
@@ -727,7 +729,7 @@ maximum abs error            = 109.466
 \end{verbatim}
 \normalsize
 
-\includegraphics[width=0.8\textwidth]{siaerror}
+\includegraphics[width=0.7\textwidth]{siaerror}
 \end{column}
 
 \begin{column}{0.4\textwidth}
@@ -748,11 +750,25 @@ maximum abs error            = 109.466
 \end{frame}
 
 
-\begin{frame}{demonstrate robustness}
+\begin{frame}{demonstrate robustness and adaptivity}
 
-see \texttt{roughice.m}, which calls \texttt{siaflat.m} after setting-up the nasty initial state at left:
-\medskip
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\small
+\begin{itemize}
+\item test program \texttt{roughice.m} calls \texttt{siaflat.m}
+\item sets up the nasty initial state (below left)
+\item runs for 50 years
+\item get final state (below right)
+\item time steps adapt (upper right)
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1.0\textwidth]{roughtimesteps}
+\end{column}
+\end{columns}
 
+\bigskip
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \includegraphics[width=1.0\textwidth]{roughinitial}
@@ -761,10 +777,6 @@ see \texttt{roughice.m}, which calls \texttt{siaflat.m} after setting-up the nas
 \includegraphics[width=1.0\textwidth]{roughfinal}
 \end{column}
 \end{columns}
-
-\begin{center}
-\includegraphics[width=0.4\textwidth]{roughtimesteps}
-\end{center}
 \end{frame}
 
 
