@@ -401,7 +401,6 @@ $$\frac{D\Delta t}{\Delta x^2}= 0.4$$
 \begin{frame}{\textsl{adaptive} implementation: guaranteed stability}
 
 \scriptsize
-%\mmess{heatadapt}
 \minput{heatadapt}
 \normalsize
 
@@ -417,45 +416,44 @@ $$\frac{D\Delta t}{\Delta x^2}= 0.4$$
 \begin{frame}{alternative instability fix: implicitness}
 
 \begin{itemize}
-\item explicit scheme is only ``conditionally stable'', but there are methods which are stable for \emph{any} positive time step $\Delta t$
-\end{itemize}
+\item explicit scheme is only ``conditionally stable''
+  \begin{itemize}
+  \item[$\circ$] the adaptive implementation uses the condition
+  \end{itemize}
+\item there are \alert{implicit} methods which are stable for \emph{any} $\Delta t$
+\item an implicit scheme for the heat equation is \emph{Crank-Nicolson}
+  \begin{itemize}
+  \item[$\circ$] it has smaller error too: $O(\Delta t^2,\Delta x^2)$
+  \end{itemize}
+\item \emph{but} you have to solve systems of equations at each time step
+\item in nonlinear case you may end up spending much more programmer time to implement implicit methods
+  \begin{itemize}
+  \item[$\circ$] this can impose a big opportunity cost
+  \end{itemize}
+\vspace{5mm}
 
-\begin{columns}
-\begin{column}{0.7\textwidth}
-\small
-\begin{itemize}
-\item an implicit scheme is \emph{Crank-Nicolson} $\longrightarrow$
-\item Crank-Nicolson has smaller error too: $O(\Delta t^2,\Delta x^2)$
-\end{itemize}
-\normalsize
-\end{column}
-\begin{column}{0.3\textwidth}
-\includegraphics[width=1.2\textwidth]{cnstencil}
-\end{column}
-\end{columns}
-
-\begin{itemize}
-\item \emph{but} you have to solve linear systems of equations to take each time step
-\medskip
-
-\item \scriptsize Donald Knuth has advice for ice sheet modelers: \begin{quote}
+\item \small Donald Knuth has advice for ice sheet modelers: \begin{quote}
 \emph{We should forget about small efficiencies \dots: premature optimization is the root of all evil}.
 \end{quote}
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{variable diffusivity and time steps}
+\begin{frame}{variable diffusivity}
 
 \begin{itemize}
   \item recall the analogy: \qquad (SIA) $\leftrightarrow$ (heat eqn)
-  \item the SIA has a diffusivity which varies in space, so consider a more general heat equation:
-  		$$u_t = F + \Div \left(D(x,y) \grad u\right)$$
-  \item the explicit method is conditionally stable with the same time step restriction if we evaluate diffusivity $D(x,y)$ at \alert{staggered} grid points:
+  \item the SIA has a diffusivity $D(x,y)$ which varies in space
+  \item and it has both $H$ and $h=H+b$
+  \item so consider a more general heat equation:
+\begin{equation}
+T_t = F + \Div \left(D\, \grad (T+b)\right) \tag{$\ast$}
+\end{equation}
+  \item the best explicit method for $(\ast)$ evaluates diffusivity $D$ at \alert{staggered} grid points:
   \scriptsize
 \begin{align*}
-\Div \left(D(x,y) \grad u\right) &\approx \frac{D_{j+1/2,k}(u_{j+1,k} - u_{j,k}) - D_{j-1/2,k}(u_{j,k} - u_{j-1,k})}{\Delta x^2} \\
-	&\qquad + \frac{D_{j,k+1/2}(u_{j,k+1} - u_{j,k}) - D_{j,k-1/2}(u_{j,k} - u_{j,k-1})}{\Delta y^2}
+\Div \left(D \grad X\right) &\approx \frac{D_{j+1/2,k}(X_{j+1,k} - X_{j,k}) - D_{j-1/2,k}(X_{j,k} - X_{j-1,k})}{\Delta x^2} \\
+	&\qquad + \frac{D_{j,k+1/2}(X_{j,k+1} - X_{j,k}) - D_{j,k-1/2}(X_{j,k} - X_{j,k-1})}{\Delta y^2}
 \end{align*}
 \end{itemize}
 
@@ -463,15 +461,18 @@ $$\frac{D\Delta t}{\Delta x^2}= 0.4$$
 \small
 \begin{columns}
 \begin{column}{0.55\textwidth}
-in stencil at right:
 \begin{itemize}
-\item[] diamonds: $u$
-\item[] triangles: $D$
+\item best = just as stable as previous
+\item in stencil at right:
+  \begin{itemize}
+  \item[] diamonds: $X = T+b$
+  \item[] triangles: $D$
+  \end{itemize}
 \end{itemize}
 \end{column}
 \begin{column}{0.45\textwidth}
 \begin{center}
-\includegraphics[width=1.0\textwidth]{diffstencil}
+\includegraphics[width=0.6\textwidth]{diffstencil}
 \end{center}
 \end{column}
 \end{columns}
@@ -481,12 +482,12 @@ in stencil at right:
 \begin{frame}
   \frametitle{general diffusion equation code}
 
-\minput{diffusion}
+\minputtiny{diffusion}
 
 \small
 \begin{itemize}
-\item solves abstract diffusion equation $u_t = \Div \left(D(x,y)\, \grad u\right)$
-\item user supplies diffusivity on staggered grid
+\item solves abstract diffusion equation $T_t = \Div \left(D \, \grad (T + b)\right)$
+\item user supplies diffusivity $D$ on staggered grid
 \end{itemize}
 \end{frame}
 
@@ -497,10 +498,11 @@ in stencil at right:
 
 \begin{itemize}
 \item before getting to ice flow, one more heat equation topic \dots
-\item the simple heat equation in 1D with constant diffusivity $D>0$ is:
-	$$u_t = D u_{xx}$$
-\item many \emph{exact} solutions to the heat equation are known, but I'll show the ``Green's function''
-\item \dots also known as ``fundamental solution'' or ``heat kernel''
+\vspace{5mm}
+
+\item many \emph{exact} solutions to the heat equation are known
+\item I'll show the ``Green's function''
+\item \dots also known as ``heat kernel''
 \item it starts at time $t=0$ with a ``delta function'' of heat at the origin $x=0$ and then it spreads out over time
 \item we find it by a method which generalizes to the SIA
 \end{itemize}
@@ -511,7 +513,7 @@ in stencil at right:
 
 \begin{itemize}
 \item the solution is ``self-similar'' over time
-\item as time goes it changes shape by
+\item with time it changes shape by
   \begin{itemize}
   \item[$\circ$] shrinking the output (vertical) axis and
   \item[$\circ$] lengthening the input (horizontal) axis
@@ -531,8 +533,8 @@ in stencil at right:
 \begin{frame}{similarity solutions}
 
 \begin{itemize}
-\item Green's function of heat equation in 1D is
-	$$u(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
+\item Green's function of 1D heat equation ( $T_t=D T_{xx}$ ) is
+	$$T(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
 \item ``similarity'' variables for 1D heat equation are
 	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad u(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
 \end{itemize}
@@ -560,8 +562,8 @@ in stencil at right:
 \item jump forward to 1981
 \item P.~Halfar found the similarity solution of the SIA in the case of flat bed and no surface mass balance
 \item Halfar's 2D solution for Glen flow law with $n=3$ has scalings
-   $$H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r$$
-\item \dots so the diffusion of ice really slows down as the shape flattens out!
+	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/18} r, \qquad H(t,r) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/9} \phi(s)$$
+\item so: the nonlinear diffusion of the SIA quickly slows down the rate of change of the profile as the shape flattens out
 \end{itemize}
 \end{frame}
 
@@ -591,12 +593,12 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \end{frame}
 
 
-\begin{frame}{is the Halfar solution \emph{good for any modeling}?}
+\begin{frame}{is the Halfar solution \emph{good for any modelling}?}
 
 \begin{itemize}
-\item John Nye and others (2000) compared the long-time consequences of different flow laws for the South Mars Polar Cap
-\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters
-\item \dots by comparing the long-time behavior of the corresponding Halfar solutions
+\item John Nye and others (2000) compared long-time consequences of different flow laws for the Mars polar caps
+\item they evaluated $\text{CO}_2$ ice versus $\text{H}_2\text{O}$ ice parameters
+\item \dots by comparing long-time behavior of the Halfar solutions
 \item conclusions:
   \begin{quote}
   \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
@@ -604,7 +606,6 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \end{itemize}
 
 \end{frame}
-
 
 
 \begin{frame}{on ``degenerate'' diffusivity}
@@ -651,7 +652,7 @@ to get the diffusivity on staggered grid
 \begin{columns}
 \begin{column}{0.65\textwidth}
 \begin{itemize}
-\item Mahaffy stencil \large $\to$ \normalsize
+\item Mahaffy's scheme has stencil \large $\to$ \normalsize
 \end{itemize}
 \end{column}
 
@@ -672,22 +673,33 @@ to get the diffusivity on staggered grid
 
 \begin{frame}{verification of numerical ice flow codes}
 \begin{itemize}
+\item how do we make sure a numerical scheme is correct?
+
+\vspace{5mm}
 \item how do we make sure an \emph{implemented} numerical scheme is correct?
   \begin{itemize}
   \item[$\circ$] \emph{technique} 1: don't make any mistakes
   \item[$\circ$] \emph{technique} 2: compare your model with others, and hope that the outliers are the ones with errors
-  \item[$\circ$] \emph{technique} 3: build-in a comparison to an exact solution, and actually measure the numerical error \alert{$=$ verification}
+  \item[$\circ$] \emph{technique} 3: build-in a comparison to an exact solution, and actually measure the numerical error
   \end{itemize}
-\item where to get exact solutions for ice flow models?
-  \begin{itemize}
-  \item[$\circ$] textbook: Greve and Blatter (2009)
-  \item[$\circ$] similarity solutions to SIA (Halfar 1983; Bueler et al 2005)
-  \item[$\circ$] manufactured solutions to thermo-coupled SIA (Bueler et al 2007)
-  \item[$\circ$] flowline and cross-flow SSA solutions (van der Veen, 1985; Schoof, 2006)
-  \item[$\circ$] flowline Blatter solutions (Glowinski and Rappaz 2003)
-  \item[$\circ$] flowline Stokes solutions for constant viscosity (Ladyzhenskaya 1963; Balise and Raymond 1985)
-  \item[$\circ$] manufactured solutions to the Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011)
-  \end{itemize}
+
+\vspace{5mm}
+\item technique 3 is called \alert{verification}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{where to get exact solutions for ice flow models?}
+
+\small
+\begin{itemize}
+  \item textbook: Greve and Blatter (2009)
+  \item similarity solutions to SIA (Halfar 1983; Bueler et al 2005)
+  \item manufactured solutions to thermo-coupled SIA (Bueler et al 2007)
+  \item flowline and cross-flow SSA solutions (van der Veen, 1985; Schoof, 2006)
+  \item flowline Blatter solutions (Glowinski and Rappaz 2003)
+  \item flowline Stokes solutions for constant viscosity (Ladyzhenskaya 1963; Balise and Raymond 1985)
+  \item manufactured solutions to the Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011)
 \end{itemize}
 \end{frame}
 
