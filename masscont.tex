@@ -127,9 +127,12 @@ H_t = M - \Div \bq \label{masscontinuity}
 \item the ingredients of a typical ice sheet model:
   \begin{enumerate}
   \item numerical implementation of a stress balance: gives velocity $\mathbf{u}=(u,v,w)$
-  \item from the horizontal velocity $\mathbf{U}=(u,v)$, or the horizontal flux $\mathbf{q}$, and the surface balance, do a time-step of the mass continuity equation to get $\Delta H = H_t \Delta t$
-  \item update upper (and perhaps lower) surface elevation
-  \item decide on time-step, and repeat at 1.
+  \item from the horizontal velocity $\mathbf{U}=(u,v)$, or the horizontal flux $\mathbf{q}$, and the climatic mass (surface) balance $M$, do a time-step of the mass continuity equation to get $\Delta H = H_t \Delta t$
+  \item update upper (and perhaps lower) surface elevation: $h \mapsto h+H_t \Delta t$
+  \item decide on next time-step $\Delta t$, and repeat at 1.
   \end{enumerate}
+
+\vspace{5mm}
+\item the non-sliding SIA is slightly atypical because we can write $\mathbf{q} = - D \grad h$ in addition to $\mathbf{q} = \overline{\mathbf{U}}H$
 \end{itemize}
 \end{frame}

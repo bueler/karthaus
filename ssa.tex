@@ -4,7 +4,7 @@
 
 \subsection{shallow shelf aprx (SSA)}
 
-\begin{frame}{flow model II: shallow shelf approximation (SSA) stress balance}
+\begin{frame}{shallow shelf approximation (SSA) stress balance}
   
 SSA model applies very well to \alert{ice shelves}
 \begin{itemize}
@@ -14,17 +14,18 @@ SSA model applies very well to \alert{ice shelves}
 \end{frame}
 
 
-\begin{frame}{shallow shelf approximation stress balance 2}
+\begin{frame}{shallow shelf approximation (SSA) stress balance 2}
 
 SSA also applies reasonably well to \alert{ice streams}
 \begin{itemize}
 \item \dots with modest bed topography
-\item \dots and weak bed strength\footnote{energy conservation (= ice temperature and basal melt) is a major aspect of ice stream flow, but not addressed here}
-\item imperfect near shear margins and grounding lines
+\item \dots and weak bed strength
+\item \dots but not so good near shear margins \& grounding lines
+\item energy conservation (= ice temperature and basal melt) is a major aspect of ice stream flow, but not addressed here
 \end{itemize}
 
 \begin{center}
-  \includegraphics[width=0.6\textwidth]{siple}
+  \includegraphics[width=0.5\textwidth]{siple}
 
 \tiny RADARSAT-derived surface velocity for Siple Coast ice streams, Antarctica 
 \end{center}
@@ -40,19 +41,19 @@ SSA also applies reasonably well to \alert{ice streams}
   \small
   \begin{itemize}
   \item[$\circ$] slide ($100$ to $1000 \,\text{m}\,\text{a}^{-1}$)
-  \item[$\circ$] concentration of vertical shear in a thin layer near base
-  \item[$\circ$] \emph{liquid water} at bed plays a critical role 
+  \item[$\circ$] have concentration of vertical shear in a thin layer near base
+  \item[$\circ$] \emph{liquid water} at bed has critical role 
   \end{itemize}
   \normalsize
 \item ``outlet glaciers''
   \begin{itemize}
-  \item[$\circ$] fast surface speed (up to $10 \,\text{km}\,\text{a}^{-1}$)
-  \item[$\circ$] uncertain how much is sliding
-  \item[$\circ$] substantial vertical shear ``up'' in the ice column,
+  \item[$\circ$] have fast surface speed (up to $10 \,\text{km}\,\text{a}^{-1}$)
+  \item[$\circ$] uncertain how much is true sliding
+  \item[$\circ$] substantial vertical shear ``up'' in the ice column
   \item[$\circ$] not-at-all flat bed topography
-  \item[$\circ$] soft, temperate ice may play a big role
+  \item[$\circ$] soft, temperate ice plays a role
   \end{itemize} 
-\item \alert{few simplifying assumptions are appropriate for outlet glaciers}
+\item therefore \alert{few simplifying assumptions are appropriate for outlet glaciers}
 \end{itemize}
 \end{column}
 
@@ -72,42 +73,17 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
 \begin{frame}{SSA stress balance equation}
 
 \begin{itemize}
-\item only plane flow case (``flow line'')
-\item the stress balance equation which determines velocity in an \emph{ice stream}:
+\item only plane flow case (``flow line'') in these lectures
+\item the stress balance equation which determines velocity:
 \begin{empheq}[box=\fbox]{equation}
-  \left({\color{red}2 A^{-1/n} H |u_x|^{1/n - 1} u_x}\right)_x - {\color{blue}C|u|^{m-1}u} = {\color{green}\rho g H h_x} \label{ssa}
+  \left({\color{red}2 B H |u_x|^{1/n - 1} u_x}\right)_x - {\color{blue}C|u|^{m-1}u} = \rho g H h_x \label{ssa}
 \end{empheq}
 \item the {\color{red} red term} inside parentheses is the vertically-integrated ``longitudinal'' or ``membrane'' stress
-\item the {\color{blue} blue term} is basal resistance
-\item the {\color{green} green term} is  driving stress
-\item derived originally by Morland (1987), MacAyeal (1989)
+\item the {\color{blue} blue term} is basal resistance; $C=0$ in an ice shelf
+\item the right-hand side is  driving stress; see \emph{next slide}
 \item \emph{how to think about this equation}?
 \item \emph{how do you solve it numerically}?
 \end{itemize}
-\end{frame}
-
-
-\begin{frame}{flow line model: from stream to shelf}
-\label{slide:streamtoshelf}
-
-\small
-\begin{align*}
-  u = u_0 & \qquad \text{ at } x = 0 \\
-  \left.\begin{array}{r}
-  \left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x - C|u|^{m-1}u = \rho g H h_x \\
-  h = H + b
-  \end{array}\right\}& \qquad \text{ on } 0 < x < x_g \\
-  \left.\begin{array}{r}
-  \left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x + 0 = \rho g H h_x \\
-  h = (1-\rho/\rho_w) H
-  \end{array}\right\}& \qquad \text{ on } x_g < x < x_c \\
-  2 A^{-1/n} H |u_x|^{1/n - 1} u_x = \frac{1}{2}\rho (1-\rho/\rho_w) g H^2 & \qquad \text{ at } x = x_c
-\end{align*}
-
-\bigskip\bigskip
-\begin{center}
-  \includegraphics[width=0.7\textwidth]{flowline}
-\end{center}
 \end{frame}
 
 
@@ -115,33 +91,56 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
 
 \begin{itemize}
 \item the inequality ``$\rho H < - \rho_w b$'' is the \alert{flotation criterion}
-\item at the grounding line $x=x_g$ the above inequality switches
-\item \dots and the driving stress switches form:
+\item at the grounding line $x=x_g$ the inequality switches
+\item driving stress:
   \begin{itemize}
-  \item[$\circ$] on the grounded side we know $\rho H > - \rho_w b$ so
+  \item[$\circ$] on the grounded side $\rho H > - \rho_w b$, so
   	$$\rho g H h_x = \rho g H (H_x + b_x)$$
-  \item[$\circ$] on the floating side we know $\rho H < - \rho_w b$ so $h = (1-\rho/\rho_w) H$ and so
+  \item[$\circ$] on the floating side $\rho H < - \rho_w b$, so $h = (1-\rho/\rho_w) H$, and so
   	$$\rho g H h_x = \rho(1-\rho/\rho_w) g H H_x$$
   \end{itemize}
-\item also: $H,u,u_x$ are all continuous at $x=x_g$
+
+\vspace{5mm}
 \item best numerical models for moving grounding lines still an open question (e.g.~MISMIP and all that)
 \end{itemize}
 \end{frame}
 
 
+\begin{frame}{from stream to shelf across grounding line}
+\label{slide:streamtoshelf}
+
+\begin{align*}
+  u = u_0 & \qquad \text{ at } x = 0 \\
+  \left.\begin{array}{r}
+  \left(2 B H |u_x|^{1/n - 1} u_x\right)_x - C|u|^{m-1}u = \rho g H h_x \\
+  h = H + b
+  \end{array}\right\}& \qquad \text{ on } 0 < x < x_g \\
+  \left.\begin{array}{r}
+  \left(2 B H |u_x|^{1/n - 1} u_x\right)_x + 0 = \rho g H h_x \\
+  h = (1-\rho/\rho_w) H
+  \end{array}\right\}& \qquad \text{ on } x_g < x < x_c \\
+  2 B H |u_x|^{1/n - 1} u_x = \frac{1}{2}\rho (1-\rho/\rho_w) g H^2 & \qquad \text{ at } x = x_c
+\end{align*}
+
+\bigskip
+\begin{center}
+  \includegraphics[width=0.75\textwidth]{flowline}
+\end{center}
+\end{frame}
+
 
 \subsection{ice shelf flow line solution}
-
 
 \begin{frame}{exact velocity and thickness for steady ice shelf}
 
 \begin{itemize}
 \item limited goal here: describe a steady state, 1D ice shelf
-\item there is this nice \alert{by-hand} result (next slide): the thickness and velocity in the ice shelf can be completely determined in terms of the 
-  \begin{enumerate}
-  \item ice thickness $H_g$ at the grounding line and
-  \item ice velocity $u_g$ at the grounding line
-  \end{enumerate}
+\item there is this nice \alert{by-hand} result: the thickness and velocity in the ice shelf can be completely determined in terms of the 
+  \begin{itemize}
+  \item[$\circ$] ice thickness $H_g$ at the grounding line and
+  \item[$\circ$] ice velocity $u_g$ at the grounding line
+  \end{itemize}
+\item derived by van der Veen (1983)
 \item we will use this to
   \begin{itemize}
   \item[$\circ$] understand the SSA better
