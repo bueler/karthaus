@@ -129,7 +129,7 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
 \end{frame}
 
 
-\subsection{ice shelf flow line solution}
+\subsection{exact shelf solution}
 
 \begin{frame}{exact velocity and thickness for steady ice shelf}
 
@@ -141,6 +141,7 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
   \item[$\circ$] ice velocity $u_g$ at the grounding line
   \end{itemize}
 \item derived by van der Veen (1983)
+\item shown on next slide
 \item we will use this to
   \begin{itemize}
   \item[$\circ$] understand the SSA better
@@ -152,49 +153,74 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
 
 \begin{frame}{exact velocity and thickness for steady ice shelf 2}
 
-\small see \texttt{testshelf.m} 
+\small see \texttt{testshelf.m}:
+\bigskip
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+  \includegraphics[width=1.0\textwidth]{steadyshelfprofile}
 
 \begin{center}
-  \includegraphics[width=0.45\textwidth]{steadyshelfprofile} \quad
-  \includegraphics[width=0.45\textwidth]{steadyshelfvelocity}
+surface and base elevation (m)
 \end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+  \includegraphics[width=1.0\textwidth]{steadyshelfvelocity}
 
-\hfill \includegraphics[width=0.3\textwidth]{Rocket_nozzle_expansion}
+\begin{center}
+velocity (m/a)
+\end{center}
+\end{column}
+\end{columns}
+
+\vspace{10mm}
+\includegraphics[width=0.2\textwidth]{Rocket_nozzle_expansion}
 \end{frame}
 
 
-\subsection{numerical SSA}
+\subsection{stress balance}
 
 \begin{frame}{numerically solving the SSA stress balance}
 
 \begin{itemize}
-\item here we fix ice thickness $H(x)$ and find the velocity numerically
+\item now we fix ice thickness $H(x)$ and find the velocity numerically
 \item the stress balance is a nonlinear equation in the velocity:
-  $$\left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x - C|u|^{m-1}u = \rho g H h_x$$
-\item \alert{iteration is needed}
-\item I'll describe the numerical method for a shelf \emph{or} stream, but only give a code for an ice shelf
+  $$\left(2 B H |u_x|^{1/n - 1} u_x\right)_x - C|u|^{m-1}u = \rho g H h_x$$
+\item nonlinear so \alert{iteration is needed}
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{numerically solving the SSA stress balance 2}
+\begin{frame}{Picard iteration}
 
 \begin{itemize}
-\item coefficient ${\color{red} \bar \nu} = A^{-1/n} |u_x|^{1/n-1}$ is the ``effective viscosity'':
+\item coefficient ${\color{red} \bar \nu} = B |u_x|^{1/n-1}$ is the ``effective viscosity'':
    $$\left(2 \,{\color{red} \bar \nu}\, H u_x\right)_x - C |u|^{m-1} u = \rho g H h_x$$
-\item \emph{simplest iteration idea}: use old effective viscosity to get new velocity solution, and repeat until things stop changing
+\item \emph{simplest iteration idea}: use initial velocity estimate to get effective viscosity estimate, then solve for new velocity, and repeat until things stop changing
   \begin{itemize}
   \item[$\circ$] this is ``Picard'' iteration
   \item[$\circ$] Newton iteration is a superior alternative
   \end{itemize}
-\item specifically:
-  \begin{itemize}
-  \item[$\circ$] last iterate $u^{(k-1)}$
-  \item[$\circ$] define $W^{(k-1)} = 2 \bar \nu H = 2 A^{-1/n} |u^{(k-1)}_x|^{1/n-1} H$
-  \item[$\circ$] current iterate (unknown) $u^{(k)}$
-  \item[$\circ$] solve repeatedly:
+\item the iteration in formulas:
+  \begin{enumerate}
+  \item previous iterate $u^{(k-1)}$
+  \item define $W^{(k-1)} = 2 \bar \nu H = 2 B |u^{(k-1)}_x|^{1/n-1} H$
+  \item solve for current iterate (unknown) $u^{(k)}$:
      $$\left(W^{(k-1)} u^{(k)}_x\right)_x - C |u^{(k-1)}|^{m-1} u^{(k)} = \rho g H h_x$$
-  \end{itemize}
+  \item repeat at 1
+  \end{enumerate}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{where do you get an initial velocity $u^{(0)}$?}
+
+\begin{itemize}
+\item \emph{for floating ice}, an initial guess assumes uniform strain rate:
+   $$u^{(0)}(x) = \gamma (x-x_g) + u_g$$
+where $\gamma$ is the value of $u_x$ from calving front stress imbalance
+\item \emph{for grounded ice}, an initial guess assumes ice is held by basal resistance only:
+   $$u^{(0)}(x) = \left(-C^{-1} \rho g H h_x\right)^{1/m}$$
 \end{itemize}
 \end{frame}
 
@@ -211,18 +237,6 @@ on $0 < x < L$, with boundary conditions
   \item[$\circ$] both $W(x)$ and $\alpha(x)$ come from previous iteration
   \item[$\circ$] $\beta(x)$ is driving stress
   \end{itemize}
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}{where do you get an initial guess $u^{(0)}$?}
-
-\begin{itemize}
-\item \emph{for floating ice}, a possible initial guess for velocity comes from assuming a uniform strain rate:
-   $$u^{(0)}(x) = \gamma (x-x_g) + u_g$$
-where $\gamma$ is the value of $u_x$ found from calving front stress imbalance
-\item \emph{for grounded ice}, a possible initial guess for velocity is to assume ice is held by basal resistance only:
-   $$u^{(0)}(x) = \left(-C^{-1} \rho g H h_x\right)^{1/m}$$
 \end{itemize}
 \end{frame}
 

@@ -126,7 +126,7 @@ and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976
 \end{frame}
 
 
-\subsection{analogy w heat equation}
+\subsection{analogy w heat}
 
 \begin{frame}{heat equation}
 
@@ -218,7 +218,7 @@ T_t = F + \Div (D\, \grad T) \label{heat}
 \end{frame}
 
 
-\subsection{finite difference numerics}
+\subsection{finite differences}
 
 \begin{frame}{basic ideas of finite differences}
 
@@ -308,6 +308,8 @@ u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2 u(t,x) + u(t,x-\Delta x)}{\Delta x^2} +
 \end{center}
 \end{frame}
 
+
+\subsection{implementations}
 
 \begin{frame}{implementation}
 \label{slide:heatmatlab}
@@ -492,7 +494,7 @@ T_t = F + \Div \left(D\, \grad (T+b)\right) \tag{$\ast$}
 \end{frame}
 
 
-\subsection{solutions}
+\subsection{exact solutions}
 
 \begin{frame}{exact solution of heat equation}
 
@@ -606,8 +608,6 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \end{frame}
 
 
-\subsection{solving the SIA}
-
 \begin{frame}{on ``degenerate'' diffusivity}
 
 \begin{itemize}
@@ -669,6 +669,8 @@ to get the diffusivity on staggered grid
 \minputtiny{siaflat}
 \end{frame}
 
+
+\subsection{verification}
 
 \begin{frame}{verification of numerical ice flow codes}
 \begin{itemize}
@@ -778,6 +780,8 @@ maximum abs error            = 109.466
 \end{columns}
 \end{frame}
 
+
+\subsection{Antarctica}
 
 \begin{frame}{model the Antarctic ice sheet}
 
