@@ -554,8 +554,6 @@ T_t = F + \Div \left(D\, \grad (T+b)\right) \tag{$\ast$}
 \end{frame}
 
 
-\subsection{solving the SIA}
-
 \begin{frame}{similarity solution to SIA}
 
 \begin{itemize}
@@ -607,6 +605,8 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 
 \end{frame}
 
+
+\subsection{solving the SIA}
 
 \begin{frame}{on ``degenerate'' diffusivity}
 
@@ -667,7 +667,6 @@ to get the diffusivity on staggered grid
   \frametitle{SIA implementation: flat bed case}
 
 \minputtiny{siaflat}
-
 \end{frame}
 
 
@@ -815,9 +814,9 @@ maximum abs error            = 109.466
 
 \normalsize
 \begin{itemize}
-\item left: thickness change
-\item right: volume time series from 50 km, 25 km, 20 km runs; volumes are in $10^6\,\text{km}^3$
-\item conclusion:  \alert{look at multiple grid resolutions} before interpreting your results (e.g.~their parameter-dependence)
+\item left: thickness change from beginning to end of 50 km run
+\item right: volume time series from {\color{red} 50 km}, {\color{green} 25 km}, {\color{blue} 20 km} runs; volumes are in $10^6\,\text{km}^3$
+\item conclusion:  \emph{look at results on multiple grid resolutions} before interpreting your results (e.g.~their parameter-dependence)
 \end{itemize}
 
 \bigskip

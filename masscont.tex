@@ -41,7 +41,7 @@
 \begin{itemize}
 \item what does this ``most basic shallow assumption'' get you?
 \item \emph{answer:} a map-plane mass continuity equation
-\item consider these three equations (\emph{on next slide}):
+\item consider these three equations:
   \begin{itemize}
   \item[$\circ$]  the surface kinematical equation
   \item[$\circ$]  the base kinematical equation
@@ -50,14 +50,9 @@
 \item under the ``most basic shallow assumption'', 
 
 \begin{center}\emph{any two imply the third}\end{center}
-\item you connect the three equations by
-  \begin{itemize}
-  \item[$\circ$]  the incompressibility of ice
-    $$u_x + v_y + w_z = 0$$
-  \item[$\circ$]  and the Leibniz rule for differentiating integrals
-  \scriptsize
-    $$\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy$$
-  \end{itemize}
+
+\vspace{5mm}
+\item these three equations are on the next slide
 \end{itemize}
 \end{frame}
 
@@ -65,11 +60,11 @@
 \begin{frame}{kinematic and mass continuity equations 2}
 
 \begin{itemize}
-\item let $a$ be the surface mass balance function ($a>0$ is accumulation), and
-\item $s$ be the basal melt rate function ($s>0$ is basal melting), so
+\item $a$ is surface mass balance ($a>0$ is accumulation)
+\item $s$ is basal melt rate ($s>0$ is basal melting)
 \item $M=a-s$
 \item define the map-plane flux of ice,
-	$$\bq = \int_{b}^{h} (u,v)\,dz = \overline{\mathbf{u}}\,H$$
+	$$\bq = \int_{b}^{h} (u,v)\,dz = \overline{\mathbf{U}}\,H$$
 \item the three equations are:
 \begin{empheq}[left=\text{surface kinematical}\quad,innerbox=\fbox]{equation}
 h_t = a - u\big|_h h_x - v\big|_h h_y + w\big|_h  \label{surfkine}
@@ -77,7 +72,7 @@ h_t = a - u\big|_h h_x - v\big|_h h_y + w\big|_h  \label{surfkine}
 \begin{empheq}[left=\text{base kinematical}\quad,innerbox=\fbox]{equation}
 b_t = s - u\big|_b b_x - v\big|_b b_y + w\big|_b  \label{basekine}
 \end{empheq}
-\begin{empheq}[left=\text{mass continuity}\qquad\qquad\quad,innerbox=\fbox]{equation}
+\begin{empheq}[left=\text{mass continuity}\qquad\qquad\qquad\quad,innerbox=\fbox]{equation}
 H_t = M - \Div \bq \label{masscontinuity}
 \end{empheq}
 \end{itemize}
@@ -87,10 +82,41 @@ H_t = M - \Div \bq \label{masscontinuity}
 \begin{frame}{kinematic and mass continuity equations 3}
 
 \begin{itemize}
-\item literature is full of incomplete calculations of these shallow equivalences
-\item \dots usually mixed in with small-parameter arguments about shallow stress balances
-\item most ice sheet models use the mass continuity equation to describe change in ice sheet geometry
-\item \dots but they could instead use the surface kinematical equation
+\small
+\item how are the three equations related to each other?
+\item start with the incompressibility of ice
+    $$u_x + v_y + w_z = 0 \qquad \iff \qquad w_z = - \Div \mathbf{U}$$
+\item integrate vertically:
+    $$w\big|_h - w\big|_b = \int_b^h w_z\,dz = - \int_b^h \Div \mathbf{U}\,dz$$
+\item now be careful and use the Leibniz rule for differentiating integrals:
+\scriptsize
+  \begin{align*}
+\frac{d}{dx}\left(\int_{A(x)}^{B(x)} F(x,y)\,dy\right) &= B'(x) F(x,B(x)) - A'(x) F(x,A(x)) + \int_{A(x)}^{B(x)} F_x(x,y)\,dy
+  \end{align*}
+\small
+\item which implies that
+   $$- \Div \int_b^h \mathbf{U}\,dz = - \grad h \cdot \mathbf{U}\big|h + \grad b \cdot \mathbf{U}\big|_b - \int_b^h \Div \mathbf{U}\,dz$$
+\item so
+    $$w\big|_h - w\big|_b = - \Div \mathbf{q} + \grad h \cdot \mathbf{U}\big|h - \grad b \cdot \mathbf{U}\big|_b$$
+\item and so on
+\normalsize
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{kinematic and mass continuity equations 4}
+
+\begin{itemize}
+\item why am I telling you this?
+\item because glaciology articles are filled with redoing these equivalences \dots watch for it
+
+\vspace{5mm}
+\item in any case,
+  \begin{itemize}
+  \item[$\circ$] most ice sheet models use the mass continuity equation to describe change in ice sheet geometry
+  \item[$\circ$] but they could instead use the surface kinematical equation
+  \item[$\circ$] and they almost always use, and greatly simplify, the basal kinematical equation
+  \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -100,9 +126,9 @@ H_t = M - \Div \bq \label{masscontinuity}
 \begin{itemize}
 \item the ingredients of a typical ice sheet model:
   \begin{enumerate}
-  \item numerical implementation of a stress balance: gives velocity $(u,v,w)$
-  \item from the horizontal velocity $(u,v)$ and the surface balance, do time-step of mass continuity equation to get $H_t$
-  \item update upper and lower surface elevation
+  \item numerical implementation of a stress balance: gives velocity $\mathbf{u}=(u,v,w)$
+  \item from the horizontal velocity $\mathbf{U}=(u,v)$, or the horizontal flux $\mathbf{q}$, and the surface balance, do a time-step of the mass continuity equation to get $\Delta H = H_t \Delta t$
+  \item update upper (and perhaps lower) surface elevation
   \item decide on time-step, and repeat at 1.
   \end{enumerate}
 \end{itemize}
