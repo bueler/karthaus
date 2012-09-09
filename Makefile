@@ -26,7 +26,7 @@ figures := iceshelfedge.jpg flowline.png fofv.png \
 	joughin.png g3km_3_10_98.png g3km_3_10_98_hist.png green_transect.pdf \
 	slabfigs.pdf  slabmasscontfig.pdf athabasca_deform.pdf \
 	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf shelfnumsoln.pdf \
-	antinitial.png antfinal.png antvol.pdf antthickchange.png \
+	antinitial.png antfinal.png antvolcompare.pdf antthickchange.png \
 	initialheat.pdf finalheat.pdf stability.pdf instability.pdf slab.pdf \
 	roughfinal.png roughinitial.png roughtimesteps.pdf \
 	expstencil.pdf exp2dstencil.pdf diffstencil.pdf mahaffystencil.pdf

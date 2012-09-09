@@ -9,6 +9,8 @@ function [t vol] = ant(filename,doplot,E)
 %   >> [t vol] = ant('Ant25km.nc',1,5.0);
 %   >> save -v7 vol25km.mat t vol
 % (Retrieve the data with "load vol25km.mat".)
+% Run times of 9/8/2012 runs with Octave on bueler-lemur:
+%   50 km = 373 sec,  25 km = 1829 sec,  20 km = 12065 sec.
 % Calls:  BUILDANT, SIAGENERAL, DIFFUSION
 
 if nargin < 1, filename = 'Ant50km.nc'; end
