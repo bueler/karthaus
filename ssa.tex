@@ -178,7 +178,7 @@ velocity (m/a)
 \end{frame}
 
 
-\subsection{stress balance}
+\subsection{numerical SSA}
 
 \begin{frame}{numerically solving the SSA stress balance}
 
@@ -225,13 +225,13 @@ where $\gamma$ is the value of $u_x$ from calving front stress imbalance
 \end{frame}
 
 
-\begin{frame}{solving the ``inner'' linear problem}
+\begin{frame}{a linear problem at each iteration}
 \begin{itemize}
 \item abstract the problem:
    $$\left(W(x)\, u_x\right)_x - \alpha(x)\, u = \beta(x)$$
 on $0 < x < L$, with boundary conditions
    $$u(0) = V, \qquad  u_x(L) = \gamma$$
-\item an \emph{elliptic} PDE boundary value problem
+\item an \emph{linear}, elliptic PDE boundary value problem
 \item $W(x)$, $\alpha(x)$, $\beta(x)$ are known functions in the SSA context:
   \begin{itemize}
   \item[$\circ$] both $W(x)$ and $\alpha(x)$ come from previous iteration
@@ -241,29 +241,34 @@ on $0 < x < L$, with boundary conditions
 \end{frame}
 
 
-\begin{frame}{numerics of the ``inner'' linear problem}
+\begin{frame}{numerics of the linear problem}
 
 \begin{itemize}
-\item suppose $j=1,2,\dots,J+1$, where $x_1 = x_g$ and $x_{J+1} = x_c$ are endpoints
-\item $W(x)$ is needed on the staggered grid; the approximation is:
+\item equally-spaced grid $x_1,x_2,\dots,x_{J+1}$
+  \begin{itemize}
+  \item[$\circ$] $x_1 = x_g$ and $x_{J+1} = x_c$ are endpoints
+  \end{itemize}
+\item the finite difference approximation to the linear PDE is:
 $$\frac{W_{j+1/2} (u_{j+1} - u_j) - W_{j-1/2} (u_{j} - u_{j-1})}{\Delta x^2} - \alpha_j u_j \stackrel{\ast}{=} \beta_j$$
+\item so $W(x)$ is needed on the staggered grid
 \item left-hand boundary condition: $u_1 = V$ given
-\item right-hand boundary condition (``$u_x(L)=\gamma$''):
+\item right-hand boundary condition is $u_x(L)=\gamma$
+\item to put right-hand b.c.~into system:
   \begin{itemize}
   \item[$\circ$] introduce notional point $x_{J+2}$
   \item[$\circ$]
     $$\frac{u_{J+2} - u_J}{2 \Delta x} = \gamma$$
-  \item[$\circ$] using equation $\ast$ in $j=J+1$ case, eliminate $u_{J+2}$ variable ``by-hand'' before coding numerics
+  \item[$\circ$] using equation $\ast$ in $j=J+1$ case, eliminate $u_{J+2}$ variable by-hand before solving system
   \end{itemize}
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{numerics of the ``inner'' linear problem 2}
+\begin{frame}{numerics of the linear problem 2}
 
-\scriptsize
+\small
 \begin{itemize}
-\item so SSA stress balance has form  \quad $A \mathbf{x} = \mathbf{b}$, \quad namely:
+\item thus discretized stress balance has form  \, $A \mathbf{x} = \mathbf{b}$\, :
 $$
 \begin{bmatrix}
 1 &  &  &  &  \\
@@ -281,27 +286,30 @@ u_1 \\ u_2 \\ u_3 \\ \vdots \\ u_J \\ u_{J+1}
 0 \\ \beta_2 \Delta x^2 \\ \beta_3 \Delta x^2 \\ \vdots \\ \beta_J \Delta x^2 \\ b_{J+1}
 \end{bmatrix}
 $$
-\item with diagonal entries
-$$A_{22} = -(W_{3/2}+W_{5/2}+\alpha_1 \Delta x^2)$$
-$$A_{33} = -(W_{5/2}+W_{7/2}+\alpha_2 \Delta x^2)$$
-and so on, up to $A_{JJ}$, 
-\item with special cases in last equation:
-$$A_{J+1,J} = 2 W_{J+1/2}$$
-$$A_{J+1,J+1} = -(2 W_{J+1/2}+\alpha_{J+1}\Delta x^2)$$
-$$b_{J+1} = -2 \gamma \Delta x W_{J+3/2} + \beta_{J+1} \Delta x^2$$
+\item with specific formulas on diagonal ($A_{jj}$) and in the last equation
+  \begin{itemize}
+  \small
+  \item[$\circ$] see printed notes
+  \end{itemize}
 \item this is a \emph{tridiagonal} system
+\item hand the system to a linear algebra black box
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{numerics of the ``inner'' linear problem 3}
-\label{slide:flowlinecode}
+\begin{frame}{solver for the linear problem}
 
 \minput{flowline}
+
+\vspace{-4mm}
+\begin{itemize}
+\item solves
+   $$\left(W(x)\, u_x\right)_x - \alpha(x)\, u = \beta(x)$$
+\end{itemize}
 \end{frame}
 
 
-\begin{frame}{testing the ``inner'' linear code}
+\begin{frame}{testing the linear PDE solver}
 
 \begin{itemize}
 \item before proceeding to solve nonlinear SSA problem, we can test the ``abstracted'' code \texttt{flowline.m}
@@ -309,17 +317,22 @@ $$b_{J+1} = -2 \gamma \Delta x W_{J+3/2} + \beta_{J+1} \Delta x^2$$
   \begin{itemize}
   \item[$\circ$] see \texttt{testflowline.m}; not shown
   \end{itemize}
-\item results:
-  \begin{itemize}
-  \item[$\circ$] converges at optimal rate $O(\Delta x^2)$
-  \end{itemize}
+\item results:  converges at optimal rate $O(\Delta x^2)$
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{numerical: SSA}
 
+\vspace{-3mm}
 \minputtiny{ssaflowline}
+
+\vspace{-5mm}
+\small
+\begin{itemize}
+\item implements the Picard iteration
+\item calls the linear solver \texttt{flowline.m} at each iteration
+\end{itemize}
 \end{frame}
 
 
@@ -333,6 +346,9 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
 \end{center}
 \end{frame}
 
+
+
+\subsection{real ice shelves}
 
 \begin{frame}{realistic ice shelf modeling}
 
@@ -373,6 +389,8 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
 \end{center}
 \end{frame}
 
+
+\subsection{stress balances}
 
 \begin{frame}{numerical solution of stress balances: a summary}
 

@@ -667,6 +667,13 @@ to get the diffusivity on staggered grid
   \frametitle{SIA implementation: flat bed case}
 
 \minputtiny{siaflat}
+
+\vspace{-3mm}
+\small
+\begin{itemize}
+\item solves the $M=0$, flat bed SIA: $\quad H_t = \Div \left(\Gamma H^{n+2} |\grad H|^{n-1}\, \grad H \right)$
+\item calls \texttt{diffusion.m} at each major time step
+\end{itemize}
 \end{frame}
 
 
