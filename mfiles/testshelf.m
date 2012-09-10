@@ -7,7 +7,11 @@ function [averr,maxerr] = testshelf(J,L)
 % where:
 %   J  = number of grid points
 %   L  = length of ice shelf (m)
-% example:  shelfconv.m
+% Example: 
+%   >> testshelf(25,200e3);        % show figure, coarse grid
+%   >> err = testshelf(400,200e3)  % no figure, return vel error in m/s
+% Called by:  SHELFCONV
+% Calls:  SSAFLOWLINE
 
 % use a structure for physical parameters (values are from MISMIP)
 param = struct('secpera',31556926,...
@@ -26,6 +30,7 @@ if nargin<2, param.L = 200e3; else, param.L = L; end
 if nargin<1, J = 300; end
 
 dx = param.L / J;   x = (0:dx:param.L)';
+fprintf('dx = %.3f km\n',dx/1000.0)
 
 % get exact solution
 [uexact,H] = exactshelf(x,param.L,M0,Hg,ug);
@@ -38,11 +43,11 @@ averr = sum(abs(unum-uexact)) / (J+1);
 maxerr = max(abs(unum-uexact));
 
 if nargout==0  % plot, if not asked for error
-  plot(x,u0 * param.secpera,'b-','LineWidth',2.0),  hold on
-  plot(x,uexact * param.secpera,'r-','LineWidth',2.0)
-  plot(x,unum * param.secpera,'go','markersize',12),  hold off
-  xlabel('x (km)'),  ylabel('velocity (m a^{-1})')
-  title(sprintf('case with  dx = %.0f km  has  (max error) = %.3f  m a^{-1}',...
-                dx/1000.0,maxerr * param.secpera))
+  plot(x/1000.0,u0 * param.secpera,'b-','LineWidth',3.0),  hold on
+  plot(x/1000.0,uexact * param.secpera,'r-','LineWidth',3.0)
+  plot(x/1000.0,unum * param.secpera,'go','markersize',12,'LineWidth',2.0),  hold off
+  xlabel('x  (km)')%,  ylabel('velocity  (m/a)')
+  %title(sprintf('case with  dx = %.0f km  has  (max error) = %.3f  m a^{-1}',...
+  %               dx/1000.0,maxerr * param.secpera))
 end
 

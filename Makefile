@@ -28,7 +28,7 @@ figures := iceshelfedge.jpg flowline.png fofv.png \
 	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf shelfnumsoln.pdf \
 	antinitial.png antfinal.png antvolcompare.pdf antthickchange.png \
 	initialheat.pdf finalheat.pdf stability.pdf instability.pdf slab.pdf \
-	roughfinal.png roughinitial.png roughtimesteps.pdf \
+	roughfinal.png roughinitial.png roughtimesteps.pdf ssavel8km.pdf \
 	expstencil.pdf exp2dstencil.pdf diffstencil.pdf mahaffystencil.pdf
 epsfigures :=  sshape heatscaling siascaling \
         impstencil cnstencil AofT

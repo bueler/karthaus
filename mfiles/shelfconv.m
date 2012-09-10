@@ -1,4 +1,5 @@
-% SHELFCONV  show convergence study of SSA solver using testshelf.m
+% SHELFCONV  show convergence study of SSA solver
+% calls: TESTSHELF
 
 J = [50 100 200 400 800 1600 3200];
 dxkm = 200.0 ./ J;

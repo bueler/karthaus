@@ -15,9 +15,10 @@ function [u,u0] = ssaflowline(p,J,H,b,ug,initchoice)
 % outputs:
 %   u = the velocity solution (m s-1), a length J+1 column vector
 %   u0 = the velocity initial guess (m s-1), same size as u
-% does "Picard" iteration to solve nonlinear SSA problem
-% calls flowline.m to solve inner linear PDE boundary value problem
-% example:  testshelf.m
+% Does "Picard" iteration to solve nonlinear SSA problem.
+% Calls:  FLOWLINE to solve inner linear PDE boundary value problem,
+%         SSAINIT
+% Example:  see TESTSHELF
 
 if nargin ~= 6, error('exactly 6 input arguments required'), end
 
@@ -59,6 +60,7 @@ while maxdiff > tol
   u = unew;
   fprintf('.')
 end
+fprintf('\n')
 %STRIPFROMHERE    (hide helper functions in lecture.pdf)
 
   function fav = stagav(f)
