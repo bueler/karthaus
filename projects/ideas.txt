@@ -1,15 +1,19 @@
 Here are some project ideas.  Upon consultation to find out student preferences, I will flesh them out.
 
-1.  DO ICE SHELVES HAVE MEMORY BEYOND THE OBVIOUS?
+1.  DO ICE SHELVES HAVE MEMORY, BEYOND THE OBVIOUS?
 
 Ice shelf flow in one horizontal dimension combines the SSA stress balance described in the notes with the mass continuity equation.  The mass continuity equation alters the shape of the ice shelf by advecting the thickness H at the velocity u, but this feeds back to change the velocity profile and so on.  Any thickness perturbation certainly survives till the ice shelf calves it off, but is there longer-term memory than the "residence time" of the flow?  Note we will not move the grounding line in asking/answering this question, which is likely to be a dominant form of memory.  The tools will be the codes from the lectures, plus a basic first-order upwinding code from Bueler.  Students will have to integrate these together and then perform the experiments and create convincing (e.g. robust over grid refinement) results.
 
-Ref. for illustration:  C. Hulbe and M. Fahnestock (2007).  Century-scale discharge stagnation and reactivation of the Ross ice streams, West Antarctica. J. Geophys. Res. 112, F03S27, doi:10.1029/2006JF000603
+Reference for this general topic:  C. Hulbe and M. Fahnestock (2007).  Century-scale discharge stagnation and reactivation of the Ross ice streams, West Antarctica. J. Geophys. Res. 112, F03S27, doi:10.1029/2006JF000603
 
 
-2.  HOW MUCH DOES A REGIONAL MODEL DIVERGE FROM A WHOLE ICE SHEET MODEL THAT INCLUDES IT?
+2.  HOW FAST DOES A REGIONAL MODEL DIVERGE FROM A WHOLE ICE SHEET MODEL THAT INCLUDES ITS REGION?
+
+In the lectures we already have a minimal isothermal SIA model for the whole Antarctic ice sheet.  The resolution of such a model can limited by the stability properties of the explicit scheme, the (floating point) computational time, the memory access time, and by the raw amount of memory in use.  For reasons like these, researchers often build regional models at higher resolution.  Also, data may be available for the region, perhaps an individual outlet glacier or ice stream/shelf, that is not available for the whole ice sheet.  But regional models do not cover the whole ice sheet, and they need flow boundary conditions connecting them to the rest of the ice sheet.  By setting up an idealized ice cap on a non-flat bed, we compare the volume and flow speed within a region of a whole ice sheet model to the same properties for a model of that region alone.  In the simplest comparison we can keep the grid resolution the same in both models, so that the only difference is in the boundary conditions.  Students will choose the boundary conditions, and the tools to cut out and simulate the region, based on Bueler's code for the 
+
+Reference for this general topic:  M. Koutnick and E. Waddington (2012).  Well-posed boundary conditions for limited-domain models of transient ice flow near an ice divide, J. Glaciol. 58 (211), doi: 10.3189/2012JoG11J212, 1008--1020.
 
 
 3.  HOW DOES BEDROCK ELEVATION PREPROCESSING AFFECT ICE SHEET MODEL RESULTS?
 
-
+In the whole Antarctic model in the lectures there is a choice about how the bedrock elevations, available from a NetCDF (ALBMAPv1) file at 5 km resolution, are converted to a coarser 50 km grid.  The choice is convenient but bad: the conversion is by subsampling, so that every tenth data point is used as a representative of the 50 km square grid cell.  Not only is the detail in the bedrock map lost---this is of course inevitable on a 50 km grid---but we can also get unlucky and use a mountain-top to represent the whole 50 km cell.  In fact the SIA model is generally very sensitive to the smoothness of the bedrock elevation map.  So merely changing "subsampling" into "averaging" will make a difference in the model result on the coarser grid.  
