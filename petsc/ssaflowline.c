@@ -33,24 +33,13 @@ Examples:\n\
           -mat_mffd_type ds -snes_ls basic -ssa_picard \n\
 \n";
 
-/*
-   Include "petscda.h" so that we can use distributed arrays (DAs).
-   Include "petscsnes.h" so that we can use SNES solvers.  Note that this
-   file automatically includes:
-     petsc.h       - base PETSc routines   petscvec.h - vectors
-     petscsys.h    - system routines       petscmat.h - matrices
-     petscis.h     - index sets            petscksp.h - Krylov subspace methods
-     petscviewer.h - viewers               petscpc.h  - preconditioners
-     petscksp.h   - linear solvers
-*/
-#include "petscda.h"
+#include "petscdmda.h"
 #include "petscsnes.h"
 
 
 /* User-defined application context - contains data needed by the 
    application-provided call-back routines, esp. FormFunctionLocal().  */
 typedef struct {
-  DA          da;       /* one-dimensional distributed array data structure for soln and residual */
   PetscReal   secpera;
   PetscReal   n;
   PetscReal   rho;
@@ -73,14 +62,14 @@ typedef struct {
 
 
 /* declare the user-written routines ... */
-static PetscErrorCode FillThicknessAndExactSoln(AppCtx*);
-static PetscErrorCode FormInitialGuess(AppCtx*,Vec);
-static PetscErrorCode FormFunctionLocal(DALocalInfo*,PetscScalar*,PetscScalar*,AppCtx*);
+static PetscErrorCode FillThicknessAndExactSoln(DM,AppCtx*);
+static PetscErrorCode FormInitialGuess(DM,AppCtx*,Vec);
+static PetscErrorCode FormFunctionLocal(DMDALocalInfo*,PetscScalar*,PetscScalar*,AppCtx*);
 
 /* ... including two versions of "analytical" Jacobian; these functions are only
    evaluated if *not* using one of the methods -fd, -snes_fd, -snes_mf */
-static PetscErrorCode FormTrueJacobianMatrixLocal(DALocalInfo*,PetscScalar*,Mat,AppCtx*);
-static PetscErrorCode FormPicardMatrixLocal(DALocalInfo*,PetscScalar*,Mat,AppCtx*);
+static PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo*,PetscScalar*,Mat,AppCtx*);
+static PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo*,PetscScalar*,Mat,AppCtx*);
 
 
 #undef __FUNCT__
@@ -89,19 +78,20 @@ int main(int argc,char **argv)
 {
   PetscErrorCode         ierr;
 
+  DM                     da;
   SNES                   snes;                 /* nonlinear solver */
   Vec                    u,r;                  /* solution, residual vectors */
   AppCtx                 user;                 /* user-defined work context */
-  PetscInt               guess=1,its,Mx;       /* initial guess type, iteration count, num of pts */
-  PetscReal              err1,errinf;          /* average and max norm of numerical error */
-  PetscTruth             checks = PETSC_FALSE; /* display values at calving front to check
-                                                    on correctness of thickness and exact soln */
-  PetscTruth             show = PETSC_FALSE;   /* show some fields in X viewers;
-                                                    use -draw_pause N for N sec delay */
-  PetscTruth             matview = PETSC_FALSE;/* dump preconditioner matrix */
+  PetscInt               guess=1,              /* initial guess type */
+                         its,Mx;               /* iteration count, num of pts */
+  PetscReal              err1,errinf;          /* average and max norm of error */
+  PetscBool              checks = PETSC_FALSE, /* display values at calving front */
+                         show = PETSC_FALSE,   /* show some fields in X viewers;
+                                                  use -draw_pause N for N sec delay */
+                         matview = PETSC_FALSE;/* dump preconditioner matrix */
   SNESConvergedReason    reason;               /* Check convergence */
   Mat                    A,B;                  /* Jacobian and preconditioning matrices */
-  PetscTruth             fd_coloring = PETSC_FALSE,
+  PetscBool              fd_coloring = PETSC_FALSE,
                          fd_naive = PETSC_FALSE,
                          mf = PETSC_FALSE,
                          smo_set = PETSC_FALSE,
@@ -157,15 +147,15 @@ int main(int argc,char **argv)
     ierr = PetscOptionsReal("-ssa_epsilon","regularization (a strain rate in units of 1/a)","",
                             user.epsilon * user.secpera,&user.epsilon,&eps_set);CHKERRQ(ierr);
     if (eps_set) {  user.epsilon *= 1.0 / user.secpera;  }
-    ierr = PetscOptionsTruth("-ssa_fd","solve SSA using finite difference Jacobian by coloring","",
+    ierr = PetscOptionsBool("-ssa_fd","solve SSA using finite difference Jacobian by coloring","",
                              fd_coloring,&fd_coloring,NULL);CHKERRQ(ierr);
-    ierr = PetscOptionsTruth("-ssa_picard","compute Picard matrix instead of analytical Jacobian","",
+    ierr = PetscOptionsBool("-ssa_picard","compute Picard matrix instead of analytical Jacobian","",
                              picard,&picard,NULL);CHKERRQ(ierr);
-    ierr = PetscOptionsTruth("-ssa_checks","print values at calving front as minimal check","",
+    ierr = PetscOptionsBool("-ssa_checks","print values at calving front as minimal check","",
                              checks,&checks,NULL);CHKERRQ(ierr);
-    ierr = PetscOptionsTruth("-ssa_show","show thickness and initial guess","",
+    ierr = PetscOptionsBool("-ssa_show","show thickness and initial guess","",
                              show,&show,NULL);CHKERRQ(ierr);
-    ierr = PetscOptionsTruth("-ssa_mat_view","put preconditioner matrix in Matlab form to stdout","",
+    ierr = PetscOptionsBool("-ssa_mat_view","put preconditioner matrix in Matlab form to stdout","",
                              matview,&matview,NULL);CHKERRQ(ierr);
     ierr = PetscOptionsInt(  "-ssa_guess","initial guess: 1=(linear; default), 2=(exact soln)","",
                              guess,&guess,NULL);CHKERRQ(ierr);
@@ -186,37 +176,38 @@ int main(int argc,char **argv)
 
   /* these existing PETSc options are checked outside of PetscOptionsBegin .. End
      so that they are not listed redundantly in -help output */
-  ierr = PetscOptionsTruth("-snes_fd",
+  ierr = PetscOptionsBool("-snes_fd",
            "use naive finite difference evaluation of Jacobian (PETSc option)","",
            fd_naive,&fd_naive,NULL);CHKERRQ(ierr);
-  ierr = PetscOptionsTruth("-snes_mf","use matrix-free method (PETSc option)","",
+  ierr = PetscOptionsBool("-snes_mf","use matrix-free method (PETSc option)","",
            mf,&mf,NULL);CHKERRQ(ierr);
-  ierr = PetscOptionsTruth("-snes_mf_operator",
+  ierr = PetscOptionsBool("-snes_mf_operator",
            "use matrix-free method but with provided assembled preconditioning matrix (PETSc option)","",
            smo_set,&smo_set,NULL);CHKERRQ(ierr);
   if (smo_set) {  mf = PETSC_TRUE;  }
 
   /* Jacobian method flags resolution */
   if (mf && !smo_set && (fd_naive || fd_coloring)) {
-    SETERRQ(1,
+    SETERRQ(PETSC_COMM_SELF,1,
       "SSAFLOWLINE ERROR:  finite difference options (-fd or -snes_fd) and unpreconditioned\n"
       "                    matrix-free option (-snes_mf) conflict,\n"
       "                    and should not be used at the same time");
   }
   if (fd_naive && fd_coloring) {
-    SETERRQ(2,
+    SETERRQ(PETSC_COMM_SELF,2,
       "SSAFLOWLINE ERROR:  finite difference options -fd and -snes_fd conflict,\n"
       "                    and should not be used at the same time");
   }
   if (mf || fd_naive)  fd_coloring = PETSC_FALSE;
 
-  /* Create machinery for parallel grid management (DA), nonlinear solver (SNES), 
+  /* Create machinery for parallel grid management (DMDA), nonlinear solver (SNES), 
      and Vecs for fields (thickness, velocity, RHS).  Note default Mx=20 is 
      number of grid points.  Also degrees of freedom = 1 (scalar problem) and
      stencil radius = ghost width = 1.                                    */
-  ierr = DACreate1d(PETSC_COMM_WORLD,DA_NONPERIODIC,-20,1,1,PETSC_NULL,&user.da);CHKERRQ(ierr);
-  ierr = DASetUniformCoordinates(user.da,0.0,user.L,
-                                 PETSC_NULL,PETSC_NULL,PETSC_NULL,PETSC_NULL);CHKERRQ(ierr);
+  ierr = DMDACreate1d(PETSC_COMM_WORLD,DMDA_BOUNDARY_NONE,
+                      -20,1,1,PETSC_NULL,&da);CHKERRQ(ierr);
+  /*ierr = DASetUniformCoordinates(user.da,0.0,user.L,
+                                 PETSC_NULL,PETSC_NULL,PETSC_NULL,PETSC_NULL);CHKERRQ(ierr);*/
 
   /* Extract global vectors from DA and duplicate (allocate) for remaining same types */
   ierr = DACreateGlobalVector(user.da,&u);CHKERRQ(ierr);
@@ -264,7 +255,7 @@ int main(int argc,char **argv)
              "    (*not* efficiently, by differencing all variables; built-in SNES method)\n");
              CHKERRQ(ierr);
     } else {
-      SETERRQ(2,"how did I get here?");
+      SETERRQ(PETSC_COMM_SELF,2,"how did I get here?");
     }
   } else {
     ierr = SNESSetJacobian(snes,A,B,SNESDAComputeJacobian,&user);CHKERRQ(ierr);
@@ -336,7 +327,7 @@ int main(int argc,char **argv)
              CHKERRQ(ierr);
     ierr = VecCopy(user.uexact,u);CHKERRQ(ierr);
   } else {
-    SETERRQ(1,"invalid integer for guess = (initial solution guess case)\n");
+    SETERRQ(PETSC_COMM_SELF,1,"invalid integer for guess = (initial solution guess case)\n");
   }
 
   /************ SOLVE NONLINEAR SYSTEM!  ************/

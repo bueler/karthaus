@@ -3,10 +3,7 @@ codes
    testshelf.m,  ssaflowline.m,  flowline.m
 in directory mfiles/.
 
-See the PDF lecture slides for a bit of high-level
-information on the problem, the Picard iteration solution implemented in the
-Matlab/Octave codes, and superficial ideas about PETSc as a nonlinear solver
-toolbox.  See jacobiannotes.pdf for more.
+See the PDF lecture slides for a description of the problem and of the Picard iteration solution implemented in the Matlab/Octave codes.  See notes/jacobiannotes.pdf for more.
 
 To build and run in this directory:
   0)  needs PETSc version 3.1 
