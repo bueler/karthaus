@@ -1,32 +1,29 @@
 static const char help[] = 
 "\nComputes the velocity from the SSA model for ice, in a flow-line case.\n\
-See lecture.pdf and mfiles/{flowline.m,ssaflowline.m,testshelf.m}\n\
+See notes/notes.pdf and slides.pdf and mfiles/{flowline.m,ssaflowline.m,testshelf.m}\n\
 for the problem being solved.\n\n\
-This code is roughly based on src/snes/examples/tutorials/ex5.c in\n\
-PETSc and on Jed Brown's tutorial pbratu.c example.\n\n\
+This code is based on examples src/snes/examples/tutorials/{ex5.c,ex5.c} in\n\
+PETSc 3.2.\n\n\
 Program usage:  mpiexec -n <procs> ./ssaflowline [-help] [all PETSc options]\n\n\
 Examples:\n\
-(0a) see all available options:\n\
-      ./ssaflowline -help |less\n\
-(0b) see all SSA-related options, and default values of constants:\n\
+(0) see all SSA-related options, and default values of constants:\n\
       ./ssaflowline -help |grep ssa_\n\
-(1) use defaults (Newton-Krylov w analytical Jacobian and M=20 grid points):\n\
+(1) use defaults (Newton-Krylov w analytical Jacobian and M=21 grid points):\n\
       ./ssaflowline\n\
-(2) to see a useful amount of PETSc internal structure, and run in parallel:\n\
+(2) to see a useful amount of info on PETSc objects, and run in parallel:\n\
       mpiexec -n 2 ./ssaflowline -snes_view -snes_monitor -ksp_converged_reason\n\
-(3) finer grid and Picard pre-conditioned matrix-free Newton-Krylov\n\
-      ./ssaflowline -da_grid_x 1000 -ssa_picard -snes_mf_operator\n\
-(4) finite difference Jacobian and use exact solution as initial guess:\n\
-      ./ssaflowline -ssa_fd -ssa_guess 2\n\
-(5) ask PETSc to check our analytical Jacobian in M=6 case (ignore all but the\n\
+(3) finer grid and Picard iterations: slower than Newton!\n\
+      ./ssaflowline -da_grid_x 1001 -ssa_picard\n\
+(4) finite difference Jacobian (FIXME: I think there is scaling problem with fd):\n\
+      ./ssaflowline -fd -snes_monitor\n\
+(5) use exact solution as initial guess:\n\
+      ./ssaflowline -ssa_guess 2 -snes_monitor\n\
+(6) ask PETSc to check our analytical Jacobian in M=6 case (ignore all but the\n\
           first displayed case):\n\
-      ./ssaflowline -da_grid_x 6 -mat_fd_type ds -snes_type test -snes_test_display\n\
-(6) with X graphics:\n\
+      ./ssaflowline -da_grid_x 6 -mat_fd_type ds -snes_type test\n\
+(7) with X graphics:\n\
       ./ssaflowline -ssa_show -snes_monitor_solution -draw_pause 1\n\
-(7) fine-grid by finite difference Jacobian needs different algorithm to choose\n\
-          fd-Jacobian epsilon, and permission to do more iterations\n\
-      ./ssaflowline -da_grid_x 20000 -ssa_fd -mat_fd_type ds -snes_max_it 500\n\
-(8) main point: compare performance using analytical jacobian and matrix-free\n\
+(8) main point (FIXME): compare performance using analytical jacobian and matrix-free\n\
           with Picard-as-preconditioner:\n\
       mpiexec -n 4 ./ssaflowline -da_grid_x 20000\n\
       mpiexec -n 4 ./ssaflowline -da_grid_x 20000 -snes_mf_operator \\ \n\
@@ -91,8 +88,6 @@ int main(int argc,char **argv)
                          matview = PETSC_FALSE;/* dump preconditioner matrix */
   SNESConvergedReason    reason;               /* Check convergence */
   PetscBool              fd_naive = PETSC_FALSE,
-                         mf = PETSC_FALSE,
-                         smo_set = PETSC_FALSE,
                          picard = PETSC_FALSE,
                          eps_set = PETSC_FALSE;
 
@@ -147,7 +142,7 @@ int main(int argc,char **argv)
                              picard,&picard,NULL);CHKERRQ(ierr);
     ierr = PetscOptionsBool("-ssa_checks","print values at calving front as minimal check","",
                              checks,&checks,NULL);CHKERRQ(ierr);
-    ierr = PetscOptionsBool("-ssa_show","show thickness and initial guess","",
+    ierr = PetscOptionsBool("-ssa_show","show thickness, exact viscosity, and exact solution","",
                              show,&show,NULL);CHKERRQ(ierr);
     ierr = PetscOptionsBool("-ssa_mat_view","put preconditioner matrix in Matlab form to stdout","",
                              matview,&matview,NULL);CHKERRQ(ierr);
@@ -168,32 +163,12 @@ int main(int argc,char **argv)
     PetscEnd();
   }
 
-  /* these existing PETSc options are checked outside of PetscOptionsBegin .. End
-     so that they are not listed redundantly in -help output */
-  ierr = PetscOptionsBool("-fd",
-           "use naive finite difference evaluation of Jacobian","",
-           fd_naive,&fd_naive,NULL);CHKERRQ(ierr);
-  ierr = PetscOptionsBool("-snes_mf","use matrix-free method (PETSc option)","",
-           mf,&mf,NULL);CHKERRQ(ierr);
-  ierr = PetscOptionsBool("-snes_mf_operator",
-           "use matrix-free method but with provided assembled preconditioning matrix (PETSc option)","",
-           smo_set,&smo_set,NULL);CHKERRQ(ierr);
-  if (smo_set) {  mf = PETSC_TRUE;  }
-
-  /* Jacobian method flags resolution */
-  if (mf && !smo_set && fd_naive) {
-    SETERRQ(PETSC_COMM_SELF,1,
-      "SSAFLOWLINE ERROR:  finite difference options (-fd) and unpreconditioned\n"
-      "                    matrix-free option (-snes_mf) conflict,\n"
-      "                    and should not be used at the same time");
-  }
-
   /* Create machinery for parallel grid management (DMDA), nonlinear solver (SNES), 
-     and Vecs for fields (thickness, velocity, RHS).  Note default Mx=20 is 
+     and Vecs for fields (thickness, velocity, RHS).  Note default Mx=21 is
      number of grid points.  Also degrees of freedom = 1 (scalar problem) and
      stencil radius = ghost width = 1.                                    */
   ierr = DMDACreate1d(PETSC_COMM_WORLD,DMDA_BOUNDARY_NONE,
-                      -20,1,1,PETSC_NULL,&da);CHKERRQ(ierr);
+                      -21,1,1,PETSC_NULL,&da);CHKERRQ(ierr);
   ierr = DMDASetUniformCoordinates(da,0.0,user.L, 0.0, 1.0, 0.0, 1.0);CHKERRQ(ierr);
   ierr = DMSetApplicationContext(da,&user);CHKERRQ(ierr);
 
@@ -205,15 +180,27 @@ int main(int argc,char **argv)
   ierr = VecDuplicate(u,&user.viscosity);CHKERRQ(ierr);
 
   ierr = DMDASetLocalFunction(da,(DMDALocalFunction1)FormFunctionLocal);CHKERRQ(ierr);
-  if (picard) {
-    ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormPicardMatrixLocal);CHKERRQ(ierr);
-  } else {
-    ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormTrueJacobianMatrixLocal);CHKERRQ(ierr);
+  ierr = PetscOptionsBool("-fd",
+           "use naive finite difference evaluation of Jacobian","",
+           fd_naive,&fd_naive,NULL);CHKERRQ(ierr);
+  if (!fd_naive) {
+    if (picard) {
+      ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormPicardMatrixLocal);CHKERRQ(ierr);
+    } else {
+      ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormTrueJacobianMatrixLocal);CHKERRQ(ierr);
+    }
   }
 
   ierr = SNESCreate(PETSC_COMM_WORLD,&snes);CHKERRQ(ierr);
   ierr = SNESSetDM(snes,da);CHKERRQ(ierr);
   ierr = SNESSetFromOptions(snes);CHKERRQ(ierr);
+
+  ierr = DMDAGetInfo(da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE);
+                     CHKERRQ(ierr);
+  ierr = PetscPrintf(PETSC_COMM_WORLD,"  grid of Mx=%d points and dx=%.3f km\n",
+                     Mx,(user.L/(Mx-1))/1000.0);CHKERRQ(ierr);
 
   /* We use a particular formula for the thickness (user.H).  This formula has the
      property that our numerical velocity solution (u) should converge to a
@@ -236,7 +223,7 @@ int main(int argc,char **argv)
     ierr = PetscDrawSetTitle(draw,"ice thickness (m)"); CHKERRQ(ierr);
     ierr = VecView(user.H,PETSC_VIEWER_DRAW_WORLD); CHKERRQ(ierr);
 
-    ierr = PetscDrawSetTitle(draw,"viscosity (10^15 Pa s)"); CHKERRQ(ierr);
+    ierr = PetscDrawSetTitle(draw,"exact viscosity (10^15 Pa s)"); CHKERRQ(ierr);
     ierr = VecScale(user.viscosity,1.0e-15); CHKERRQ(ierr);
     ierr = VecView(user.viscosity,PETSC_VIEWER_DRAW_WORLD); CHKERRQ(ierr);
     ierr = VecScale(user.viscosity,1.0e-15); CHKERRQ(ierr);
@@ -267,17 +254,13 @@ int main(int argc,char **argv)
   ierr = SNESGetIterationNumber(snes,&its);CHKERRQ(ierr);
   ierr = SNESGetConvergedReason(snes,&reason);CHKERRQ(ierr);
   ierr = PetscPrintf(PETSC_COMM_WORLD,
-           "  %s Number of Newton iterations = %D\n",
+           "  %s number of Newton iterations = %D\n",
            SNESConvergedReasons[reason],its);CHKERRQ(ierr);
 
   /* evaluate error relative to exact solution */
   ierr = VecAXPY(u,-1.0,user.uexact);CHKERRQ(ierr); /* "y:=ax+y"  so   u := u - uexact */
   ierr = VecNorm(u,NORM_1,&err1);CHKERRQ(ierr);
   ierr = VecNorm(u,NORM_INFINITY,&errinf);CHKERRQ(ierr);
-  ierr = DMDAGetInfo(da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
-                     PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
-                     PETSC_IGNORE,PETSC_IGNORE);
-                     CHKERRQ(ierr);
   ierr = PetscPrintf(PETSC_COMM_WORLD,
            "  numerical errors in velocity: %.4e m/a average\n"
            "                                %.4e m/a maximum\n"
@@ -670,4 +653,3 @@ static PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo *info,PetscScala
 
   PetscFunctionReturn(0);
 }
-
