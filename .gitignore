@@ -36,3 +36,4 @@ mfiles/*.nc
 mfiles/other/*.nc
 bueler_karthaus/*
 bueler_karthaus.*
+petsc/ssaflowline

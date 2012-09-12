@@ -90,15 +90,11 @@ int main(int argc,char **argv)
                                                   use -draw_pause N for N sec delay */
                          matview = PETSC_FALSE;/* dump preconditioner matrix */
   SNESConvergedReason    reason;               /* Check convergence */
-  Mat                    A,B;                  /* Jacobian and preconditioning matrices */
-  PetscBool              fd_coloring = PETSC_FALSE,
-                         fd_naive = PETSC_FALSE,
+  PetscBool              fd_naive = PETSC_FALSE,
                          mf = PETSC_FALSE,
                          smo_set = PETSC_FALSE,
                          picard = PETSC_FALSE,
                          eps_set = PETSC_FALSE;
-  MatFDColoring          matfdcoloring = 0;
-  ISColoring             iscoloring;
 
   PetscInitialize(&argc,&argv,(char *)0,help);
 
@@ -147,8 +143,6 @@ int main(int argc,char **argv)
     ierr = PetscOptionsReal("-ssa_epsilon","regularization (a strain rate in units of 1/a)","",
                             user.epsilon * user.secpera,&user.epsilon,&eps_set);CHKERRQ(ierr);
     if (eps_set) {  user.epsilon *= 1.0 / user.secpera;  }
-    ierr = PetscOptionsBool("-ssa_fd","solve SSA using finite difference Jacobian by coloring","",
-                             fd_coloring,&fd_coloring,NULL);CHKERRQ(ierr);
     ierr = PetscOptionsBool("-ssa_picard","compute Picard matrix instead of analytical Jacobian","",
                              picard,&picard,NULL);CHKERRQ(ierr);
     ierr = PetscOptionsBool("-ssa_checks","print values at calving front as minimal check","",
@@ -176,8 +170,8 @@ int main(int argc,char **argv)
 
   /* these existing PETSc options are checked outside of PetscOptionsBegin .. End
      so that they are not listed redundantly in -help output */
-  ierr = PetscOptionsBool("-snes_fd",
-           "use naive finite difference evaluation of Jacobian (PETSc option)","",
+  ierr = PetscOptionsBool("-fd",
+           "use naive finite difference evaluation of Jacobian","",
            fd_naive,&fd_naive,NULL);CHKERRQ(ierr);
   ierr = PetscOptionsBool("-snes_mf","use matrix-free method (PETSc option)","",
            mf,&mf,NULL);CHKERRQ(ierr);
@@ -187,18 +181,12 @@ int main(int argc,char **argv)
   if (smo_set) {  mf = PETSC_TRUE;  }
 
   /* Jacobian method flags resolution */
-  if (mf && !smo_set && (fd_naive || fd_coloring)) {
+  if (mf && !smo_set && fd_naive) {
     SETERRQ(PETSC_COMM_SELF,1,
-      "SSAFLOWLINE ERROR:  finite difference options (-fd or -snes_fd) and unpreconditioned\n"
+      "SSAFLOWLINE ERROR:  finite difference options (-fd) and unpreconditioned\n"
       "                    matrix-free option (-snes_mf) conflict,\n"
       "                    and should not be used at the same time");
   }
-  if (fd_naive && fd_coloring) {
-    SETERRQ(PETSC_COMM_SELF,2,
-      "SSAFLOWLINE ERROR:  finite difference options -fd and -snes_fd conflict,\n"
-      "                    and should not be used at the same time");
-  }
-  if (mf || fd_naive)  fd_coloring = PETSC_FALSE;
 
   /* Create machinery for parallel grid management (DMDA), nonlinear solver (SNES), 
      and Vecs for fields (thickness, velocity, RHS).  Note default Mx=20 is 
@@ -206,82 +194,25 @@ int main(int argc,char **argv)
      stencil radius = ghost width = 1.                                    */
   ierr = DMDACreate1d(PETSC_COMM_WORLD,DMDA_BOUNDARY_NONE,
                       -20,1,1,PETSC_NULL,&da);CHKERRQ(ierr);
-  /*ierr = DASetUniformCoordinates(user.da,0.0,user.L,
-                                 PETSC_NULL,PETSC_NULL,PETSC_NULL,PETSC_NULL);CHKERRQ(ierr);*/
+  ierr = DMDASetUniformCoordinates(da,0.0,user.L, 0.0, 1.0, 0.0, 1.0);CHKERRQ(ierr);
+  ierr = DMSetApplicationContext(da,&user);CHKERRQ(ierr);
 
   /* Extract global vectors from DA and duplicate (allocate) for remaining same types */
-  ierr = DACreateGlobalVector(user.da,&u);CHKERRQ(ierr);
+  ierr = DMCreateGlobalVector(da,&u);CHKERRQ(ierr);
   ierr = VecDuplicate(u,&r);CHKERRQ(ierr);
   ierr = VecDuplicate(u,&user.H);CHKERRQ(ierr);
   ierr = VecDuplicate(u,&user.uexact);CHKERRQ(ierr);
   ierr = VecDuplicate(u,&user.viscosity);CHKERRQ(ierr);
 
-  ierr = DASetLocalFunction(user.da,(DALocalFunction1)FormFunctionLocal);CHKERRQ(ierr);
+  ierr = DMDASetLocalFunction(da,(DMDALocalFunction1)FormFunctionLocal);CHKERRQ(ierr);
   if (picard) {
-    ierr = DASetLocalJacobian(user.da,(DALocalFunction1)FormPicardMatrixLocal);CHKERRQ(ierr);
+    ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormPicardMatrixLocal);CHKERRQ(ierr);
   } else {
-    ierr = DASetLocalJacobian(user.da,(DALocalFunction1)FormTrueJacobianMatrixLocal);CHKERRQ(ierr);
+    ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormTrueJacobianMatrixLocal);CHKERRQ(ierr);
   }
 
   ierr = SNESCreate(PETSC_COMM_WORLD,&snes);CHKERRQ(ierr);
-
-  ierr = SNESSetFunction(snes,r,SNESDAFormFunction,&user);CHKERRQ(ierr);
-
-  ierr = DAGetMatrix(user.da,MATAIJ,&B);CHKERRQ(ierr);
-  A = B;
-  if (matview)   user.J = B;
-
-  if (fd_coloring) {
-    ierr = PetscPrintf(PETSC_COMM_WORLD,
-             "  Jacobian: approximated as matrix by finite-differencing\n"
-             "    (efficiently using coloring)\n"); CHKERRQ(ierr);
-    ierr = DAGetColoring(user.da,IS_COLORING_GLOBAL,MATAIJ,&iscoloring);CHKERRQ(ierr);
-    ierr = MatFDColoringCreate(B,iscoloring,&matfdcoloring);CHKERRQ(ierr);
-    ierr = ISColoringDestroy(iscoloring);CHKERRQ(ierr);
-    ierr = MatFDColoringSetFunction(matfdcoloring,
-                 (PetscErrorCode (*)(void))SNESDAFormFunction,&user);CHKERRQ(ierr);
-    ierr = MatFDColoringSetFromOptions(matfdcoloring);CHKERRQ(ierr);
-    ierr = SNESSetJacobian(snes,A,B,SNESDefaultComputeJacobianColor,matfdcoloring);CHKERRQ(ierr);
-  } else if ((mf && !smo_set) || fd_naive) {
-    /* cases where SNES default methods are used for finite-differencing */
-    ierr = SNESSetJacobian(snes,A,B,SNESDefaultComputeJacobian,PETSC_NULL);CHKERRQ(ierr);
-    if (mf) {
-      ierr = PetscPrintf(PETSC_COMM_WORLD,
-             "  Jacobian: using matrix-free finite-differencing\n"
-             "    (without pre-conditioning)\n"); CHKERRQ(ierr);
-    } else if (fd_naive) {
-      ierr = PetscPrintf(PETSC_COMM_WORLD,
-             "  Jacobian: approximated as matrix by finite differencing\n"
-             "    (*not* efficiently, by differencing all variables; built-in SNES method)\n");
-             CHKERRQ(ierr);
-    } else {
-      SETERRQ(PETSC_COMM_SELF,2,"how did I get here?");
-    }
-  } else {
-    ierr = SNESSetJacobian(snes,A,B,SNESDAComputeJacobian,&user);CHKERRQ(ierr);
-    if (picard) {
-      if (smo_set) {
-        ierr = PetscPrintf(PETSC_COMM_WORLD,
-             "  Jacobian: using matrix-free finite-differencing\n"
-             "    (with assembled Picard matrix as preconditioner)\n"); CHKERRQ(ierr);
-      } else {
-        ierr = PetscPrintf(PETSC_COMM_WORLD,
-             "  Jacobian: using Picard matrix in place of analytical Jacobian matrix\n"); 
-             CHKERRQ(ierr);
-      }
-    } else {
-      if (smo_set) {
-        ierr = PetscPrintf(PETSC_COMM_WORLD,
-             "  Jacobian: using matrix-free finite-differencing\n"
-             "    (with assembled analytical Jacobian matrix as preconditioner)\n"); 
-             CHKERRQ(ierr);
-      } else {
-        ierr = PetscPrintf(PETSC_COMM_WORLD,
-             "  Jacobian: using analytical Jacobian matrix\n"); CHKERRQ(ierr);
-      }
-    }
-  }
-
+  ierr = SNESSetDM(snes,da);CHKERRQ(ierr);
   ierr = SNESSetFromOptions(snes);CHKERRQ(ierr);
 
   /* We use a particular formula for the thickness (user.H).  This formula has the
@@ -289,7 +220,7 @@ int main(int argc,char **argv)
      known exact solution (user.uexact), which is also computed here.  Note that the 
      thickness is computed on the staggered grid and the exact solution on the
      regular grid.  For more, see notes lecture.pdf.   */
-  ierr = FillThicknessAndExactSoln(&user);CHKERRQ(ierr);
+  ierr = FillThicknessAndExactSoln(da,&user);CHKERRQ(ierr);
 
   if (checks || show) {
     ierr = PetscPrintf(PETSC_COMM_WORLD,  /* minimal checks on thickness, exact */
@@ -321,7 +252,7 @@ int main(int argc,char **argv)
   if (guess == 1) { /* linear guess: see notes */
     ierr = PetscPrintf(PETSC_COMM_WORLD,"  using linear initial guess\n");
              CHKERRQ(ierr);
-    ierr = FormInitialGuess(&user,u);CHKERRQ(ierr);
+    ierr = FormInitialGuess(da,&user,u);CHKERRQ(ierr);
   } else if (guess == 2) { /* use exact soln as initial guess: */
     ierr = PetscPrintf(PETSC_COMM_WORLD,"  using exact solution as initial guess\n");
              CHKERRQ(ierr);
@@ -343,25 +274,24 @@ int main(int argc,char **argv)
   ierr = VecAXPY(u,-1.0,user.uexact);CHKERRQ(ierr); /* "y:=ax+y"  so   u := u - uexact */
   ierr = VecNorm(u,NORM_1,&err1);CHKERRQ(ierr);
   ierr = VecNorm(u,NORM_INFINITY,&errinf);CHKERRQ(ierr);
-  ierr = DAGetInfo(user.da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
-                   PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE);
+  ierr = DMDAGetInfo(da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE);
+                     CHKERRQ(ierr);
   ierr = PetscPrintf(PETSC_COMM_WORLD,
            "  numerical errors in velocity: %.4e m/a average\n"
            "                                %.4e m/a maximum\n"
            "                                %.4e relative maximum\n",
            err1*user.secpera/Mx,errinf*user.secpera,errinf/user.uexactcalv);CHKERRQ(ierr);
   
-  ierr = VecDestroy(u);CHKERRQ(ierr);
-  ierr = VecDestroy(r);CHKERRQ(ierr);
-  ierr = VecDestroy(user.H);CHKERRQ(ierr);
-  ierr = VecDestroy(user.uexact);CHKERRQ(ierr);
-  ierr = VecDestroy(user.viscosity);CHKERRQ(ierr);
-  if (A != B) {
-    ierr = MatDestroy(A); CHKERRQ(ierr);
-  }
-  ierr = MatDestroy(B);CHKERRQ(ierr);
-  ierr = SNESDestroy(snes);CHKERRQ(ierr);
-  ierr = DADestroy(user.da);CHKERRQ(ierr);
+  ierr = VecDestroy(&u);CHKERRQ(ierr);
+  ierr = VecDestroy(&r);CHKERRQ(ierr);
+  ierr = VecDestroy(&(user.H));CHKERRQ(ierr);
+  ierr = VecDestroy(&(user.uexact));CHKERRQ(ierr);
+  ierr = VecDestroy(&(user.viscosity));CHKERRQ(ierr);
+
+  ierr = SNESDestroy(&snes);CHKERRQ(ierr);
+  ierr = DMDestroy(&da);CHKERRQ(ierr);
 
   ierr = PetscFinalize();CHKERRQ(ierr);
   return 0;
@@ -392,7 +322,7 @@ static inline PetscScalar GetViscosityFromStrainRate(PetscScalar dudx, PetscScal
 #define __FUNCT__ "FillThicknessAndExactSoln"
 /*  Compute the right thickness H = H(x).  See lecture notes for analysis
     leading to exact ice shelf shape. */
-static PetscErrorCode FillThicknessAndExactSoln(AppCtx *user)
+static PetscErrorCode FillThicknessAndExactSoln(DM da, AppCtx *user)
 {
   PetscErrorCode ierr;
   PetscInt       i,Mx,xs,xm;
@@ -400,9 +330,10 @@ static PetscErrorCode FillThicknessAndExactSoln(AppCtx *user)
   PetscScalar    *H, *uex, *visc;
 
   PetscFunctionBegin;
-  ierr = DAGetInfo(user->da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
-                   PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE);
-  ierr = DAGetCorners(user->da,&xs,PETSC_NULL,PETSC_NULL,&xm,PETSC_NULL,PETSC_NULL);CHKERRQ(ierr);
+  ierr = DMDAGetInfo(da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE);CHKERRQ(ierr);
+  ierr = DMDAGetCorners(da,&xs,PETSC_NULL,PETSC_NULL,&xm,PETSC_NULL,PETSC_NULL);CHKERRQ(ierr);
 
   /* constants, independent of x */
   hx = user->L / (PetscReal)(Mx-1);
@@ -415,9 +346,9 @@ static PetscErrorCode FillThicknessAndExactSoln(AppCtx *user)
 
   /* Compute regular grid exact soln and staggered-grid thickness over the
      locally-owned part of the grid */
-  ierr = DAVecGetArray(user->da,user->uexact,&uex);CHKERRQ(ierr);
-  ierr = DAVecGetArray(user->da,user->H,&H);CHKERRQ(ierr);
-  ierr = DAVecGetArray(user->da,user->viscosity,&visc);CHKERRQ(ierr);
+  ierr = DMDAVecGetArray(da,user->uexact,&uex);CHKERRQ(ierr);
+  ierr = DMDAVecGetArray(da,user->H,&H);CHKERRQ(ierr);
+  ierr = DMDAVecGetArray(da,user->viscosity,&visc);CHKERRQ(ierr);
   for (i=xs; i<xs+xm; i++) {
     /* get exact velocity and strain rate on regular grid */
     xx = hx * (PetscReal)i;  /* = x_i = distance from grounding line */
@@ -432,9 +363,9 @@ static PetscErrorCode FillThicknessAndExactSoln(AppCtx *user)
     GetUEx(user->ug, qg, user->accum, n, Cs, flux, &ustag, &dudx);
     H[i] = flux / ustag;
   }
-  ierr = DAVecRestoreArray(user->da,user->uexact,&uex);CHKERRQ(ierr);
-  ierr = DAVecRestoreArray(user->da,user->H,&H);CHKERRQ(ierr);
-  ierr = DAVecRestoreArray(user->da,user->viscosity,&visc);CHKERRQ(ierr);
+  ierr = DMDAVecRestoreArray(da,user->uexact,&uex);CHKERRQ(ierr);
+  ierr = DMDAVecRestoreArray(da,user->H,&H);CHKERRQ(ierr);
+  ierr = DMDAVecRestoreArray(da,user->viscosity,&visc);CHKERRQ(ierr);
 
   /* separately compute and store calving-front values */
   flux = user->accum * user->L + qg;
@@ -453,7 +384,7 @@ static PetscErrorCode FillThicknessAndExactSoln(AppCtx *user)
 
 #undef __FUNCT__
 #define __FUNCT__ "FormInitialGuess"
-static PetscErrorCode FormInitialGuess(AppCtx *user,Vec X)
+static PetscErrorCode FormInitialGuess(DM da, AppCtx *user,Vec X)
 {
   PetscErrorCode ierr;
   PetscInt       i,Mx,xs,xm;
@@ -461,20 +392,21 @@ static PetscErrorCode FormInitialGuess(AppCtx *user,Vec X)
   PetscScalar    *u;
 
   PetscFunctionBegin;
-  ierr = DAGetInfo(user->da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
-                   PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE);
-  ierr = DAGetCorners(user->da,&xs,PETSC_NULL,PETSC_NULL,&xm,PETSC_NULL,PETSC_NULL);CHKERRQ(ierr);
+  ierr = DMDAGetInfo(da,PETSC_IGNORE,&Mx,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
+                     PETSC_IGNORE,PETSC_IGNORE);CHKERRQ(ierr);
+  ierr = DMDAGetCorners(da,&xs,PETSC_NULL,PETSC_NULL,&xm,PETSC_NULL,PETSC_NULL);CHKERRQ(ierr);
 
   hx = user->L / (PetscReal)(Mx-1);
 
   /* Compute initial guess over the locally owned part of the grid.  See lecture
      notes for comments on why this linear function is a reasonable initial guess. */
-  ierr = DAVecGetArray(user->da,X,&u);CHKERRQ(ierr);
+  ierr = DMDAVecGetArray(da,X,&u);CHKERRQ(ierr);
   for (i=xs; i<xs+xm; i++) {
     xx = hx * (PetscReal)i;  /* distance from grounding line */
     u[i] = user->ug + user->gamma * xx;
   }
-  ierr = DAVecRestoreArray(user->da,X,&u);CHKERRQ(ierr);
+  ierr = DMDAVecRestoreArray(da,X,&u);CHKERRQ(ierr);
 
   PetscFunctionReturn(0);
 }
@@ -508,7 +440,7 @@ with some regularization using user.epsilon, and
   B = A^{1/n}
 
 */
-static PetscErrorCode FormFunctionLocal(DALocalInfo *info,PetscScalar *u,PetscScalar *f,AppCtx *user)
+static PetscErrorCode FormFunctionLocal(DMDALocalInfo *info,PetscScalar *u,PetscScalar *f,AppCtx *user)
 {
   PetscErrorCode ierr;
   PetscReal      hx, p, K, B, duL, duR, sL, sR;
@@ -519,9 +451,9 @@ static PetscErrorCode FormFunctionLocal(DALocalInfo *info,PetscScalar *u,PetscSc
   PetscFunctionBegin;
   /* ierr = PetscPrintf(PETSC_COMM_WORLD,"FormFunctionLocal() called\n"); CHKERRQ(ierr); */
 
-  ierr = DAGetLocalVector(user->da,&localH);CHKERRQ(ierr);
-  ierr = DAGlobalToLocalBegin(user->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
-  ierr = DAGlobalToLocalEnd(user->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
+  ierr = DMGetLocalVector(info->da,&localH);CHKERRQ(ierr);
+  ierr = DMGlobalToLocalBegin(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
+  ierr = DMGlobalToLocalEnd(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
 
   p  = 1.0 + 1.0 / user->n;
   B  = PetscPowScalar(user->A,-1.0/user->n);
@@ -529,7 +461,7 @@ static PetscErrorCode FormFunctionLocal(DALocalInfo *info,PetscScalar *u,PetscSc
   Mx = info->mx;
   hx = user->L / ((PetscReal)Mx - 1.0);
 
-  ierr = DAVecGetArray(user->da,localH,&H);CHKERRQ(ierr);
+  ierr = DMDAVecGetArray(info->da,localH,&H);CHKERRQ(ierr);
   for (i=info->xs; i<info->xs+info->xm; i++) {
     if (i == 0) {
       f[0] = u[0] - user->ug;  /* Dirichlet condition */
@@ -549,9 +481,9 @@ static PetscErrorCode FormFunctionLocal(DALocalInfo *info,PetscScalar *u,PetscSc
       f[i] = sR - sL - hx * K * (H[i]*H[i] - H[i-1]*H[i-1]);
     }
   }
-  ierr = DAVecRestoreArray(user->da,localH,&H);CHKERRQ(ierr);
+  ierr = DMDAVecRestoreArray(info->da,localH,&H);CHKERRQ(ierr);
 
-  ierr = DARestoreLocalVector(user->da,&localH);CHKERRQ(ierr);
+  ierr = DMRestoreLocalVector(info->da,&localH);CHKERRQ(ierr);
 
   PetscFunctionReturn(0);
 }
@@ -564,7 +496,7 @@ The result of this routine can be used as a preconditioner to a finite-
 difference matrix-free approach *or* directly as an approximation to the Jacobian.
 The former happens with options
   -ssa_picard -snes_mf_operator */
-static PetscErrorCode FormPicardMatrixLocal(DALocalInfo *info,PetscScalar *u, Mat pic,AppCtx *user)
+static PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo *info,PetscScalar *u, Mat pic,AppCtx *user)
 {
   PetscErrorCode ierr;
   PetscInt       i, Mx;
@@ -577,15 +509,15 @@ static PetscErrorCode FormPicardMatrixLocal(DALocalInfo *info,PetscScalar *u, Ma
   PetscFunctionBegin;
   /*DEBUG: ierr = PetscPrintf(PETSC_COMM_WORLD,"FormPicardMatrixLocal() called\n"); CHKERRQ(ierr); */
 
-  ierr = DAGetLocalVector(user->da,&localH);CHKERRQ(ierr);
-  ierr = DAGlobalToLocalBegin(user->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
-  ierr = DAGlobalToLocalEnd(user->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
+  ierr = DMGetLocalVector(info->da,&localH);CHKERRQ(ierr);
+  ierr = DMGlobalToLocalBegin(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
+  ierr = DMGlobalToLocalEnd(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
 
   p  = 1.0 + 1.0 / user->n;
   Mx = info->mx;
   hx = user->L / ((PetscReal)Mx - 1.0);
 
-  ierr = DAVecGetArray(user->da,localH,&H);CHKERRQ(ierr);
+  ierr = DMDAVecGetArray(info->da,localH,&H);CHKERRQ(ierr);
   for (i=info->xs; i<info->xs+info->xm; i++) {
     row[0] = i;
     if (i == 0) {
@@ -621,9 +553,9 @@ static PetscErrorCode FormPicardMatrixLocal(DALocalInfo *info,PetscScalar *u, Ma
       }
     }
   }
-  ierr = DAVecRestoreArray(user->da,localH,&H);CHKERRQ(ierr);
+  ierr = DMDAVecRestoreArray(info->da,localH,&H);CHKERRQ(ierr);
 
-  ierr = DARestoreLocalVector(user->da,&localH);CHKERRQ(ierr);
+  ierr = DMRestoreLocalVector(info->da,&localH);CHKERRQ(ierr);
 
   /* Assemble matrix, using the 2-step process */
   ierr = MatAssemblyBegin(pic,MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
@@ -660,7 +592,7 @@ static inline PetscScalar GetOmega(PetscScalar Z, PetscScalar dx, PetscScalar p,
 #undef __FUNCT__
 #define __FUNCT__ "FormTrueJacobianMatrixLocal"
 /* FormTrueJacobianMatrixLocal - Evaluates analytical Jacobian matrix. */
-static PetscErrorCode FormTrueJacobianMatrixLocal(DALocalInfo *info,PetscScalar *u, Mat jac,AppCtx *user)
+static PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo *info,PetscScalar *u, Mat jac,AppCtx *user)
 {
   PetscErrorCode ierr;
   PetscInt       i, Mx;
@@ -673,15 +605,15 @@ static PetscErrorCode FormTrueJacobianMatrixLocal(DALocalInfo *info,PetscScalar 
   PetscFunctionBegin;
   /*DEBUG: ierr = PetscPrintf(PETSC_COMM_WORLD,"FormTrueJacobianMatrixLocal() called\n"); CHKERRQ(ierr); */
 
-  ierr = DAGetLocalVector(user->da,&localH);CHKERRQ(ierr);
-  ierr = DAGlobalToLocalBegin(user->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
-  ierr = DAGlobalToLocalEnd(user->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
+  ierr = DMGetLocalVector(info->da,&localH);CHKERRQ(ierr);
+  ierr = DMGlobalToLocalBegin(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
+  ierr = DMGlobalToLocalEnd(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
 
   p  = 1.0 + 1.0 / user->n;
   Mx = info->mx;
   hx = user->L / ((PetscReal)Mx - 1.0);
 
-  ierr = DAVecGetArray(user->da,localH,&H);CHKERRQ(ierr);
+  ierr = DMDAVecGetArray(info->da,localH,&H);CHKERRQ(ierr);
   for (i=info->xs; i<info->xs+info->xm; i++) {
     row[0] = i;
     if (i == 0) {
@@ -719,9 +651,9 @@ static PetscErrorCode FormTrueJacobianMatrixLocal(DALocalInfo *info,PetscScalar 
     }
 
   }
-  ierr = DAVecRestoreArray(user->da,localH,&H);CHKERRQ(ierr);
+  ierr = DMDAVecRestoreArray(info->da,localH,&H);CHKERRQ(ierr);
 
-  ierr = DARestoreLocalVector(user->da,&localH);CHKERRQ(ierr);
+  ierr = DMRestoreLocalVector(info->da,&localH);CHKERRQ(ierr);
 
   /* Assemble matrix, using the 2-step process */
   ierr = MatAssemblyBegin(jac,MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
