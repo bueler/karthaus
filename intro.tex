@@ -72,7 +72,7 @@ notation: see printed notes
 
 \subsection{ice flow equations}
 
-\begin{frame}{my first goal}
+\begin{frame}{my goal for the first hour}
 
 \begin{itemize}
 \item my goal is to get to an equation for which I can say:
@@ -84,7 +84,7 @@ notation: see printed notes
 \bigskip
 
 \item a ``usable'' model is \emph{understood} more than it is \emph{correct}
-\item to get to my goal I will quickly recall some continuum mechanics of ice flow
+\item to get to my goal I will quickly recall some continuum mechanics
 \end{itemize}
 \end{frame}
 
@@ -105,6 +105,8 @@ notation: see printed notes
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 \rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nu \nabla^2 \mathbf{u} + \rho \mathbf{g} &&\text{\emph{force balance}}
 \end{align*}
+\item so, to numerically model our fluid, we grab a textbook on ``computational fluid dynamics''
+\item right?
 \end{itemize}
 \end{frame}
 
@@ -122,10 +124,10 @@ is numerical ice flow modeling a part of computational fluid dynamics?
   \item[$\circ$] turbulence
   \item[$\circ$] convection
   \item[$\circ$] coriolis force
-  \item[$\circ$] density/salinity variation
+  \item[$\circ$] density variation
   \item[$\circ$] chemistry (methane, ozone, \dots)
   \end{itemize}
-\item none of the above is relevant to ice flow
+\item none of the above is very relevant to ice flow
 \item so what could be interesting about the flow of slow, cold, stiff, laminar, inert old ice?
 
  \qquad \dots \qquad it's \emph{ice dynamics!}
@@ -142,10 +144,10 @@ is numerical ice flow modeling a part of computational fluid dynamics?
   \emph{slow}: & $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$ \\
   \emph{non-Newtonian}: & viscosity $\nu$ is not constant
   \end{tabular}
-\item regarding ``slow'':
+\item ``slow'':
   $$\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0 \qquad \iff \qquad \begin{pmatrix} \text{forces of inertia} \\ \text{are negligible} \end{pmatrix}$$
-\item regarding ``non-Newtonian'' flow:  in particular it is ``shear-thinning'', so larger strain rate means smaller viscosity
-\item the standard ``full'' model is Glen-law ($n=3$) Stokes:
+\item ``non-Newtonian'' flow:  it is ``shear-thinning'', so larger strain rate means smaller viscosity
+\item so the standard ice flow model is Glen-law ($n=3$) Stokes:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance}} \\
@@ -158,10 +160,12 @@ is numerical ice flow modeling a part of computational fluid dynamics?
 \begin{frame}{ice is a slow fluid 2}
 
 \begin{itemize}
-\item equations on previous slide are true at every instant, and
+\item equations on previous slide are true at every instant
+\item
   \begin{quote}
-  \emph{geometry, boundary stress, and ice viscosity determine velocity instantaneously}
-  \end{quote}\item a time-stepping ice sheet code recomputes the full velocity field at every time step, without requiring velocity from the previous step\footnote{to be a weatherman you've got to know which way the wind blows \dots but don't expect that from a glaciologist}
+  \alert{geometry, boundary stress, and ice viscosity determine velocity field instantaneously}
+  \end{quote}
+\item a time-stepping ice sheet code recomputes the velocity field at every time step, without requiring velocity from the previous step\footnote{to be a weatherman you've got to know which way the wind blows \dots but don't expect that from a glaciologist}
 \item thus no memory of previous momentum/velocity, so velocity is a ``diagnostic'' output of an ice flow model
 \end{itemize}
 \end{frame}
@@ -296,7 +300,6 @@ velocity profile of the Athabasca Glacier from inclinometry
 \item but, assuming width $dx=x_2-x_1$ is small, $A\approx dx\, H$; divide by $dx$ and get
    $$H_t = M - \left(\bar u H\right)_x$$
 \item this is a \emph{mass continuity equation}
-\item I'll return to this topic \dots
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}

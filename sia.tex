@@ -8,9 +8,12 @@
   \begin{enumerate}
   \item slow
   \item non-Newtonian
-  \item contact slip (sometimes)
   \item shallow
+  \item contact slip (sometimes)
   \end{enumerate}
+
+\vspace{5mm}
+\item the first model will capture the first three properties
 \end{itemize}
 \end{frame}
 
@@ -61,7 +64,7 @@ a model which applies to
 \end{center}
 \item shear stress approximation:
 	$$(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$$
-\item let $\mathbf{U} = (u,v)$, the horizontal velocity
+\item notation: $\mathbf{U} = (u,v)$ = the horizontal velocity
 \item we further approximate
 \begin{align*}
 \mathbf{U}_z &\approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) \\
@@ -111,8 +114,7 @@ and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976
 \begin{column}{0.5\textwidth}
 \noindent good questions:
 \begin{enumerate}
-\item where does equation (1) come from?
-\item how to solve it numerically?
+\item how to solve equation (1) numerically?
 \item how to \emph{think} about it?
 \end{enumerate}  
 \end{column}
@@ -790,7 +792,7 @@ maximum abs error            = 109.466
 
 \subsection{Antarctica}
 
-\begin{frame}{model the Antarctic ice sheet}
+\begin{frame}{model of the Antarctic ice sheet}
 
 \normalsize
 \begin{itemize}
@@ -821,22 +823,40 @@ maximum abs error            = 109.466
 \end{frame}
 
 
-\begin{frame}{model the Antarctic ice sheet 2}
+\begin{frame}{model of the Antarctic ice sheet 2}
 
 \normalsize
 \begin{itemize}
-\item left: thickness change from beginning to end of 50 km run
-\item right: volume time series from {\color{red} 50 km}, {\color{green} 25 km}, {\color{blue} 20 km} runs; volumes are in $10^6\,\text{km}^3$
-\item conclusion:  \emph{look at results on multiple grid resolutions} before interpreting your results (e.g.~their parameter-dependence)
+\item thickness change from beginning to end of 50 km run
+\item thickness change is nearly a map of where flow is fast
+  \begin{itemize}
+  \item[$\circ$] why?
+  \end{itemize}  
 \end{itemize}
 
 \bigskip
 \begin{columns}
-\begin{column}{0.55\textwidth}
+\begin{column}{0.6\textwidth}
 \includegraphics[width=1.0\textwidth]{antthickchange}
 \end{column}
-\begin{column}{0.45\textwidth}
-\includegraphics[width=1.0\textwidth]{antvolcompare}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1.0\textwidth]{antspeedrignot2008}
 \end{column}
 \end{columns}
+\end{frame}
+
+
+\begin{frame}{model of the Antarctic ice sheet 3}
+
+\normalsize
+\begin{itemize}
+\item volume time series from {\color{red} 50 km}, {\color{green} 25 km}, {\color{blue} 20 km} runs
+\item units of $10^6\,\text{km}^3$
+\item conclusion:  look at your results on \emph{multiple grid resolutions} before interpreting your results (e.g.~their parameter-dependence)
+\end{itemize}
+
+\bigskip
+\begin{center}
+\includegraphics[width=0.6\textwidth]{antvolcompare}
+\end{center}
 \end{frame}
