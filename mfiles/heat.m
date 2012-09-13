@@ -9,7 +9,7 @@ function T = heat(D,J,K,dt,N)
 % where
 %   T   = approximate solution at tf = N * dt
 %   D   = diffusivity coeff
-%   J,K = number of points in x,y directions, resp.
+%   J,K = number of subintervals in x,y directions, resp.
 %   dt  = fixed time step
 %   N   = number of time steps
 % Examples:

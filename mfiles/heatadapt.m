@@ -10,7 +10,7 @@ function T = heatadapt(D,J,K,tf)
 % where
 %   T   = approximate solution at tf
 %   D   = diffusivity coeff
-%   J,K = number of points in x,y directions, resp.
+%   J,K = number of subintervals in x,y directions, resp.
 %   tf  = final time
 % Examples:  Compare these
 %   >> heatadapt(1.0,50,50,0.05);

@@ -8,7 +8,7 @@ function [T,dtav] = diffusion(Lx,Ly,J,K,Dup,Ddown,Dright,Dleft,T0,tf,F,b)
 % where
 %   T     = approximate solution at tf
 %   Lx,Ly = half-widths of rectangular domain
-%   J,K   = number of points in x,y directions, resp.
+%   J,K   = number of subintervals in x,y directions, resp.
 %   D*    = (J-1) x (K-1) arrays with diffusivities for "staggered" grid
 %   T0    = (J+1) x (K+1) array with initial values on regular grid
 %   tf    = final time
