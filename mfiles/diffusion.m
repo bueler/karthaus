@@ -2,7 +2,11 @@ function [T,dtav] = diffusion(Lx,Ly,J,K,Dup,Ddown,Dright,Dleft,T0,tf,F,b)
 % DIFFUSION  Adaptive explicit method for diffusion equation
 %   T_t = F + div (D grad (T + b))
 % on rectangle (-Lx,Lx) x (-Ly,Ly) with initial condition T0 and
-% functions F(x,y), D(x,y), b(x,y).
+% functions F(x,y), D(x,y), b(x,y).  The boundary condition is that
+% the T values at the edge of the domain (i.e. T(1,.), T(J+1,.), T(.,1),
+% T(.,K+1)) are all held fixed at their initial values supplied in T0.
+% That is, the boundary condition is a Dirichlet condition from the
+% initial values.
 % Usage:
 %   T = diffusion(Lx,Ly,J,K,Dup,Ddown,Dright,Dleft,T0,tf,F)
 % where

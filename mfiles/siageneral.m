@@ -42,7 +42,7 @@ for n=1:N
   Hdn  = 0.5 * ( H(j,k) + H(j,sk) ); % down
   Hrt  = 0.5 * ( H(ej,k) + H(j,k) ); % right
   Hlt  = 0.5 * ( H(j,k) + H(wj,k) ); % left
-  h = max(0.0,H + b); % update surface
+  h = max(0.0,H + b); % update surface; uses sea level of z=0
   % staggered grid value of |grad h|^2 = "alpha^2"
   a2up = (h(ej,nk) + h(ej,k) - h(wj,nk) - h(wj,k)).^2 / (4*dx)^2 + ...
          (h(j,nk) - h(j,k)).^2 / dy^2;
