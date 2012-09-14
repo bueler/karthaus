@@ -46,8 +46,12 @@ while t < tf
    % stability condition gives time-step restriction
    maxD = [max(max(Dup)) max(max(Ddown)) max(max(Dleft)) max(max(Dright))];
    maxD = max(maxD);  % scalar maximum of D
-   dt0 = 0.25 * min(dx,dy)^2 / maxD;
-   dt = min(dt0, tf - t);  % do not go past tf
+   if maxD <= 0.0  % e.g. happens with zero thickness ice sheets
+     dt = tf - t;
+   else
+     dt0 = 0.25 * min(dx,dy)^2 / maxD;
+     dt = min(dt0, tf - t);  % do not go past tf
+   end
    mu_x = dt / (dx*dx);    mu_y = dt / (dy*dy);
    Tb = T + b;
    T(2:J,2:K) = T(2:J,2:K) + ...

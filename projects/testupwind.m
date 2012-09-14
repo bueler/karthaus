@@ -1,8 +1,9 @@
 function maxdiff = testupwind(J)
 % TESTUPWIND  Tests the UPWIND code by setting up the van der Veen
 % exact ice shelf solution and then treating it as time dependent.
-% Any changes are a measure of the numerical error in scheme for the mass
-% continuity equation, i.e. in the scheme used in UPWIND.
+% Any changes are a measure of the numerical error in the scheme for
+% the mass continuity equation, i.e. in the scheme used in UPWIND.
+% This code is a place to start for idea 1 in ideas.txt.
 % Examples:
 %   >> testupwind           % uses J = 100 subintervals; about 5 sec
 %   >> testupwind(50)       % try coarser
