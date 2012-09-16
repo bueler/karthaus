@@ -1,5 +1,5 @@
 \documentclass[titlepage,a4paper,final,12pt]{scrartcl}
-\usepackage[total={6.2in,9.4in},top=1.2in,left=1.05in]{geometry}
+\usepackage[total={6.2in,9.6in},top=1.1in,left=1.05in]{geometry}
 
 %\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
 %\usepackage[total={6.2in,9.0in},top=1.1in,left=1.2in]{geometry}
@@ -83,56 +83,45 @@ urlcolor=blue     % only if colorlinks=true
 \newcommand{\twofig}[3]{\twofigsizes{#1}{#2}{#3}{2.5in}{2.5in}}
 
 
-
 \begin{document}
-%\graphicspath{{../photos/}{../pdffigs/}}
-
-
-\begin{titlepage}
 
   \begin{center}
-    \vspace{10cm}
+    \vspace{3cm}
     {\Large\usekomafont{title} Notes on the upwind method \\ for the 1D mass continuity equation}
-    \vspace{5cm}
+    \vspace{1cm}
 
     {\large Ed Bueler}
 
-    \vspace{10cm}
-    {\large \today}
+    \vspace{0.5cm}
+    \today
+    \vspace{1cm}
   \end{center}
-\end{titlepage}
 
 
-\subsection*{The problem}   These notes document the numerical codes \texttt{upwind.m} and \texttt{testupwind.m}.
+\subsection*{The mass continuity equation}   These notes document the numerical codes \texttt{upwind.m} and \texttt{testupwind.m}.  These codes solve the mass continuity equation, which is a kind of ``advection'' equation.  An advection equation describes the movement of a quantity, in our case the ice thickness, by a velocity field which we suppose is ``supplied'' by some other code or process.  The SSA stress balance solved by code \texttt{ssaflowline.m} will supply our velocity field, of course.
 
-For a one-dimensional ice shelf with time-dependent geometry\footnote{I.e.~\emph{not} steady state.} we have
+For our current time-dependent one-dimensional ice shelf we have this mass continuity equation:
 \begin{equation}
-  H_t = M - (u H)_x.  \label{mc}
+  H_t = M_0 - (u H)_x.  \label{mc}
 \end{equation}
-This form of the equation is simplified relative to equation (18) in the notes, namely
-    $$H_t = M - \Div \left(\bar{\mathbf{U}} H\right).$$
-The particular simplifications are that, because the ice shelf is one-dimensional the horizontal vector velocity $\mathbf{U}$ is the scalar $u$.  Second, in the SSA model the horizontal velocity is constant in each column of ice, so the vertical average is the same as the quantity; thus $\bar{\mathbf{U}} = \bar{u} = u$ for the current situation.
+This form is simplified relative to equation (18) in the notes, which says ``$H_t = M - \Div \left(\bar{\mathbf{U}} H\right)$.''  First, because our ice shelf is one-dimensional, the horizontal vector velocity $\mathbf{U}$ is the scalar $u$.  Second, in the SSA model the horizontal velocity is constant in each column of ice (i.e.~it is constant vertically), so the vertical average is the same as the quantity; thus $\bar{\mathbf{U}} = \bar{u} = u$ for the current situation.  Of course, $H(t,x)$ is the ice thickness and $M$ is the climatic mass balance.  In the particular circumstances of project ``idea 1'', we have $M=M_0$ constant independent of time and space, while $H$ and $u$ each depend on both $t$ and $x$.
 
-Of course, $H(t,x)$ is the ice thickness and $M(t,x)$ is the climatic mass balance.  In the particular circumstances of project ``idea 1'', we have $M=M_0$ constant independent of time and space, while $H$ and $u$ each depend on both $t$ and $x$.
+For project ``idea 1'', the velocity $u(t,x)$ solves another equation, namely the SSA stress balance.  But in \emph{this} note we just assume that some other agent supplies us with gridded values of $u(t,x)$ as we need, at least for present and/or past values of $t$.
 
-Now, in practice and in the context of project ``idea 1'', the velocity $u(t,x)$ is the solution of another equation, i.e.~a solution to the SSA stress balance.  But in \emph{this} note we just assume that some other agent---in fact it is another a Matlab code---supplies us with gridded values of $u(t,x)$ as we need, at least for present and/or past values of $t$.
+\subsection*{A first guess for a numerical scheme}  We assume an equally-space grid $x_1,\dots,x_{J+1}$ with spacing $\Delta x$.  Also we have $x_1=0$ for concreteness, as the location of the grounding line.  We assume that the grounding line ice thickness $H_g$ is known.  At $x_{J+1} = L$ we have a calving front.  We will assume here that the velocity at the grounding line is positive ($u_1 > 0$) and similarly that it is positive at the calving front ($u_{J+1} > 0$).  These assumptions can only be removed, for the purposes of solving the mass continuity equation, if inward velocity at the boundaries coincides with known boundary thickness $H$.
 
-As in the notes we assume an equally-space grid $x_1,\dots,x_{J+1}$ with spacing $\Delta x$.  Also we have $x_1=0$ for concreteness, as the location of the grounding line where we assume that the ice thickness $H_g$ is known.  At $x_{J+1} = L$ we have a calving front; in the stress balance equation this means we have a stress boundary condition but this will not be our concern here.
-
-We will assume here that the velocity at the grounding line is positive ($u_1 > 0$) and similarly that it is positive at the calving front ($u_{J+1} > 0$).  These assumptions can be removed, for the purposes of solving the mass continuity equation, as long as inward velocity at the boundaries only occurs at times where we know the boundary thickness $H$.
-
-\subsection*{The numerical scheme}   Now we can state the numerical scheme.  Suppose $H_j^n \approx H(t_n,x_j)$ are the gridded, numerical ice thicknesses at time $t_n$.  The finite difference approximation uses the flux
-	$$q = u H$$
-at staggered points, and an explicit time-derivative:
+Now we can state a candidate numerical scheme.  Suppose $H_j^n \approx H(t_n,x_j)$ are the gridded, numerical ice thicknesses at time $t_n$.  The finite difference approximation uses the flux $q = u H$ at staggered points, and an explicit time-derivative:
 	$$\frac{H_j^{n+1} - H_j^n}{\Delta t} = M_0 - \frac{q_{j+1/2}^n - q_{j-1/2}^n}{\Delta x}.$$
 Solved for the updated thickness, this is
 \begin{equation}
 H_j^{n+1} = H_j^n + M_0 \Delta t - \mu \left[q_{j+1/2}^n - q_{j-1/2}^n\right]  \label{ftcfluxes}
 \end{equation}
-where $\mu = \Delta t / \Delta x$.  Within the code \texttt{upwind.m}, the staggered flux value $q_{j+1/2}^n$ is called ``\texttt{qright}'' because it is to the right of the regular point $x_j$, and similarly $q_{j-1/2}^n$ is called ``\texttt{qleft}''.
+where $\mu = \Delta t / \Delta x$.  Within the code \texttt{upwind.m}, the staggered flux value $q_{j+1/2}^n$ is called ``\texttt{qright}'' because it is to the right of the regular point $x_j$, and similarly $q_{j-1/2}^n$ is called ``\texttt{qleft}''.  Scheme \eqref{ftcfluxes} turns out to be just fine, as long as we compute the discrete fluxes $q_{j+1/2}^n$ in the right way.  But \eqref{ftcfluxes} is an incomplete scheme without a specific way of computing fluxes.
 
-Now, we have the formula $q = u H$.  But now we must be careful.  The velocity and thickness are, in the current model, available on the regular (non-staggered) grid.  It turns out to be harmless to assume that the gridded velocities represent a piecewise-linear continuous curve, so that, in particular, the staggered grid values of the velocity can be computed as averages:
-	$$u_{j+1/2}^n = \frac{u_{j+1}^n + u_j^n}{2}.$$
+We must be careful in computing $q = u H$.  The velocity and thickness are, in the current model, available on the regular (non-staggered) grid.  It turns out to be harmless to assume that the gridded velocities represent a piecewise-linear continuous curve, so that, in particular, the staggered grid values of the velocity can be computed as averages:
+\begin{equation}
+  u_{j+1/2}^n = \frac{u_{j+1}^n + u_j^n}{2}. \label{ustag}
+\end{equation}
 But the staggered fluxes $q_{j+1/2}^n$ should \emph{not} be computed in the most obvious way from the averages of velocity and thickness:
 	$$q_{j+1/2}^n \stackrel{\text{NO!}}{=} u_{j+1/2}^n\,\frac{H_{j+1}^n + H_j^n}{2}.$$
 If this were combined with the incomplete scheme \eqref{ftcfluxes} then the resulting scheme would be the well-known ``forward time centered space'' scheme for the advection problem \cite{MortonMayers}.  The scheme is well-known because it is unconditionally \emph{un}stable.  That is, useless.
@@ -141,7 +130,9 @@ If this were combined with the incomplete scheme \eqref{ftcfluxes} then the resu
 \noindent \emph{Small Exercise}.  Draw the space-time stencil of the bad scheme above.
 \medskip
 
-The idea that turns out to help is to ``upwind''.  The reason is for stability, not accuracy.  In the case $M_0=0$ (no mass balance) and $u=u_0>0$ (constant positive velocity), the upwind scheme would use the upwind (i.e.~leftward) thicknesses in the flux formula, thus
+\subsection*{The upwind numerical scheme}   The idea that turns out to be helpful is to ``upwind''.  The reason is stability, not accuracy.  
+
+To explain this, let us start with the simple case where $M_0=0$ (i.e.~no mass balance) and $u=u_0>0$ (i.e.~constant velocity, right-ward), the upwind scheme would use the left-ward thickness in the flux formula, thus
 	$$q_{j+1/2}^n = u_0 \, H_j^n.$$
 Combined with \eqref{ftcfluxes} we get the scheme
    $$H_j^{n+1} = H_j^n - \mu \left[u_0 H_j^n - u_0 H_{j-1}^n\right]$$
@@ -149,22 +140,44 @@ or equivalently
 \begin{equation}
 H_j^{n+1} = (1 - u_0 \mu) H_j^n + u_0 \mu H_{j-1}^n.  \label{firstupwind}
 \end{equation}
+Note that if we had constant left-ward velocity $u=u_0<0$ then we would difference to the right and get $H_j^{n+1} = (1 + u_0 \mu) H_j^n - u_0 \mu H_{j+1}^n$.
 
 \medskip
 \noindent \emph{Small Exercise}.  Draw the space-time stencil of this upwind scheme.
 \medskip
 
-Recall that the stability condition of the explicit method for the heat equation was explained in terms of the positivity of the coefficients in an average.  FIXME: CFL
+Recall that the stability condition of the explicit method for the heat equation was explained in terms of the positivity of the coefficients in an average.  Using the same idea for \eqref{firstupwind} we would worry that the coefficient could end up negative, so we ask for a time step restriction which follows from requiring it to be positive:
+   $$1 - u_0 \mu \ge 0 \qquad \iff \qquad \frac{u_0 \Delta t}{\Delta x} \le 1 \qquad \iff \qquad \Delta t \le \frac{\Delta x}{u_0}.$$
+This condition, which applies in some form to all explicit methods for advection problems, is called the ``CFL'' condition, and the last formula $\Delta t = \Delta x/u_0$ the ``CFL timestep'' for the scheme.\footnote{``CFL'' is for Courant-Friedrich-Lewy paper.  In 1928.  The ``computers'' they had in mind were human employees with calculators.}  The most common form in which to write the CFL condition might be this,
+\begin{equation}
+\frac{|u_0| \Delta t}{\Delta x} \le 1.  \label{cfl}
+\end{equation}
+in which we handle both positive and negative velocities appropriately.
 
-FIXME: state as donor cell rule for flux
+This kind of time step restriction is much nicer, in the sense of being less restrictive, than the explicit time-step restriction for explicit diffusion schemes.  That is, the restriction $\Delta t = O(\Delta x)$ for this advection problem allows much longer time steps than $\Delta t = O(\Delta x^2)$ for the diffusion scheme, at least as we attempt to compute with fine grid resolutions.
 
-\subsection*{The codes}  Here are the codes:
+Returning to the general equation \eqref{mc} with spatially-variable velocity and mass balance, the upwind idea is a formula for the staggered-grid fluxes in terms of the staggered grid velocity:
+\begin{equation}
+q_{j+1/2}^n = \begin{cases} u_{j+1/2}^n \, H_j^n, & \qquad u_{j+1/2}^n \ge 0, \\
+                            u_{j+1/2}^n \, H_{j+1}^n, & \qquad u_{j+1/2}^n \le 0. \end{cases}
+\label{donorcell}
+\end{equation}
+Note that the two cases generate the same result $q_{j+1/2}^n=0$ in the borderline case $u_{j+1/2}^n$.  Scheme \eqref{donorcell} is called the ``donor cell'' method, because the decision can be interpreted as a decision about which cell to the sides of the location $x_{j+1/2}$ will ``donate'' its value $H$.
 
-\minput{upwind}
+Code \texttt{upwind.m} implements formulas \eqref{ftcfluxes}, \eqref{ustag}, and \eqref{donorcell} to solve PDE \eqref{mc}.  The time step is determined by condition \eqref{cfl}, where the $u_0$ value is actually the maximum of the velocity values.
 
-\minput{testupwind}
+\medskip
+\noindent \emph{Small Exercise}.  Draw the space-time stencil of the upwind scheme which is based on formulas \eqref{ftcfluxes}, \eqref{ustag}, and \eqref{donorcell}.  Indicate the ``cells'' of length $\Delta x$ which are centered at the regular grid points $x_j$.  Also indicate the ``cell walls,'' which are the staggered grid points, at which we evaluate the velocity and compute the fluxes.
+\medskip
+
+%\subsection*{The conservation property}  I claim that by using \eqref{donorcell} and \eqref{cfl} we get stability.  But just by setting up \eqref{ftcfluxes} we have another desirable property of a scheme, namely conservation.  On the one hand, the mass continuity equation is conservative in the sense that ETC ... NOT NEEDED
 
 
+%\subsection*{The codes}  Here are the codes:
+%\minput{upwind}
+%\minput{testupwind}
+
+\small
 \bibliography{ice_bib}
 \bibliographystyle{siam}
 
