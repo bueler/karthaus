@@ -1,0 +1,171 @@
+\documentclass[titlepage,a4paper,final,12pt]{scrartcl}
+\usepackage[total={6.2in,9.4in},top=1.2in,left=1.05in]{geometry}
+
+%\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
+%\usepackage[total={6.2in,9.0in},top=1.1in,left=1.2in]{geometry}
+
+% this lets us avoid the scrartcl/hyperref conflict...
+%\let\ifvtex\relax
+
+\usepackage{verbatim}
+\usepackage{empheq}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{animate}
+\usepackage{graphicx}
+\usepackage{fancyvrb}
+
+% hyperref should be the last package we load
+\usepackage[pdftex,
+colorlinks=true,
+plainpages=false, % only if colorlinks=true
+linkcolor=blue,   % only if colorlinks=true
+citecolor=blue,   % only if colorlinks=true
+urlcolor=blue     % only if colorlinks=true
+]{hyperref}
+
+\pdfinfo{
+/Title (Numerical modelling of ice sheets, streams, and shelves)
+/Author (Ed Bueler)
+/Subject (numerical modelling of glaciers, ice sheets, and ice shelves)
+/Keywords (numerical modelling, numerical analysis, glacier, ice sheet, ice shelf, shallow models of ice flow)
+}
+
+\newcommand{\ddt}[1]{\ensuremath{\frac{\partial #1}{\partial t}}}
+\newcommand{\ddx}[1]{\ensuremath{\frac{\partial #1}{\partial x}}}
+\newcommand{\ddy}[1]{\ensuremath{\frac{\partial #1}{\partial y}}}
+\newcommand{\pp}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\renewcommand{\t}[1]{\texttt{#1}}
+\newcommand{\Matlab}{\textsc{Matlab}\xspace}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\grad}{\nabla}
+\newcommand{\Div}{\nabla\cdot}
+\newcommand{\devstress}{\tau}
+
+\newcommand{\mmess}[1]{\vspace{-0.1in}\begin{center}
+\fbox{\url{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/#1.m}}
+\end{center}}
+
+\newcommand{\minput}[1]{
+\bigskip
+\begin{quote}
+\bigskip
+%\VerbatimInput[frame=single,framesep=3mm,label=\fbox{\normalsize \textsl{\,#1.m\,}},fontfamily=courier,fontsize=\scriptsize]{../mfiles/#1.slim.m}
+\VerbatimInput[frame=single,framesep=3mm,label=\fbox{\normalsize \textsl{\,#1.m\,}},fontfamily=courier,fontsize=\scriptsize]{#1.m}
+\bigskip
+\end{quote}
+}
+
+%\onefigsize{name}{caption}{width}
+\newcommand{\onefigsize}[3]{
+\begin{figure}[ht]
+\centering
+\includegraphics[width=#3,keepaspectratio=true]{#1}
+\caption{#2}
+\label{fig:#1}
+\end{figure}}
+
+%\onefig{name}{caption}
+\newcommand{\onefig}[2]{\onefigsize{#1}{#2}{3.0in}}
+
+%\twofigsizes{left-name}{right-name}{caption}{left-width}{right-width}
+\newcommand{\twofigsizes}[5]{
+\begin{figure}[ht]
+\centering
+\includegraphics[width=#4,keepaspectratio=true]{#1} \quad
+\includegraphics[width=#5,keepaspectratio=true]{#2}
+\caption{#3}
+\label{fig:#1}
+\end{figure}}
+
+%\twofig{left-name}{right-name}{caption}
+\newcommand{\twofig}[3]{\twofigsizes{#1}{#2}{#3}{2.5in}{2.5in}}
+
+
+
+\begin{document}
+%\graphicspath{{../photos/}{../pdffigs/}}
+
+
+\begin{titlepage}
+
+  \begin{center}
+    \vspace{10cm}
+    {\Large\usekomafont{title} Notes on the upwind method \\ for the 1D mass continuity equation}
+    \vspace{5cm}
+
+    {\large Ed Bueler}
+
+    \vspace{10cm}
+    {\large \today}
+  \end{center}
+\end{titlepage}
+
+
+\subsection*{The problem}   These notes document the numerical codes \texttt{upwind.m} and \texttt{testupwind.m}.
+
+For a one-dimensional ice shelf with time-dependent geometry\footnote{I.e.~\emph{not} steady state.} we have
+\begin{equation}
+  H_t = M - (u H)_x.  \label{mc}
+\end{equation}
+This form of the equation is simplified relative to equation (18) in the notes, namely
+    $$H_t = M - \Div \left(\bar{\mathbf{U}} H\right).$$
+The particular simplifications are that, because the ice shelf is one-dimensional the horizontal vector velocity $\mathbf{U}$ is the scalar $u$.  Second, in the SSA model the horizontal velocity is constant in each column of ice, so the vertical average is the same as the quantity; thus $\bar{\mathbf{U}} = \bar{u} = u$ for the current situation.
+
+Of course, $H(t,x)$ is the ice thickness and $M(t,x)$ is the climatic mass balance.  In the particular circumstances of project ``idea 1'', we have $M=M_0$ constant independent of time and space, while $H$ and $u$ each depend on both $t$ and $x$.
+
+Now, in practice and in the context of project ``idea 1'', the velocity $u(t,x)$ is the solution of another equation, i.e.~a solution to the SSA stress balance.  But in \emph{this} note we just assume that some other agent---in fact it is another a Matlab code---supplies us with gridded values of $u(t,x)$ as we need, at least for present and/or past values of $t$.
+
+As in the notes we assume an equally-space grid $x_1,\dots,x_{J+1}$ with spacing $\Delta x$.  Also we have $x_1=0$ for concreteness, as the location of the grounding line where we assume that the ice thickness $H_g$ is known.  At $x_{J+1} = L$ we have a calving front; in the stress balance equation this means we have a stress boundary condition but this will not be our concern here.
+
+We will assume here that the velocity at the grounding line is positive ($u_1 > 0$) and similarly that it is positive at the calving front ($u_{J+1} > 0$).  These assumptions can be removed, for the purposes of solving the mass continuity equation, as long as inward velocity at the boundaries only occurs at times where we know the boundary thickness $H$.
+
+\subsection*{The numerical scheme}   Now we can state the numerical scheme.  Suppose $H_j^n \approx H(t_n,x_j)$ are the gridded, numerical ice thicknesses at time $t_n$.  The finite difference approximation uses the flux
+	$$q = u H$$
+at staggered points, and an explicit time-derivative:
+	$$\frac{H_j^{n+1} - H_j^n}{\Delta t} = M_0 - \frac{q_{j+1/2}^n - q_{j-1/2}^n}{\Delta x}.$$
+Solved for the updated thickness, this is
+\begin{equation}
+H_j^{n+1} = H_j^n + M_0 \Delta t - \mu \left[q_{j+1/2}^n - q_{j-1/2}^n\right]  \label{ftcfluxes}
+\end{equation}
+where $\mu = \Delta t / \Delta x$.  Within the code \texttt{upwind.m}, the staggered flux value $q_{j+1/2}^n$ is called ``\texttt{qright}'' because it is to the right of the regular point $x_j$, and similarly $q_{j-1/2}^n$ is called ``\texttt{qleft}''.
+
+Now, we have the formula $q = u H$.  But now we must be careful.  The velocity and thickness are, in the current model, available on the regular (non-staggered) grid.  It turns out to be harmless to assume that the gridded velocities represent a piecewise-linear continuous curve, so that, in particular, the staggered grid values of the velocity can be computed as averages:
+	$$u_{j+1/2}^n = \frac{u_{j+1}^n + u_j^n}{2}.$$
+But the staggered fluxes $q_{j+1/2}^n$ should \emph{not} be computed in the most obvious way from the averages of velocity and thickness:
+	$$q_{j+1/2}^n \stackrel{\text{NO!}}{=} u_{j+1/2}^n\,\frac{H_{j+1}^n + H_j^n}{2}.$$
+If this were combined with the incomplete scheme \eqref{ftcfluxes} then the resulting scheme would be the well-known ``forward time centered space'' scheme for the advection problem \cite{MortonMayers}.  The scheme is well-known because it is unconditionally \emph{un}stable.  That is, useless.
+
+\medskip
+\noindent \emph{Small Exercise}.  Draw the space-time stencil of the bad scheme above.
+\medskip
+
+The idea that turns out to help is to ``upwind''.  The reason is for stability, not accuracy.  In the case $M_0=0$ (no mass balance) and $u=u_0>0$ (constant positive velocity), the upwind scheme would use the upwind (i.e.~leftward) thicknesses in the flux formula, thus
+	$$q_{j+1/2}^n = u_0 \, H_j^n.$$
+Combined with \eqref{ftcfluxes} we get the scheme
+   $$H_j^{n+1} = H_j^n - \mu \left[u_0 H_j^n - u_0 H_{j-1}^n\right]$$
+or equivalently
+\begin{equation}
+H_j^{n+1} = (1 - u_0 \mu) H_j^n + u_0 \mu H_{j-1}^n.  \label{firstupwind}
+\end{equation}
+
+\medskip
+\noindent \emph{Small Exercise}.  Draw the space-time stencil of this upwind scheme.
+\medskip
+
+Recall that the stability condition of the explicit method for the heat equation was explained in terms of the positivity of the coefficients in an average.  FIXME: CFL
+
+FIXME: state as donor cell rule for flux
+
+\subsection*{The codes}  Here are the codes:
+
+\minput{upwind}
+
+\minput{testupwind}
+
+
+\bibliography{ice_bib}
+\bibliographystyle{siam}
+
+\end{document}
