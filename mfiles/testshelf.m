@@ -30,7 +30,6 @@ if nargin<2, param.L = 200e3; else, param.L = L; end
 if nargin<1, J = 300; end
 
 dx = param.L / J;   x = (0:dx:param.L)';
-fprintf('dx = %.3f km\n',dx/1000.0)
 
 % get exact solution
 [uexact,H] = exactshelf(x,param.L,M0,Hg,ug);

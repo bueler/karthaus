@@ -1,11 +1,12 @@
 % SHELFCONV  show convergence study of SSA solver
 % calls: TESTSHELF
 
-J = [50 100 200 400 800 1600 3200];
+J = [25 50 100 200 500 1000 2000];
+
 dxkm = 200.0 ./ J;
-fprintf('(showing one dot per outer iteration)\n')
+maxerr = ones(size(dxkm));  % allocate
 for j=1:length(J)
-  fprintf('J = %4d,  dx = %5.3f km:\n',J(j),dxkm(j))
+  fprintf('J = %4d:\n',J(j))
   [av,maxerr(j)] = testshelf(J(j));
   maxerr(j) = 3.1556926e7 * maxerr(j);
   fprintf('  max error = %.5f m/a\n',maxerr(j))
@@ -19,6 +20,8 @@ grid on, xlabel('dx  (km)','fontsize',16)
 ylabel('maximum error  (m a^{-1})','fontsize',16)
 result = sprintf('convergence rate O(dx^{%.5f})\n',pf(1));
 disp(result),   text(2*dxkm(end-1),maxerr(end-1),result,'fontsize',18)
+
+return
 
 figure(2)  % on super-low resolution grid, show solution
 testshelf(20);  fprintf('\n')

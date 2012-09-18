@@ -46,6 +46,7 @@ tol = 1.0e-14;  % m s-1; = 0.000316 mm a-1 velocity error
 eps_reg = (1.0 / p.secpera) / p.L;  % strain rate of 1 m/a over length of shelf
 maxdiff = Inf;
 W = zeros(J+1,1);
+iter = 0;
 while maxdiff > tol
   % find coefficient W(x) on staggered grid using "old" u
   uxstag = stagslope(dx,u);
@@ -58,9 +59,10 @@ while maxdiff > tol
   unew = flowline(p.L,J,gamma,W,alpha,beta,ug);
   maxdiff = max(abs(unew-u));
   u = unew;
+  iter = iter + 1;
   fprintf('.')
 end
-fprintf('\n')
+fprintf('\nSSA solver did %d Picard iterations on dx = %.3f km grid\n',iter,dx/1000.0)
 %STRIPFROMHERE    (hide helper functions in lecture.pdf)
 
   function fav = stagav(f)
