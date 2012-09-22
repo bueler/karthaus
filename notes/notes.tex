@@ -113,15 +113,15 @@ urlcolor=blue     % only if colorlinks=true
 \setcounter{section}{1}
 \subsection{Introduction}
 
-Numerical models can, if well-constructed, actually help you, the reader, understand the behavior of particular glaciers, ice sheets, and ice shelves.  Their most common use may be to help you ask: When I put together my incomplete understanding of glacier processes into a mathematical model, does the combination behave as I expect?  Or why does it mis-behave?  Though numerical models rarely generate new theoretical understandings---a human brain seems to be needed to get new insights from observations---they can demonstrate flaws in the understanding of glacier processes, and in how these processes combine to give behavior.
+Numerical models can actually help you, the reader, understand the behavior of particular ice flows.  Their most common use may be to help you ask: When I put together my incomplete understanding of glacier processes into a mathematical model, does the combination behave as I expect?  Or why does it mis-behave?  Though numerical models rarely generate new theoretical understandings---a human brain seems to be needed to get new insights from observations---they can demonstrate flaws in our understanding of glacier processes, and they can illuminate how these processes combine to give overall behavior.
 
-Numerical models should be built with care.  The worst outcome is to have a researcher spend time explaining, through physical argumentation and using observational evidence, numerical model behavior that is simply an artifact of poor computer programming or numerical analysis.  The reader of this chapter may be surprised that the continuum model, and not the code, seems to be our focus much of the time.  We analyse the numerical implementation to see if it matches the continuum model and its solutions.  While all numerical codes produce numbers, we want numbers and pictures that actually come from our continuum model.
+Numerical models should be built with care.  The worst outcome is to spend time explaining, through physical argumentation and using observational evidence, numerical model behavior that is an artifact of poor computer programming or numerical analysis.  The reader of this chapter may be surprised that a continuum model, and not a code, seems to be our focus much of the time.  All numerical codes produce numbers, but we want numbers that actually come from our continuum model.  We analyse numerical implementations to see if they match the continuum model and its solutions.
 
 This chapter has a limited scope:
-  \begin{quote}\emph{we focus on approximating ice flow}\end{quote}
-and a constructive approach:
-  \begin{quote}\emph{we provide example numerical codes that actually work.}\end{quote}
-Within our scope are the shallow ice approximation (SIA) in two horizontal dimensions (2D), the shallow shelf approximation (SSA) in 1D, and the mass continuity and surface kinematical equations.  We briefly describe the Stokes model, but we do not address its numerical solution.  The numerical ideas include finite difference schemes, solving algebraic systems from stress balances, and the verification of codes.
+  \begin{quote}\emph{shallow approximations of ice flow.}\end{quote}
+It adopts a constructive approach:
+  \begin{quote}\emph{example numerical codes that actually work.}\end{quote}
+Within our scope are the shallow ice approximation (SIA) in two horizontal dimensions (2D), the shallow shelf approximation (SSA) in 1D, and the mass continuity and surface kinematical equations.  We recall the Stokes model, but we do not address its numerical solution.  Our numerical ideas include finite difference schemes, solving algebraic systems from stress balances, and the verification of codes using exact solutions.
 
 Our notation is common in the glaciological literature; see Table \ref{tab:notation}.  Coordinates are $t,x,y,z$, with $z$ perpendicular to the geoid and positive-upward.  If these coordinates appear as subscripts then they denote partial derivatives: $u_x = \partial u/\partial x$.  Tensor notation uses subscripts from the list $\{1,2,3,i,j\}$, so that, for example, $\tau_{ij}$ is a generic entry, and $\tau_{13}$ a particular entry, of the deviatoric stress tensor.
 
