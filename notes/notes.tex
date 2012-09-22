@@ -208,15 +208,14 @@ Note that $\tau_{13}$ is a ``vertical'' shear stress while $\tau_{11}$ and $\tau
 
 This is complicated enough to make us pause before jumping in to numerical solution methods.  Can we handle a simplified situation?  Our first example, a uniform slab or a ``slab-on-a-slope'', is both a case in which we actually solve the Stokes equations, and a motivation for the shallow model in the next subsection.
 
+\onefig{slab}{Rotated axes for a slab-on-a-slope flow calculation.}
+
 We rotate our coordinates only for this example and not elsewhere in these notes.  The two-dimensional axes ($x$,$z$) shown in Figure \ref{fig:slab} are rotated downward at angle $\alpha>0$ so that the gravity vector has components $\mathbf{g} = (g \sin\alpha,- g \cos \alpha)$.  Equations \eqref{stokespx}, \eqref{stokespz}, in these rotated coordinates, are
 \begin{align}
 p_x &= \tau_{11,x} + \tau_{13,z} + \rho g \sin\alpha, \label{stokespxrot} \\
 p_z &= \tau_{13,x} - \tau_{11,z} - \rho g \cos\alpha. \label{stokespzrot}
 \end{align}
-
-\onefig{slab}{Rotated axes for a slab-on-a-slope flow calculation.}
-
-Because we now assume there is no variation with $x$, the whole set of Stokes equations \eqref{incompressiblexz}, \eqref{forceflowx}, \eqref{forceflowz}, \eqref{stokespxrot}, \eqref{stokespzrot} simplifies greatly:
+By now assuming additionally that there is no variation with $x$, the whole set of Stokes equations \eqref{incompressiblexz}, \eqref{forceflowx}, \eqref{forceflowz}, \eqref{stokespxrot}, \eqref{stokespzrot} simplifies greatly:
 \begin{align*}
 w_z &= 0 &   0 &= \tau_{11} \\
 \tau_{13,z} &= - \rho g \sin\alpha &   u_z &= 2 A \tau^2 \tau_{13} \\
@@ -226,10 +225,10 @@ We apply boundary conditions for these functions of $z$:
 	$$w(0)=0, \qquad p(H)=0, \qquad u(0)=u_0.$$
 The basal velocity $u_0$ will remain undetermined for now.  By integrating vertically, we get $w=0$, $p = \rho g \cos\alpha (H-z)$, and $\tau_{13} = \rho g \sin\alpha (H-z)$.  Note that $H-z$ is the depth within the ice and that both the pressure $p$ and shear stress $\tau_{13}$ are linear in depth.
 
-We also get a formula for the horizontal velocity,
+By integrating vertically again we find a formula for the horizontal velocity,
 \begin{align}
-u &= u_0 + 2 A (\rho g \sin\alpha)^3 \int_0^z (H-z')^3\,dz'  \label{uslab} \\
-  &= u_0 + \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right) \notag
+u &= u_0 + 2 A (\rho g \sin\alpha)^3 \int_0^z (H-z')^3\,dz' \notag \\
+  &= u_0 + \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)  \label{uslab}
 \end{align}
 Do we believe formula \eqref{uslab}?  Figure \ref{fig:slabvel} compares to observations of a mountain glacier.  This comparison shows we have done a credible job of capturing deformation flow velocity, though we do not yet have a model for the sliding velocity $u_0$ (i.e.~basal motion).  
 
@@ -237,7 +236,7 @@ Do we believe formula \eqref{uslab}?  Figure \ref{fig:slabvel} compares to obser
 
 Now that we have calculated the velocity $u$, so what?  The equations so far do not address the change in shape of the glacier or ice sheet.  For this we need another equation, the \emph{mass continuity equation}.  To explain it, define the vertical average of velocity:
 	$$\bar u = \frac{1}{H}\int_0^{H} u\,dz.$$
-The flux $q=\bar u\, H$ is the rate of flow input into the side of the area in Figure \ref{fig:slabmasscontfig}.  Now, how does the ice area $A$ in the figure change?\footnote{In three-dimensions it would be ``How does the ice volume change?''}  We compute
+The flux $q=\bar u\, H$ is the rate of flow input into a side of the area in Figure \ref{fig:slabmasscontfig}.  Now, how does the ice area $A$ in the figure change?\footnote{In three-dimensions it would be ``how does the ice volume change?''}  We add the contributions around the edges,
 	$$\frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2$$
 If the width $\Delta x=x_2-x_1$ is small then $A\approx \Delta x\, H$.  So we divide by $\Delta x$, take $\Delta x \to 0$, and get
 \begin{equation}
@@ -250,30 +249,28 @@ This mass continuity equation describes the change in the ice thickness in terms
 
 \subsection{Shallow ice sheets}
 
-Our slab-on-a-slope example gives us a rough explanation of the shallow ice approximation (SIA), which is a model we will use more generally.  From the slab-on-slope velocity formula \eqref{uslab} in the $u_0=0$ case (non-sliding case) we get
+Our slab-on-a-slope example gives us a rough explanation of the shallow ice approximation (SIA), which is a model we will apply more generally.  To complete it, vertically integrating velocity formula \eqref{uslab} in the $u_0=0$ (non-sliding) case gives
 \begin{equation}
 \bar u H = \int_0^H \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)\,dz = \frac{2}{5} A (\rho g \sin\alpha)^3 H^5. \label{siaubar}
 \end{equation}
-Note that $\sin \alpha \approx \tan\alpha = - h_x$.  Combining these with mass continuity \eqref{masscont1D} gives
+Note $\sin \alpha \approx \tan\alpha = - h_x$.  Combining these statements with mass continuity \eqref{masscont1D} gives
 \begin{equation}
   H_t = M + \left(\frac{2}{5} (\rho g)^3 A H^5 |h_x|^2 h_x\right)_x. \label{sia1D}
 \end{equation}
 
-Equation \eqref{sia1D} is the main SIA equation.  It determines the evolution of ice sheets in terms of mass balance, ice softness, and bed elevation.  (Note $h=H+b$.)  Additional arguments are needed to actually show that the SIA is ``general purpose'' and not special to a simple slab.  Such arguments reduce the Stokes equations carefully, under the assumption that the surface and bed slopes are small, and that the depth-to-width ratio is small.  See Notes and References.
+Equation \eqref{sia1D} is the SIA equation for nonsliding plane flow.  It determines the evolution of an ice sheet's shape in terms of mass balance, ice softness, and bed elevation.  Additional arguments (not shown) are needed to demonstrate that the SIA is ``general purpose'' and not special to a simple slab.  Such arguments reduce the Stokes equations under the assumption that the surface and bed slopes, and the depth-to-width ratio, are small; see Notes and References.  We will numerically solve \eqref{sia1D} in section \ref{sec:numericalsia}.  First we state it in two horizontal dimensions and attempt to understand it better.
 
-We will numerically solve the SIA equation in section \ref{sec:numericalsia}.  First we seek to understand it better, and state it in two horizontal dimensions.
+\subsubsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they experience some contact slip (basal sliding).  The first ice flow model we consider, the non-sliding, isothermal SIA, accounts for (\emph{i})--(\emph{iii}).
 
-\subsubsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they sometimes experience contact slip (basal sliding).  The first ice flow model we consider addresses (\emph{i})--(\emph{iii}).  It is the non-sliding, isothermal SIA.
+Regarding property (\emph{ii}), Figure \ref{fig:green_transect} shows a no-vertical-exaggeration cross-section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is more familiar in the glaciological literature.  Thus: Remember that ice sheets are shallow.
 
-Regarding (\emph{ii}) shallow, Figure \ref{fig:green_transect} shows a no-vertical-exaggeration cross-section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is more familiar in the glaciological literature.  Thus: Remember that ice sheets are actually thin.
+\onefig{green_transect}{A vertically-exaggerated cross-section of the Greenland ice sheet ($71^\circ$ N) is shown by the green and blue curves.  Without exaggeration it appears as a horizontal line (red).}
 
-\onefig{green_transect}{A vertically-exaggerated cross-section of the Greenland ice sheet ($71^\circ$ N) is shown by the green and blue curves.  The version without such exaggeration appears as a red horizontal line.}
-
-The SIA uses the formulas from slab-on-a-slope, generalized to two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The shear stress approximation is $(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$.  From Equation \eqref{flowlaw}, and further approximation of the shear strain rates in planes parallel to the geoid, we get a formula for certain strain rates,
+The SIA uses the formulas from slab-on-a-slope, generalized to two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The shear stress approximation is $(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$, which becomes an equality in the SIA.  From Equation \eqref{flowlaw}, a further approximation of shear strain rates gives the SIA formula
 \begin{equation*}
-\mathbf{U}_z \approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) = - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h.
+\mathbf{U}_z = 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) = - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h.
 \end{equation*}
-By integrating vertically, in the non-sliding case, we get
+By integrating vertically we get, in the non-sliding case,
 \begin{equation}
 \mathbf{U} = - \frac{2 A (\rho g)^n}{n+1} \left[H^{n+1} - (h-z)^{n+1}\right] |\nabla h|^{n-1} \nabla h.  \label{siavelocity}
 \end{equation}
@@ -282,9 +279,9 @@ Mass continuity in two horizontal dimensions, which generalizes the 1D version \
 \begin{equation}
     H_t = M - \Div\left(\bar{\mathbf{U}} H\right)  \label{masscont}
 \end{equation}
-The mass continuity equation is often written in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{U}\,dz = \bar{\mathbf{U}}\,H$.  Thus \eqref{masscont} is also $H_t = M - \Div \bq$.
+Equation \eqref{masscont} may be written $H_t = M - \Div \bq$ in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{U}\,dz = \bar{\mathbf{U}}\,H$.
 
-Combining Equations \eqref{siavelocity} and \eqref{masscont} and defining a positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$, we get an equation for the rate of thickness change in terms of mass balance $M$, thickness, and surface slope $\grad h$:
+Define the positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$.  Combining Equations \eqref{siavelocity} and \eqref{masscont}, we get an equation for the rate of thickness change in terms of mass balance $M$, thickness, and surface slope $\grad h$:
 \begin{equation}
 H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 \end{equation}
