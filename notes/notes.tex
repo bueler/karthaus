@@ -288,23 +288,23 @@ H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 
 Fulfilling an earlier promise, if we can solve \eqref{sia} numerically then we have a usable model for the Barnes ice cap in Canada \cite{Mahaffy}.  The Barnes ice cap is a particularly simple ice sheet on a rather flat bed.
 
-\subsubsection*{Analogy with the heat equation}  A step toward understanding the SIA model is to recognize that it is analogous to the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
+\subsubsection*{Analogy with the heat equation}  A step toward understanding the SIA model is to recognize its analogy with the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
 
-Recall that the temperature $T(t,x)$ of a conducting rod satisfies the 1D heat equation
+The temperature $T(t,x)$ of a conducting rod satisfies the one-dimensional (1D) heat equation
 \begin{equation}
   T_t = D T_{xx}. \label{heat1D}
 \end{equation}
-This equation applies when material properties are constant; the constant $D$ is the ``diffusivity''.  This equation has a smoothing effect on the solution $T$ as it evolves in time, because at any local maximum the temperature is flattened (i.e.~$T_{xx}<0$ means $T$ decreases), while at any local minimum the temperature is also flattened (i.e.~$T_{xx}>0$ means $T$ increases).
+This form applies when material properties are constant.  The constant $D$ is the ``diffusivity''.  This equation has a smoothing effect on the solution $T$ as it evolves in time, because any local maximum in the temperature is flattened (i.e.~$T_{xx}<0$ implies $T$ decreases), while any local minimum is also flattened (i.e.~$T_{xx}>0$ implies $T$ increases).
 
-The 2D version of the heat equation describes the temperature $T(t,x,y)$ at position $x,y$ in an object and at time $t$.  Recall Fourier's law is the formula $\mathbf{Q} = - k \grad T$ for heat flux.  If we allow an additional heat source $f$, conservation of internal energy says $\rho c T_t = f - \Div \mathbf{Q}$.  Combining these we get:
+The 2D heat equation, which we will see is analogous to equation \eqref{sia}, describes the temperature $T(t,x,y)$ at position $x,y$ in a planar object at time $t$.  Recall Fourier's law is the formula $\mathbf{Q} = - k \grad T$ for heat flux.  If we allow an additional heat source $f$, conservation of internal energy says $\rho c T_t = f - \Div \mathbf{Q}$.  Combining these we get the 2D heat equation:
 	$$\rho c T_t = f + \Div (k \grad T).$$
-Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.  Assuming $\rho c$ is constant, define the ``diffusivity'' $D=k/(\rho c)$ and source term $F = f/(\rho c)$.  Then the heat equation is
+Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.  Assuming $\rho c$ is constant, define the ``diffusivity'' $D=k/(\rho c)$ and source term $F = f/(\rho c)$; generally these may vary.  The revised 2D heat equation is
 \begin{equation}
 T_t = F + \Div (D\, \grad T). \label{heat}
 \end{equation}
 Figure \ref{fig:initialheat} shows a solution of the heat equation, where the initial condition is a localized ``hot spot''.  Solutions of the heat equation involve the spreading, in all directions, of any local heat maxima or minima, that is, diffusion.
 
-\twofigsizes{initialheat}{finalheat}{A solution of the heat equation \eqref{heat} with $D=1$ and $F=0$.  Left: Initial condition $T(0,x,y)$.   Right: Solution $T(t,x,y)$ at $t=0.02$.}{2.8in}{2.8in}
+\twofigsizes{initialheat}{finalheat}{A solution of heat equation \eqref{heat} with $D=1$ and $F=0$.  Left: Initial condition $T(0,x,y)$.   Right: Solution $T(t,x,y)$ at $t=0.02$.}{2.8in}{2.8in}
 
 The SIA equation \eqref{sia} and the heat equation \eqref{heat} are each diffusive, time-evolving partial differential equations (PDEs).  A side-by-side comparison is illuminating:
 \begin{center}
@@ -313,27 +313,29 @@ SIA:\, $H$ is ice thickness & \phantom{foo bar} heat: $T$ is temperature\phantom
 	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
 \end{tabular}
 \end{center}
-Notice that the number of derivatives (one time and two space derivatives) and the signs are the same in these equations.  Mass balance $M$ is analogous to the heat source $F$.  
+Notice that the number of derivatives (one time and two space derivatives) and the signs are the same.  Mass balance $M$ is analogous to heat source $F$.  
 
-The analogy allows us to identify the diffusivity in the SIA:
+The analogy suggests that we identify the diffusivity in the SIA:
 	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
-The non-sliding shallow ice flow \emph{diffuses} the ice sheet.  When $\Gamma$ or $H$ or $|\grad h|$ are large, the diffusion acts more quickly because $D$ is larger.  This analogy explains generally why the surfaces of ice sheets are smooth, at least if we ignore non-fluid processes like crevassing and wind-driven snow.  There are, however, some issues with this analogy:  (\emph{i})  The thickness $H$ and surface elevation $h$ are not the same unless the bed is flat.  (\emph{ii})  The diffusivity $D$ depends on the solution $H$.  (\emph{iii}) The diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
-
+The non-sliding shallow ice flow \emph{diffuses} the ice sheet.  When $\Gamma$ or $H$ or $|\grad h|$ are large, the diffusion acts more quickly because $D$ is larger.  This analogy explains generally why the surfaces of ice sheets are smooth, at least if we ignore non-fluid processes like crevassing and wind-driven snow.  There are, however, some issues with this analogy:
+\begin{itemize}
+\item The diffusivity $D$ depends on the solution thickness $H$ and surface elevation $h$, and also these are not the same functions.
+\item The diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
+\end{itemize}
+Nonetheless we will provide a verified numerical scheme for \eqref{sia} in Section \ref{sec:numericalsia}.
 
 \subsection{Finite difference numerics} 
 
-As already noted, numerical schemes for the heat equation are a good starting place for solving the SIA equation \eqref{sia} numerically.  Here we describe only finite difference schemes, with alternative numerical approaches left to the Notes and References.
-
-Finite difference schemes replace derivatives in a differential equation by arithmetic.  The basic fact is \emph{Taylor's theorem}, which says that for a smooth function $f(x)$,
+As already noted, numerical schemes for the heat equation are a good starting place for solving the SIA equation \eqref{sia} numerically.  Finite difference numerical schemes, in particular, replace derivatives in a differential equation by arithmetic.  The basic fact is \emph{Taylor's theorem}, which says that for a smooth function $f(x)$,
 	$$f(x+\Delta) = f(x) + f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 + \frac{1}{3!} f'''(x) \Delta^3 + \dots$$
 You can replace ``$\Delta$'' by its multiples, for example:
 \begin{align*}
 f(x-\Delta) &= f(x) - f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 - \frac{1}{3!} f'''(x) \Delta^3 + \dots \\
 f(x+2\Delta) &= f(x) + 2 f'(x) \Delta + 2 f''(x) \Delta^2 + \frac{4}{3} f'''(x) \Delta^3 + \dots
 \end{align*}
-The idea for constructing finite difference schemes is to combine expressions like these to give approximations of derivatives.  Thereby values of the unknowns on a grid are combined to approximate the differential equation.
+The idea for constructing finite difference schemes is to combine expressions like these to give approximations of derivatives.  Thereby function values on a grid combine to approximate the differential equation.
 
-Here we want partial derivative approximations, so we apply the Taylor's expansions one variable at a time.  For example with a general function $u=u(t,x)$ we can write these approximations:
+Here we want partial derivative approximations, so we apply the Taylor's expansions one variable at a time.  For example with a general function $u=u(t,x)$,
 \begin{align*}
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} + O(\Delta t), \\
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t-\Delta t,x)}{2\Delta t} + O((\Delta t)^2), \\
@@ -342,11 +344,11 @@ u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2\, u(t,x) + u(t,x-\Delta x)}{\Delta x^2}
 \end{align*}
 Note that if $\Delta$ is a small number then ``$+O(\Delta^2)$'' is better, in the sense that the approximation is closer, than ``$+O(\Delta)$''
 
-\subsubsection*{Explicit scheme for the heat equation}  Now we can state the simplest ``explicit'' scheme for the 1D heat equation \eqref{heat1D}:
+\subsubsection*{Explicit scheme for the heat equation}  Now we can state the simplest ``explicit'' scheme which approximates the 1D heat equation \eqref{heat1D}:
 	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2\, T(t,x) + T(t,x-\Delta x)}{\Delta x^2}.$$
-The finite difference scheme is not just an approximation of the PDE, but an actual method for computing numbers on a grid.  Let $(t_n,x_j)$ denote the time-space grid points.  Denote our approximation of the solution value on the grid $T(t_n,x_j)$ by $T_j^n$.\footnote{Evaluating the exact solution at a grid point gives a different value from the approximate one we compute by the scheme!  Of course we plan that these numbers will be close, but that needs checking.}  Then the finite difference scheme is
+The finite difference scheme is not just an approximation of the PDE, but an actual method for computing numbers on a grid.  Let $(t_n,x_j)$ denote the time-space grid points.  Denote our approximation\footnote{Evaluating the exact solution at a grid point would give a different value from the one we compute by the scheme!  Of course we plan that these numbers will be close, but that needs checking or proof.} of the solution value $T(t_n,x_j)$ by $T_j^n$.  Then the finite difference scheme is
 	$$\frac{T_j^{n+1} - T_j^n}{\Delta t} = D\,\frac{T_{j+1}^n - 2\, T_j^n + T_{j-1}^n}{\Delta x^2}.$$
-To get a simple, computable formula, let $\mu = D \Delta t / (\Delta x)^2$ and solve for $T_j^{n+1}$:
+To get a computable formula, let $\mu = D \Delta t / (\Delta x)^2$ and solve for $T_j^{n+1}$:
 \begin{equation}
   T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n \label{heat1Dfd}
 \end{equation}
