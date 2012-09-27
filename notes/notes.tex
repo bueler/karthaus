@@ -354,17 +354,17 @@ To get a computable formula, let $\mu = D \Delta t / (\Delta x)^2$ and solve for
 \end{equation}
 The scheme is ``explicit'' because we have been able to solve it for $T_j^{n+1}$ in terms of values at time $t_n$.  Figure \ref{fig:expstencil} shows the ``stencil'' for scheme \eqref{heat1Dfd}: three values at the current time $t_n$ are combined to update the one value at the next time $t_{n+1}$.
 
-How accurate is \eqref{heat1Dfd}?  The above construction tells us that the difference between the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t,(\Delta x)^2)$.  This difference between scheme and PDE goes to zero as we refine the grid in space and time (``consistency'').  With care about the smoothness of boundary conditions, and using mathematical facts about the heat equation itself, one can show that the difference between $T_j^n$ and $T(t_n,x_j)$ is also $O(\Delta t,(\Delta x)^2)$, which is ``convergence''; see Notes and References.  However, to get convergence, the PDE must be well understood and the scheme \eqref{heat1Dfd} must be stable, which we address below.  The main theorem for numerical PDE schemes is ``consistency plus stability implies convergence''; see Notes and References.
+How accurate is scheme \eqref{heat1Dfd}?  Its construction tells us that the difference between the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t,(\Delta x)^2)$.  This difference between scheme and PDE goes to zero as we refine the grid in space and time (``consistency'').  With care about the smoothness of boundary conditions, and using mathematical facts about the heat equation itself, one can show that the difference between $T_j^n$ and $T(t_n,x_j)$ is \emph{also} $O(\Delta t,(\Delta x)^2)$, which is ``convergence''; see Notes and References.  However, to get convergence, the PDE problem must be known to generate smooth solutions and the scheme \eqref{heat1Dfd} must be stable, which we address below.  Then the main theorem for numerical PDE schemes is ``consistency plus stability implies convergence''; see Notes and References.  In these notes we do something rather practical, namely we find problems for which we already know exact values $T(t,x)$, and we compute the differences $|T_j^n - T(t_n,x_j)|$.  Thus we determine directly whether they go to zero.  This is ``verification''; more below.
 
-\subsubsection*{A first implemented scheme}  For the first Matlab implementation we extend to the heat equation in two spatial dimensions, Equation \eqref{heat}, with $D$ constant and $F=0$:
+\subsubsection*{A first implemented scheme}  For the first Matlab implementation we consider the two spatial dimension Equation \eqref{heat} with $D$ constant and $F=0$:
 \begin{equation}
 T_t = D (T_{xx}+T_{yy}).\label{heat2D}
 \end{equation}
-In two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$.  The 2D explicit scheme is
+Writing $T_{jk}^n \approx T(t_n,x_j,y_k)$, the 2D explicit scheme is
 \begin{equation}
 	\frac{T_{jk}^{n+1} - T_{jk}^n}{\Delta t} = D\,\left(\frac{T_{j+1,k}^n - 2\, T_{jk}^n + T_{j-1,k}^n}{\Delta x^2} + \frac{T_{j,k+1}^n - 2\, T_{jk}^n + T_{j,k-1}^n}{\Delta y^2}\right). \label{heat2dexplicit}
 \end{equation}
-The stencil for the right-hand spatial derivative approximation is in Figure \ref{fig:expstencil}.
+The stencil for the right-hand side of \eqref{heat2dexplicit} is in Figure \ref{fig:expstencil}.
 
 \twofigsizes{expstencil}{exp2dstencil}{Left: Space-time stencil for the explicit scheme \eqref{heat1Dfd} for the 1D heat equation.  Right: Two spatial dimension stencil for scheme \eqref{heat2dexplicit}.}{2.0in}{2.1in}
 
