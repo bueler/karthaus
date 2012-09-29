@@ -29,9 +29,9 @@ figures := iceshelfedge.jpg flowline.png fofv.png \
 	antinitial.png antfinal.png antvolcompare.pdf antthickchange.png \
 	initialheat.pdf finalheat.pdf stability.pdf instability.pdf slab.pdf \
 	roughfinal.png roughinitial.png roughtimesteps.pdf ssavel8km.pdf \
-	expstencil.pdf exp2dstencil.pdf diffstencil.pdf mahaffystencil.pdf
-epsfigures :=  sshape heatscaling siascaling \
-        impstencil cnstencil AofT
+	expstencil.pdf exp2dstencil.pdf diffstencil.pdf mahaffystencil.pdf \
+	heatscaling.pdf
+epsfigures :=  sshape siascaling impstencil cnstencil AofT
 svgfigures := coffee heatconduction Rocket_nozzle_expansion
 minputs := heat heatadapt halfar diffusion siaflat flowline \
 	convanalysis ssaflowline ssainit testshelf verifysia
