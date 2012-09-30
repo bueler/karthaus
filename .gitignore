@@ -28,6 +28,10 @@
 *~
 slides.pdf
 notes/notes.pdf
+projects/upwindnotes.pdf
+projects/diffusion.m
+projects/exactshelf.m
+projects/siageneral.m
 *.slim.m
 pdffigs/*.pdf
 anim/*.png
