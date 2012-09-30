@@ -599,33 +599,29 @@ Equation \eqref{ssa} simplifies if the ice is floating, because we assume zero r
 \end{equation}
 for floating ice.  A useful observation about flow line equation \eqref{ssafloat} is that both left and right-hand expressions are derivatives; this fact can be used to build a 1D exact solution.
 
-\subsubsection*{Steady ice shelf exact solution}  For a steady 1D ice shelf, for which $H_t=0$, the mass continuity equation \eqref{masscont} reduces to $M=(uH)_x$.  Because this is simple, and because of the relative simplicity of the SSA equation \eqref{ssafloat} for 1D floating ice, the exact velocity and thickness for a steady ice shelf can be computed \cite{vanderVeen83}.  This exact solution depends on the ice thickness $H_g$ and velocity $u_g$ at the grounding line, and it requires a suitable surface mass balance $M$ which we choose to be a positive constant $M_0$.  These determine a unique solution, the derivation of which is left to the exercises.
+\subsubsection*{Steady ice shelf exact solution}  For a steady 1D ice shelf, in which $H_t=0$, the mass continuity equation \eqref{masscont} reduces to $M=(uH)_x$.  Because this is simple, and because of the relative simplicity of the SSA equation \eqref{ssafloat} for 1D floating ice, the exact velocity and thickness for a steady ice shelf were computed by van der Veen  \cite{vanderVeen83}.  This exact solution depends on the ice thickness $H_g$ and velocity $u_g$ at the grounding line.  For the surface mass balance $M$ we choose a positive constant $M_0$.  These choices determine a unique solution, the derivation of which is left to the exercises.
 
-Supposing $H_g=500$ m, $u_g = 50 \,\text{m}\,\text{a}^{-1}$, and $M_0=30 \,\text{cm}\,\text{a}^{-1}$ we get the results in Figure \ref{fig:steadyshelfprofile}, which are from code \texttt{exactshelf.m} (not shown).  We will use this exact solution to verify a numerical SSA code.  Note that near the grounding line are the highest driving stresses, thus the highest longitudinal stresses and strain rates, and thus the most rapid thinning rates.
+Supposing $H_g=500$ m, $u_g = 50 \,\text{m}\,\text{a}^{-1}$, and $M_0=30 \,\text{cm}\,\text{a}^{-1}$ we get the results in Figure \ref{fig:steadyshelfprofile}, which are from code \texttt{exactshelf.m} (not shown).  We will use this exact solution to verify a numerical SSA code.  Note that driving stresses are much higher near the grounding line than away from it, and thus the highest longitudinal stresses, strain rates, and thinning rates occur near the grounding line.
 
 \twofig{steadyshelfprofile}{steadyshelfvelocity}{The upper and lower surface elevation (m; left) of the exact ice shelf solution and its velocity (m/a; right); $x=0$ is the grounding line.}
 
-\subsubsection*{Numerical solution of the SSA}  We will describe a numerical method for an ice shelf or stream, but only give a code in the ice shelf case.  The ice stream modifications are an exercise.
+\subsubsection*{Numerical solution of the SSA}  Suppose the ice thickness is a fixed function $H(x)$.  To find the velocity we must solve the nonlinear PDE \eqref{ssa} or \eqref{ssafloat} for the unknown $u(x)$.  When we do this numerically an iteration is needed because of the nonlinearity.  The simplest iteration idea is to use an initial guess at the velocity, which allows us to compute an effective viscosity and then get a new velocity solution from a linear PDE problem.  Then we recompute the effective viscosity, solve for a new velocity, and repeat until things stop changing.  This is a ``Picard'' iteration.
 
-Suppose the ice thickness is a fixed function $H(x)$.  To find the velocity we must solve the nonlinear PDE \eqref{ssa} for the unknown $u(x)$.  When we do this numerically an iteration is needed because of the nonlinearity.  The simplest iteration idea is to use an initial guess at the velocity, which allows us to compute an effective viscosity and then get a new velocity solution from a linear PDE problem.  Then we recompute the effective viscosity, solve for a new velocity, and repeat until things stop changing.  This is a ``Picard'' iteration; see Notes and References for an alternative.
-
-Specifically, denote the previous velocity iterate as $u^{(k-1)}$ and the current iterate as $u^{(k)}$.  Compute $\bar \nu^{(k-1)} = B |u^{(k-1)}_x|^{1/n-1}$ and define $W^{(k-1)} = 2 \bar \nu^{(k-1)} H$.  Solve this linear elliptic PDE for the unknown $u^{(k)}$, at each iteration:
+Specifically, denote the previous velocity iterate as $u^{(k-1)}$ and the current iterate as $u^{(k)}$.  Compute $\bar \nu^{(k-1)} = B |u^{(k-1)}_x|^{1/n-1}$ and define $W^{(k-1)} = 2 \bar \nu^{(k-1)} H$.  Solve this linear elliptic PDE for the unknown $u^{(k)}$ at each iteration:
 \begin{equation}
    \left(W^{(k-1)} u^{(k)}_x\right)_x - C |u^{(k-1)}|^{m-1} u^{(k)} = \rho g H h_x. \label{picardssa}
 \end{equation}
-If the difference between $u^{(k-1)}$ and $u^{(k)}$ were ever to be zero then we would have a solution of \eqref{ssa}.  In practice we stop the iteration when the difference is small enough.
-
-Equation \eqref{picardssa} is a linear boundary value problem.  We can write it abstractly
+If the difference between $u^{(k-1)}$ and $u^{(k)}$ were ever to be zero then we would have a solution of \eqref{ssa}.  In practice we stop the iteration when the difference is small enough.  Equation \eqref{picardssa} is a linear boundary value problem.  We can write it abstractly
 \begin{equation}
   \left(W(x)\, u_x\right)_x - \alpha(x)\, u = \beta(x)  \label{innerlinear}
 \end{equation}
-where the functions $W(x)$, $\alpha(x)$, $\beta(x)$ are known in this SSA context.  (Both $W(x)$ and $\alpha(x)$ come from the previous iteration, while $\beta(x)$ is the geometry-determined driving stress.)  Equation \eqref{innerlinear} applies on an interval of the $x$-axis.  For boundary conditions we will suppose that $x=x_g$ is a location where the velocity is known, $u(x_g)=u_g$, as in Figure \ref{fig:steadyshelfprofile}.  In the ice shelf case we also have the calving front condition
+where the functions $W(x)$, $\alpha(x)$, $\beta(x)$ are known in thiscontext.  Equation \eqref{innerlinear} applies on an interval of the $x$-axis.  For boundary conditions we will suppose that $x=x_g$ is a location where the velocity is known, $u(x_g)=u_g$, as in Figure \ref{fig:steadyshelfprofile}.  In the ice shelf case we also have the calving front condition
 \begin{equation}
   2 B H |u_x|^{1/n - 1} u_x = \frac{1}{2}\rho (1-\rho/\rho_w) g H^2  \label{calvingstress}
 \end{equation}
 at the end of the ice shelf $x=x_c$.  (See Notes and References for a derivation of \eqref{calvingstress}.)  Boundary condition \eqref{calvingstress} can be solved for $u_x(x_c)=\gamma$ in terms of known quantities including the thickness at the calving front.
 
-Where to get an initial guess $u^{(0)}$?  We can give helpful answers for the 1D cases.  For floating ice, an initial velocity comes from assuming a uniform strain rate: $u^{(0)}(x) = \gamma (x-x_g) + u_g$, where $\gamma$ is the value of $u_x$ found from calving front condition.  For grounded ice, we may assume ice is held by basal resistance only: $u^{(0)}(x) = \left(-C^{-1} \rho g H h_x\right)^{1/m}$.
+Where to get an initial guess $u^{(0)}$?  Generally this may require effort, but we can give brief answers for the 1D cases.  For floating ice, an initial velocity comes from assuming a uniform strain rate provided by the calving front condition: $u^{(0)}(x) = \gamma (x-x_g) + u_g$.  For grounded ice, we may assume ice is held by basal resistance only: $u^{(0)}(x) = \left(-C^{-1} \rho g H h_x\right)^{1/m}$.
 
 \subsubsection*{Numerics of the linear boundary value problem}  Suppose \eqref{innerlinear} applies on an interval $[x_g,x_c]=[0,L]$.  We discretize with equal spacing $\Delta x$ and index $j=1,2,\dots,J+1$, so that $x_1 = x_g = 0$ and $x_{J+1} = x_c = L$ are endpoints.  The coefficient $W(x)$ is needed on a staggered grid.\footnote{Why the staggered grid?  For stability and accuracy reasons similar to those for the SIA diffusivity.}  Our finite difference approximation of \eqref{innerlinear} is
 \begin{equation}
