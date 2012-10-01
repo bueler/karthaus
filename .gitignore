@@ -32,6 +32,8 @@ projects/upwindnotes.pdf
 projects/diffusion.m
 projects/exactshelf.m
 projects/siageneral.m
+kartbook-elb.pdf
+kartrefs.tex
 *.slim.m
 pdffigs/*.pdf
 anim/*.png

@@ -1,0 +1,351 @@
+%kartbook.tex      
+%karthausbook
+
+%preamble
+  
+\documentclass[12pt]{report}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{makeidx}
+
+
+% NEW FROM OLAF
+\usepackage{epsfig}
+\usepackage{natbib}
+\usepackage{rotating,subfigure}
+
+% NEW FROM BUELER
+\usepackage{verbatim,empheq,fancyvrb}
+\usepackage[dvipsnames]{xcolor}
+
+
+\topmargin=-0.2in
+\textheight=8.4in
+\oddsidemargin=0.1in
+\textwidth=6in
+
+%choose one or other:
+%\newcommand{\lab}[1]{\label{#1} \quad #1\quad}%annotates equations
+%
+\newcommand{\lab}[1]{\label{#1}}
+%%%%%%
+\newcommand{\ben}{\begin{enumerate}}
+\newcommand{\een}{\end{enumerate}}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bdm}{\begin{displaymath}}
+\newcommand{\edm}{\end{displaymath}}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+\newcommand{\bean}{\begin{eqnarray*}}
+\newcommand{\eean}{\end{eqnarray*}}
+\newcommand{\bmat}[1]{\left(\begin{array}{#1}}
+\newcommand{\emat}{\end{array}\right)}
+\newcommand{\bm}[1]{\mbox{\boldmath$ #1 $}}
+\newcommand{\tab}{\hspace{0.8in}}
+\newcommand{\no}{\noindent}
+\newcommand{\non}{\nonumber}
+\newcommand{\pvint}{-\hspace{-1.1em}\int}%ordinary pv int after symbol
+\newcommand{\bpvint}{-\hspace{-1em}\int}%pvint after bracket
+\newcommand{\marg}{\marginpar}
+\newcommand{\real}{\mbox{Re\,}}
+\newcommand{\realnos}{\mbox{{\bf R}}}
+\newcommand{\complexnos}{\mbox{{\bf C}}}
+\newcommand{\integers}{\mbox{{\bf Z}}}
+\newcommand{\naturalnos}{\mbox{{\bf N}}}
+\newcommand{\rationalnos}{\mbox{{\bf Q}}}
+\newcommand{\mixpd}[3]{\frac{\partial ^{2} {#1}}{\partial{#2}\partial{#3}}}
+\newcommand{\pdtwo}[2]{\frac{\partial ^{2} {#1}}{\partial{#2}^{2}}}
+\newcommand{\pdone}[2]{\frac{\partial {#1}}{\partial {#2}}}
+\newcommand{\sdone}[2]{\frac{d {#1}}{d {#2}}}
+\newcommand{\sdtwo}[2]{\frac{d^2 {#1}}{d {#2}^2}}
+\newcommand{\sDone}[2]{\frac{D {#1}}{D {#2}}}
+%\newcommand{\tfrac}[2]{\textstyle{\frac{#1}{#2}}}
+%\newcommand{\dfrac}[2]{\displaystyle{\frac{#1}{#2}}}
+\newcommand{\sfrac}[2]{\small{\frac{#1}{#2}}}
+\newcommand{\cosec}{\mbox{cosec\,}}
+\newcommand{\imag}{\mbox{Im\,}}
+
+\newcounter{thequestion}
+\newcounter{question}
+\newcommand{\resetquestnos}[1]
+			{\renewcommand{\thequestion}{#1.\arabic{question}}
+	\setcounter{question}{0}}
+\newcommand{\reseteqnos}[1]{\renewcommand{\theequation}{#1.\arabic{equation}}
+	\setcounter{equation}{0}}
+\newcommand{\resetfignos}[1]{\renewcommand{\thefigure}{#1.\arabic{figure}}
+	\setcounter{figure}{0}}
+\newcommand{\resetsectnos}[1]{\renewcommand{\thesection}{#1.\arabic{section}}
+	\setcounter{section}{0}}
+\newcommand{\resetchapno}[1]{\renewcommand{\thechapter}{#1}
+	\setcounter{chapter}{0}}
+
+%begin exercises:
+\newcommand{\bex}{\section*{Exercises}
+\addcontentsline{toc}{section}{\protect\numberline{}{Exercises}}
+\begin{list}%
+{\arabic{chapter}.\arabic{question}}{\usecounter{question}}
+}
+\newcommand{\eex}{\end{list}}
+
+%begin appendix exercises: syntax \beax{appref} \eeax
+
+\newcommand{\beax}[1]{\section*{Exercises}
+\addcontentsline{toc}{section}{\protect\numberline{}{Exercises}}
+\begin{list}%
+{#1.\arabic{question}}{\usecounter{question}}
+}
+\newcommand{\eeax}{\end{list}}
+
+
+\newcommand{\react}[2]{\mbox{ \raisebox{-2ex} %reversible reaction arrows
+{$\stackrel   %3 on top of 1
+       {\stackrel   %2 on top of 1
+             { \stackrel{  
+            \mbox{\raisebox{0.6ex}{ ${\scriptstyle #1}$ }} }
+                          {\textstyle \rightleftharpoons } }
+             {#2                                           } }
+       {
+                                                             }$} }}
+\newcommand{\rightreact}[1]{\stackrel{
+\mbox{\raisebox{0.6ex}{ ${\scriptstyle #1}$} }}{\rightarrow}}
+
+\newcommand{\hemisphere}{
+\begin{picture}(8,10)(-1,-1)
+\put(0,1){\line(1,0){8}}
+\put(4,1){\oval(8,8)[t]}
+\end{picture}
+}
+\newcommand{\sphere}{_{\small{\bigcirc}}}
+
+\def\Ai{\mbox{Ai}}
+\def\erfc{\mbox{erfc\,}}
+\def\erf{\mbox{erf\,}}
+\def\sech{\mbox{sech\,}}
+\def\gl{ \mbox{\ \raisebox{-.9ex}{$\stackrel{\textstyle <}{>}$}}\ }
+\def\lg{ \mbox{\ \raisebox{-.9ex}{$\stackrel{\textstyle >}{<}$}}\ }
+\def\gsim{ \mbox{ \raisebox{-.9ex}{$\stackrel{\textstyle >}{\sim}$} } }
+\def\lsim{ \mbox{ \raisebox{-.9ex}{$\stackrel{\textstyle <}{\sim}$} } }
+\def\sgn{\mbox{sgn\,}}
+\def\dsp{\displaystyle}
+\def\txt{\textstyle}
+\def\eps{\varepsilon}
+\def\={&=&}
+\def\det{{\rm det}\,}
+\def\tr{{\rm tr}\,}
+\def\dnon{\dfrac{}{}\nonumber\\}
+
+
+\newcommand{\pd}{\partial}
+\newcommand{\divg}{{\bm \nabla}.\,}
+\newcommand{\del}{{\bm \nabla}}
+\newcommand{\grad}{{\bm \nabla}\,}
+\newcommand{\curl}{{\bm \nabla}\times}
+\newcommand{\udotgrad}{{\bf u}\,.\!{\bm \nabla}}
+%
+%specific here
+%
+\newcommand{\sat}{{\rm sat}}
+\newcommand{\Pe}{{\rm Pe}}
+
+\newcommand{\vect}[1]{{\bf #1}}
+\newcommand{\rom}[1]{{\rm #1}}
+%\newcommand{\eqref}[1]{(\ref{#1})}
+
+%chemical:
+\def\ox{O$_2$}
+\def\co2{CO$_2$}
+\def\h2o{H$_2$O}
+\def\sio2{SiO$_2$}
+\def\mg{{\rm Mg}}
+\def\si{{\rm Si}}
+\def\fe{{\rm Fe}}
+\def\oo{{\rm O}}
+
+%subscripts and superscripts:
+
+\def\sub{^{}_}
+\def\super{_{}^}
+
+
+%fractions
+\def\half{\tfrac{1}{2}}
+\def\quarter{\tfrac{1}{4}}
+\def\third{\tfrac{1}{3}}
+\def\sixth{\tfrac{1}{6}}
+\def\ninth{\tfrac{1}{9}}
+\def\12th{\tfrac{1}{12}}
+\def\24th{\tfrac{1}{24}}
+\def\48th{\tfrac{1}{48}}
+
+\def\3.4ths{\tfrac{3}{4}}
+
+\def\twothirds{\tfrac{2}{3}}
+\def\threequarters{\tfrac{3}{4}}
+
+%units:
+\newcommand{\up}[1]{$^{{#1}}$}
+
+%punctuation
+\def\ie{i.\,e.,\ }
+\def\eg{e.\,g.,\ }
+\def\etal{{\it et al}.\ }
+\def\dis{\dfrac{}{}}
+
+%appendices
+\def\apA{A } % projects
+\def\apB{B } % excursions
+
+\hyphenation{Helm-holtz}
+
+\title{Glaciers and ice sheets in the climate system\\ 
+\vspace*{0.8in} \large {The Karthaus summer school lecture notes}\vspace*{0.8in} }
+\author{Edited by A.\,C.\ Fowler, G.\,H.\ Gudmundsson and A.\ Jenkins\vspace*{0.4in} }
+\date{\today}
+
+\makeindex
+
+%\nofiles
+% not to produce updated toc file\includeonly{kartpref,kart1,kart2,kart3,kartrefs}
+\includeonly{kart8,kartrefs}
+
+\begin{document}
+
+\maketitle
+
+
+\pagenumbering{roman}
+
+\tableofcontents
+\include{contrib}
+\include{kartpref}%
+\pagenumbering{arabic}
+
+\setcounter{chapter}{0}
+
+%chapter 1 flow of ice/Gudmundsson/ACF
+\setcounter{subsection}{0}
+\reseteqnos{1}
+\include{kart1}%ch1
+
+%chapter 2 thermal structure/?/ACF
+\setcounter{subsection}{0}
+\reseteqnos{2}
+\include{kart2}%ch2
+
+%chapter 3 basal processes/Fowler/GHG
+\setcounter{subsection}{0}
+\reseteqnos{3}
+\include{kart3}%ch3
+
+%chapter 4 tidewater glaciers/?+Howat/AJ
+\setcounter{subsection}{0}
+\reseteqnos{4}
+\include{kart4}%ch4
+
+%chapter 5 ice shelf--ocean interaction/Jenkins/GHG
+\setcounter{subsection}{0}
+\reseteqnos{5}
+\include{kart5}%ch5
+
+%chapter 6 polar meteorology/van den Broeke/Reijmer
+\setcounter{subsection}{0}
+\reseteqnos{6}
+\include{kart6}%ch6
+
+%chapter 7
+\setcounter{subsection}{0}
+\reseteqnos{7}
+\include{kart7}%ch7
+
+%chapter 8 
+\setcounter{subsection}{0}
+\reseteqnos{8}
+\include{kart8}%ch8
+
+%chapter 9 
+\setcounter{subsection}{0}
+\reseteqnos{9}
+\include{kart9}%ch9
+
+%chapter 10 
+\setcounter{subsection}{0}
+\reseteqnos{10}
+\include{kart10}%ch10
+
+%chapter 11
+\setcounter{subsection}{0}
+\reseteqnos{11}
+\include{kart11}%ch11
+
+%chapter 12
+\setcounter{subsection}{0}
+\reseteqnos{12}
+\include{kart12}%ch12
+
+%chapter 13
+\setcounter{subsection}{0}
+\reseteqnos{13}
+\include{kart13}%ch13
+
+%chapter 14
+\setcounter{subsection}{0}
+\reseteqnos{14}
+\include{kart14}%ch14
+
+%chapter 15
+\setcounter{subsection}{0}
+\reseteqnos{15}
+\include{kart15}%ch15
+
+%chapter 16
+\setcounter{subsection}{0}
+\reseteqnos{16}
+\include{kart16}%ch16
+
+%chapter 17
+\setcounter{subsection}{0}
+\reseteqnos{17}
+\include{kart17}%ch17
+
+%chapter 18
+\setcounter{subsection}{0}
+\reseteqnos{18}
+\include{kart18}%ch18
+
+%chapter 19
+\setcounter{subsection}{0}
+\reseteqnos{19}
+\include{kart19}%ch19
+
+%chapter 20
+\setcounter{subsection}{0}
+\reseteqnos{20}
+\include{kart20}%ch20
+
+\resetchapno{A}
+\setcounter{subsection}{0}
+\renewcommand{\thesection}{A}
+	\setcounter{section}{0}
+\reseteqnos{A}
+\resetfignos{A}
+\include{kart_apA}%projects
+
+\resetchapno{B}
+\setcounter{subsection}{0}
+\renewcommand{\thesection}{B}
+	\setcounter{section}{0}
+\reseteqnos{B}
+\resetfignos{B}
+\include{kart_apB}%excursions
+
+
+\include{kartrefs}%
+\addcontentsline{toc}{chapter}{\protect\numberline{}{Index}}
+
+\printindex
+\end{document}
+
