@@ -83,10 +83,8 @@ urlcolor=blue     % only if colorlinks=true
 \newcommand{\twofig}[3]{\twofigsizes{#1}{#2}{#3}{2.5in}{2.5in}}
 
 
-
 \begin{document}
 \graphicspath{{../photos/}{../pdffigs/}}
-
 
 \begin{titlepage}
 
@@ -623,17 +621,18 @@ at the end of the ice shelf $x=x_c$.  (See Notes and References for a derivation
 
 Where to get an initial guess $u^{(0)}$?  Generally this may require effort, but we can give brief answers for the 1D cases.  For floating ice, an initial velocity comes from assuming a uniform strain rate provided by the calving front condition: $u^{(0)}(x) = \gamma (x-x_g) + u_g$.  For grounded ice, we may assume ice is held by basal resistance only: $u^{(0)}(x) = \left(-C^{-1} \rho g H h_x\right)^{1/m}$.
 
-\subsubsection*{Numerics of the linear boundary value problem}  Suppose \eqref{innerlinear} applies on an interval $[x_g,x_c]=[0,L]$.  We discretize with equal spacing $\Delta x$ and index $j=1,2,\dots,J+1$, so that $x_1 = x_g = 0$ and $x_{J+1} = x_c = L$ are endpoints.  The coefficient $W(x)$ is needed on a staggered grid.\footnote{Why the staggered grid?  For stability and accuracy reasons similar to those for the SIA diffusivity.}  Our finite difference approximation of \eqref{innerlinear} is
+\subsubsection*{Numerics of the linear boundary value problem}  Suppose equation \eqref{innerlinear} applies on $[x_g,x_c]=[0,L]$.  We discretize with equal spacing $\Delta x$ and index $j=1,2,\dots,J+1$, so that $x_1 = 0$ and $x_{J+1} = L$ are endpoints.  The coefficient $W(x)$ is needed on a staggered grid, for stability and accuracy reasons similar to those for the SIA diffusivity.  Our finite difference approximation of \eqref{innerlinear} is
 \begin{equation}
   \frac{W_{j+1/2} (u_{j+1} - u_j) - W_{j-1/2} (u_{j} - u_{j-1})}{\Delta x^2} - \alpha_j u_j = \beta_j  \label{discreteinnerlinear}
 \end{equation}
-For the left end boundary condition we have $u_1 = V$ given, easy to include in the linear system (below).  For the right end boundary condition we have $u_x(L)=\gamma$, which requires more thought \cite{MortonMayers}.  First introduce a notional point $x_{J+2}$.  Now require $(u_{J+2} - u_J)/(2 \Delta x) = \gamma$.  Using equation \eqref{discreteinnerlinear} in $j=J+1$ case, eliminate the $u_{J+2}$ variable ``by-hand'', before coding the numerics.
 
-Thus the SSA stress balance has the form
+For the left end boundary condition we have $u_1 = u_g$ given, which is easy to include in the linear system (below).  For the right end boundary condition we have $u_x(L)=\gamma$, which requires more thought \cite{MortonMayers}.  First introduce a notional point $x_{J+2}$.  Now require $(u_{J+2} - u_J)/(2 \Delta x) = \gamma$.  Using equation \eqref{discreteinnerlinear} in $j=J+1$ case, eliminate the $u_{J+2}$ variable ``by-hand''.  This determines the form of the last equation in our linear system.
+
+Thus each iteration to solve the SSA stress balance has the form
 \begin{equation}
-   A \mathbf{v} = \mathbf{b} \label{Aveqb}
+   A \mathbf{v} = \mathbf{b}. \label{Aveqb}
 \end{equation}
-because a each location $x_1,\dots,x_{J+1}$ we can write an equation, basically a row of the matrix $A$ in \eqref{Aveqb}, involving the unknown velocities.  In more detail it is this linear system of $J+1$ equations:
+Indeed, at each location $x_1,\dots,x_{J+1}$ we can write an equation, basically a row of the matrix $A$ in \eqref{Aveqb}, involving the unknown velocities.  In more detail it is this linear system of $J+1$ equations:
 \begin{equation}
 \begin{bmatrix}
 1 &  &  &  &  \\
@@ -652,31 +651,28 @@ u_g \\ \beta_2 \Delta x^2 \\ \beta_3 \Delta x^2 \\ \vdots \\ \beta_J \Delta x^2 
 \end{bmatrix}  \label{discretematrixform}
 \end{equation}
 The diagonal entries are
-  $$A_{22} = -(W_{3/2}+W_{5/2}+\alpha_2 \Delta x^2), \quad \dots, \quad A_{JJ} = -(W_{J-1/2}+W_{J+1/2}+\alpha_J \Delta x^2).$$
+  $$A_{22} = -(W_{3/2}+W_{5/2}+\alpha_2 \Delta x^2), \quad \dots \quad A_{JJ} = -(W_{J-1/2}+W_{J+1/2}+\alpha_J \Delta x^2).$$
 There are special cases for the coefficients in the last equation,
   $$A_{J+1,J} = 2 W_{J+1/2}, \quad A_{J+1,J+1} = -(2 W_{J+1/2}+\alpha_{J+1}\Delta x^2).$$
 For the right side of the last equation, $b_{J+1} = -2 \gamma \Delta x W_{J+3/2} + \beta_{J+1} \Delta x^2$.
 
-System \eqref{discretematrixform} is a tridiagonal linear system, but don't bother looking up how to solve such a linear system.  It is fully appropriate to hand \eqref{discretematrixform} to Matlab's linear solver, the ``backslash'' operator $\mathbf{v} = A\, \backslash\, \mathbf{b}$, and not worry further about this black box at this initial implementation stage.
-
-So we now have a code to solve \eqref{innerlinear} by finite differences and linear algebra, namely \texttt{flowline.m} below.
+System \eqref{discretematrixform} is a tridiagonal linear system.  But don't bother looking up how to solve such a linear system unless you really need to!  It is fully appropriate to give system \eqref{discretematrixform} to Matlab's linear solver, the ``backslash'' operator $\mathbf{v} = A\, \backslash\, \mathbf{b}$, and not worry further about solving finite linear systems at this initial implementation stage.  So we now have a code to solve \eqref{innerlinear} by finite differences and linear algebra, namely \texttt{flowline.m} below.
 
 \minput{flowline}
 
-By ``manufacturing'' exact solutions to \eqref{innerlinear}---see Notes and References---we can test this code.   In fact, results from \texttt{testflowline.m} (not shown) demonstrate that our implemented numerical scheme converges at the optimal rate $O(\Delta x^2)$.  We do this test intentionally before proceeding to solve the nonlinear SSA problem.
+By ``manufacturing'' exact solutions to \eqref{innerlinear}---see Notes and References---we can test this code.   In fact, results from \texttt{testflowline.m} (not shown) demonstrate that our implemented numerical scheme converges at the optimal rate $O(\Delta x^2)$.  We do this test before proceeding to solve the nonlinear SSA problem.
 
-\subsubsection*{Solving the stress balance for an ice shelf}  The code \texttt{ssaflowline.m} (below) numerically computes the velocity for a steady ice shelf.  The thickness comes directly from the exact solution shown in Figure \ref{fig:steadyshelfprofile}, so we are not solving the full, ``coupled'' steady ice shelf problem.  This code implements Picard iteration to solve the nonlinear equation \eqref{ssafloat}.  It calls \texttt{ssainit.m} (not shown) to get the initial iterate $u^{(0)}(x)$, as already described, and it calls \texttt{flowline.m} at each iteration.  It also calls small helper functions \texttt{stagav,regslope,stagslope} (not shown) to computed certain gridded values.
+\subsubsection*{Solving the stress balance for an ice shelf}  The code \texttt{ssaflowline.m} (below) numerically computes the velocity for an ice shelf.  The thickness is assumed to be given, so we are not solving the full, ``coupled'' ice shelf problem.  This code implements Picard iteration to solve the nonlinear equation \eqref{ssafloat}.  It calls \texttt{ssainit.m} (not shown) to get the initial iterate $u^{(0)}(x)$, as already described, and it calls \texttt{flowline.m} at each iteration.  It also calls small helper functions \texttt{stagav,regslope,stagslope} (not shown) to computed certain gridded values.
 
 \minput{ssaflowline}
 
-Now we can ask precisely: Does \texttt{ssaflowline.m} work?  The exact velocity solution shown in Figure \ref{fig:steadyshelfprofile} allows us to compare (e.g.~find the maximum difference between) the numerical and exact solutions.  This convergence comparison, shown in Figure \ref{fig:shelfconv}, is done by codes \texttt{testshelf.m} and \texttt{shelfconv.m} (not shown).  At screen resolution the numerical velocity solution is identical to that shown in the right part of Figure \ref{fig:steadyshelfprofile}.
+Now we can ask precisely: Does \texttt{ssaflowline.m} work correctly?  The exact velocity solution shown in Figure \ref{fig:steadyshelfprofile} allows us to compare the numerical and exact solutions by finding the maximum difference between them.  To make a test out of this we take the exact thickness shown in Figure \ref{fig:steadyshelfprofile}, from \texttt{exactshelf.m}.  A convergence comparison, shown in Figure \ref{fig:shelfconv}, is done by codes \texttt{testshelf.m} and \texttt{shelfconv.m} (not shown).  Thus, at screen resolution, the numerical velocity solution from a coarse grid computation is identical to that shown in the right part of Figure \ref{fig:steadyshelfprofile}.  There is no need to show the numerical solution.
 
 \onefig{shelfconv}{The numerical SSA velocity solution from \texttt{ssaflowline.m} converges to the exact solution, at nearly the optimal rate $O(\Delta x^2)$, as the grid is refined from spacing $\Delta x=4$ km to $\Delta x=62$ m.  Each blue circle gives the maximum velocity error for a solution on a given grid.  Even on the coarsest grid the error is less than 1 m/a while the maximum velocity is $\sim 300$ m/a.}
 
+\subsubsection*{Realistic ice shelf modelling}  Real ice shelves have two horizontal variables.  They are frequently confined in bays, and thus they experience ``side drag''.  Their velocities vary spatially and temporally along their grounding ``lines'' (i.e.~the curve where the flotation criterion is an equality).  Furthermore real ice shelves have interesting boundary processes, including high basal melt near grounding lines, marine ice basal freeze-on, and fracturing which nears full thickness at the calving front.
 
-\subsubsection*{Realistic ice shelf modelling}  Real ice shelves have two horizontal variables.  They are frequently confined in bays, thus they experience ``side drag'', and their velocities vary spatially (and temporally) along their grounding ``lines'' (i.e.~the curve where the flotation criterion is an equality).  Furthermore real ice shelves have interesting boundary processes, including high basal melt near grounding lines, marine ice basal freeze-on, fracturing which nears full thickness at the calving front, and all the complexities of real ice shelf geometry.
-
-Nonetheless ``diagnostic'' (i.e.~fixed geometry) ice shelf modelling in two horizontal variables, done like the above example where the velocity is the model unknown but the thickness is known, is quite successful using the SSA model.  Observed surface velocities can be, and should be, used to validate these stress balance models.  For example, Figure \ref{fig:rossquiver} shows a Parallel Ice Sheet Model (PISM) result for the Ross ice shelf, compared to observed velocities.  There is only one tuned parameter, the constant value of the ice hardness $B$.  Many current ice shelf models can achieve comparably good match \cite{MacAyealetal}.
+Nonetheless ``diagnostic'' (i.e.~fixed geometry) ice shelf modelling in two horizontal variables, done like the above example where the velocity is the model unknown but the thickness is known, is quite successful using only the isothermal SSA model.  For example, Figure \ref{fig:rossquiver} shows a Parallel Ice Sheet Model (PISM) result for the Ross ice shelf, compared to observed velocities.  There is only one tuned parameter, the constant value of the ice hardness $B$.  Many current ice shelf models yield comparable match \cite{MacAyealetal}.
 
 \twofigsizes{rossquiver}{rossscatter}{Results from tuning the single, constant ice hardness parameter $B$.  Left: Observed radar-derived (white) and modeled (black) ice velocities are nearly coincident across the whole Ross ice shelf.  The grounding line, at which observed velocities were applied as boundary conditions, is a thin black curve.  Right: This scatter plot has one point for each velocity at left.}{3.1in}{2.7in}
 
