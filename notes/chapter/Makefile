@@ -1,6 +1,6 @@
 all: kartbook-elb.pdf
 
-%.pdf: %.tex
+%.pdf: %.tex kart8.tex
 	pdflatex $*
 	pdflatex $*
 
