@@ -674,21 +674,21 @@ Now we can ask precisely: Does \texttt{ssaflowline.m} work correctly?  The exact
 
 Nonetheless ``diagnostic'' (i.e.~fixed geometry) ice shelf modelling in two horizontal variables, done like the above example where the velocity is the model unknown but the thickness is known, is quite successful using only the isothermal SSA model.  For example, Figure \ref{fig:rossquiver} shows a Parallel Ice Sheet Model (PISM) result for the Ross ice shelf, compared to observed velocities.  There is only one tuned parameter, the constant value of the ice hardness $B$.  Many current ice shelf models yield comparable match \cite{MacAyealetal}.
 
-\twofigsizes{rossquiver}{rossscatter}{Results from tuning the single, constant ice hardness parameter $B$.  Left: Observed radar-derived (white) and modeled (black) ice velocities are nearly coincident across the whole Ross ice shelf.  The grounding line, at which observed velocities were applied as boundary conditions, is a thin black curve.  Right: This scatter plot has one point for each velocity at left.}{3.1in}{2.7in}
+\twofigsizes{rossquiver}{rossscatter}{Results from tuning the single, constant ice hardness parameter $B$.  Left: Observed radar-derived (white) and modeled (black) ice velocities are nearly coincident across the whole Ross ice shelf.  The grounding line, at which observed velocities were applied as boundary conditions, is the thin black curve.  Right: This scatter plot has one point for each velocity arrow at left.}{3.1in}{2.7in}
 
 
 \subsection{A summary of numerical ice sheet modelling}
 
-These notes illustrate important, general principles about numerical modelling:
+These notes illustrate some general principles about numerical modelling:
 \begin{itemize}
 \item Spend time with the continuum model.
 \item Modularize your codes.
 \item Test the parts: Is the component robust? Does it show convergence to exact solutions?
 \end{itemize}
 
-Distributed stress balance equations like the SSA determine horizontal velocity from geometry and boundary conditions.  These equations are nonlinear so iteration is necessary.  At each iteration a sparse matrix ``inner'' problem is solved; non-experts should give this matrix problem to a solver package.  (The SIA is not horizontally distributed in this way, and velocity follows immediately by integration.)
+Regarding the specific problems of ice flow, distributed stress balance equations like the SSA determine horizontal velocity from geometry and boundary conditions.  These equations are nonlinear so iteration is necessary.  At each iteration a sparse matrix ``inner'' problem is solved; non-experts should give this matrix problem to a solver package.  The SIA stress balance is not horizontally-distributed, however, and velocity follows immediately by integration of the driving stress.
 
-The mass continuity equation has a time-derivative and describes how the ice geometry evolves.  The numerical nature of this equation depends on which is the stress balance which supplies the velocity.  It is a diffusion for frozen bed, large scale flows (SIA).  It is \emph{not} very diffusive for membrane stresses (e.g.~SSA), especially with no basal resistance as in ice shelves.  It has some diffusiveness for ice streams (but how much?), and more for outlet glaciers.  Unfortunately, there is not much helpful theory on to solve this transport problem.
+The mass continuity equation has a time-derivative, and it describes how the ice geometry evolves.  The numerical nature of this equation depends on which is the stress balance which supplies the velocity.  It is a diffusion for frozen bed, large scale flows (SIA).  It is \emph{not} very diffusive for membrane stresses (e.g.~SSA), especially with no basal resistance as in ice shelves.  It has some diffusiveness for ice streams (but how much?), and more for outlet glaciers.  In any case it is a kind of transport equation, but with diffusive character at larger spatial scales.
 
 
 \small
