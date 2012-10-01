@@ -9,10 +9,10 @@ zips: all
 	cp slides.pdf README.md index.html bueler_karthaus/
 	cp notes/notes.pdf bueler_karthaus/
 	cp -rf mfiles/ bueler_karthaus/mfiles/
-	(cd bueler_karthaus/mfiles/ && rm -rf other/)
+	(cd bueler_karthaus/mfiles/ && rm -rf other/ && rm -rf *.mat && rm -rf *.m~)
 	cp -rf petsc/ bueler_karthaus/petsc/
 	(cd bueler_karthaus/petsc/ && cp notes/jacobiannotes.pdf .)
-	(cd bueler_karthaus/petsc/ && rm -rf notes/)
+	(cd bueler_karthaus/petsc/ && rm -rf notes/ && rm -rf ssaflowline)
 	zip -r bueler_karthaus.zip bueler_karthaus/
 	tar -cvzf bueler_karthaus.tar.gz bueler_karthaus/*
 
