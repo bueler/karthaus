@@ -726,20 +726,16 @@ The finite difference material in this Chapter should probably be read with refe
 
 \newcommand{\exer}[2]{\medskip\noindent \textbf{#1.}\quad #2}
 
-Note:  \emph{At Karthaus 2012 there is no dedicated time for these exercises.  They are suitable for the needs of careful readers of these notes, however, because they fill in missing material, and they help make the main ideas concrete.}
+\exer{1}{Assume $f$ has continuous derivatives of all orders.  Show using Taylor's theorem:
+  $$f'(x) = \frac{f(x+\Delta) - f(x-\Delta)}{2\Delta} + O(\Delta^2) \quad \text{and} \quad f''(x) = \frac{f(x+\Delta) - 2 f(x) + f(x-\Delta)}{\Delta^2} + O(\Delta^2).$$}
 
+\exer{2}{Sometimes we want finite difference approximations for derivatives in-between grid points.  Continuing exercise \textbf{1}, show $f'(x+(\Delta/2)) = (f(x+\Delta) - f(x))/\Delta + O(\Delta^2)$.}
 
-\exer{1}{Assume $f$ has continuous derivatives of all orders.  Show
-  $$f'(x) = \frac{f(x+\Delta) - f(x-\Delta)}{2\Delta} + O(\Delta^2) \quad \text{and} \quad f''(x) = \frac{f(x+\Delta) - 2 f(x) + f(x-\Delta)}{\Delta^2} + O(\Delta^2)$$
-using Taylor's theorem with remainder.}
+\exer{3}{Rewrite \texttt{heat.m} using \texttt{for} loops instead of colon notation.  (The only purpose here is to help understand colon notation.)}
 
-\exer{2}{Sometimes we want finite difference approximations to derivatives in-between grid points.  Continuing exercise \textbf{1}, show $f'(x+(\Delta/2)) = (f(x+\Delta) - f(x))/\Delta + O(\Delta^2)$.}
+\exer{4}{The 1D explicit scheme \eqref{heat1Dfd} for the heat equation, namely $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$, is averaging if stability criterion \eqref{stabcrit} holds.  But of course we must be stepping \emph{forward} in time.  Show that the scheme is not averaging for any values of $\Delta t < 0$ and $\Delta x > 0$.  Try running \texttt{heat.m} backward in time to see what happens.  In general \emph{there are no consistent stable numerical schemes for unstable PDE problems}.}
 
-\exer{3}{Rewrite \texttt{heat.m} using \texttt{for} loops instead of colon notation.}
-
-\exer{4}{The 1D explicit scheme \eqref{heat1Dfd} for the heat equation, namely $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$, is an average if stability criterion \eqref{stabcrit} holds.  But of course we must be stepping \emph{forward} in time also ($\Delta t>0$)!  Show, by contrast, that if the time step is negative then the scheme is not an average (= positive coefficients which sum to one) for any values of $\Delta t$ and $\Delta x$.  Also, try running \texttt{heat.m} backward in time to see what happens.  In conclusion, \emph{there are no stable numerical schemes for unstable PDE problems}.}
-
-\exer{5}{Show that when written as a formula for $T_j^{n+1}$, scheme \eqref{implicit1D} has only positive coefficients.  By looking into the literature as needed, explain why this implies that it is unconditionally stable.}
+\exer{5}{Show that when written as a formula for $T_j^{n+1}$, scheme \eqref{implicit1D} has only positive coefficients.  By looking into the literature as needed, explain why this shows it is unconditionally stable.}
 
 \exer{6}{\emph{This multi-part exercise concerns the numerical treatment of ``$\Div\left(D\,\grad\right)$''.} 
 \renewcommand{\labelenumi}{(\alph{enumi})}
@@ -747,23 +743,23 @@ using Taylor's theorem with remainder.}
 \item Show that if $D=D(x,y)$ and $u=u(x,y)$ then $\Div \left(D\, \grad u\right) = D \grad^2 u + \grad D \cdot \grad u$.
 \item Write down the centered $O(\Delta t)+O(\Delta x^2)$ explicit finite difference method for the equation $u_t = D_0 u_{xx} + E_0 u_x$, assuming $D_0>0$ and $E_0$ are constant.  Solve the scheme for the unknown $u_j^{n+1}$. 
 \item Stability for your method will occur if the right hand side from the last answer in part (b) has all positive coefficients.  If $|E_0| \gg D_0$, what does this say about $\Delta t$?
-\item Why we keep ``$\Div\left(D\,\grad\right)$'' in that form and use the staggered grid?
+\item Why do we use the staggered grid for ``$\Div\left(D\,\grad\right)$,'' instead of expanding by the product rule as in part (a)?
 \end{enumerate}
 }
 
-\exer{7}{Derive the Green's function of the heat equation, namely $T = (4 \pi D t)^{-1/2}\, e^{-x^2/(4Dt)}$ as a solution to $T_t=D T_{xx}$.  Start by supposing there is a solution of the form $T(t,x) = t^{-1/2} \phi(s)$ where $s=t^{-1/2}x$ is the similarity variable.  Thereby write down an ordinary differential equation and solve it.}
+\exer{7}{Derive the Green's function of the 1D heat equation, namely $T = (4 \pi D t)^{-1/2}\, e^{-x^2/(4Dt)}$, which is a solution to $T_t=D T_{xx}$.  Start by supposing there is a solution of the form $T(t,x) = t^{-1/2} \phi(s)$ where $s=t^{-1/2}x$ is the similarity variable.  Thereby write down an ordinary differential equation for $\phi$, and solve it.}
 
 \exer{8}{In the text, and in code \texttt{verifysia.m}, we used Halfar's solution to verify our numerical scheme \texttt{siaflat.m}.  Create the analogous code \texttt{verifyheat.m} to use the Green's function of the 2D heat equation \eqref{heat2D}, namely $T(t,x,y) = (4 \pi D t)^{-1}\, e^{-(x^2+y^2)/(4Dt)}$, to verify \texttt{heatadapt.m}.  You can use the high quality approximation $e^{-A^2}\approx 0$ for $|A|>10$ to choose a rectangular domain in space for which you may use $T=0$ Dirichlet boundary conditions.}
 
 \exer{9}{Is P.~Halfar male or female, and what does the first initial ``P.'' stand for?}
 
-\exer{10}{Show that formula \eqref{halfar} solves \eqref{sia} in the case of flat bed (so $h=H$) and zero climatic mass balance ($M=0$).  You will want to express divergence and gradient in polar coordinates.}
+\exer{10}{Show that formula \eqref{halfar} solves \eqref{sia} in the case of flat bed ($h=H$) and zero climatic mass balance ($M=0$).  You will want to express divergence and gradient in polar coordinates.}
 
-\exer{11}{In the text it is claimed that any modification of \texttt{siaflat.m} will make the output of \texttt{verifysia.m} show non-convergence, e.g.~the reported average thickness error will not go to zero as the grid is refined.  By randomly altering lines of \texttt{siaflat.m}, evaluate this claim.}
+\exer{11}{In the text it is claimed that any modification of \texttt{siaflat.m} will make the output of \texttt{verifysia.m} show non-convergence, e.g.~the reported average thickness error will not go to zero as the grid is refined.  By randomly altering lines of \texttt{siaflat.m}, or by other methods of your choice, evaluate this claim.}
 
-\exer{12}{Some output from \texttt{verifysia.m} has been suppressed in the text.  It also shows the numerical ice thickness error in map-plane view.  Near the grounded margin of an ice sheet this error is much larger than elsewhere.  Why?}
+\exer{12}{Some output from \texttt{verifysia.m} has been suppressed in the text, including a map-plane view of the numerical ice thickness error.  Near the grounded margin of an ice sheet this error is much larger than elsewhere.  Why?  Would a higher-order model with moving margin on the same grid have significantly smaller thickness error, supposing we knew a relevant exact solution?}
 
-\exer{13}{Get the surface kinematical equation \eqref{surfkine} from the mass continuity \eqref{masscont} and basal kinematical \eqref{basekine} equations.  Do one more permutation too.  Note that the Leibniz rule for differentiating integrals, which was mentioned in the text, is
+\exer{13}{Derive the surface kinematical equation \eqref{surfkine} from the mass continuity \eqref{masscont} and basal kinematical \eqref{basekine} equations.  Note that the Leibniz rule for differentiating integrals, mentioned in the text, is
   $$\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy.$$}
 
 \exer{14}{Let $C_s = A (\rho g (1-r)/4)^n$ and assume $x_g=0$ is the location of the grounding line.  Derive the two parts of the van der Veen exact ice shelf solution, namely
@@ -772,6 +768,6 @@ using Taylor's theorem with remainder.}
 \end{align*}
 Start from equation \eqref{ssafloat}, and use the fact $(H^2)_x = 2 H H_x$ to generate the first integral of \eqref{ssafloat}.  Also use boundary condition \eqref{calvingstress}.  On the other hand, note that the mass continuity equation $M_0=(uH)_x$ can be integrated to give the formula $uH = M_0 (x-x_g) + u_g H_g$ for the flux.  Find $u(x)$ first, then $H(x)$ is in terms of $u(x)$ as above.  These exact solutions are from \cite{vanderVeen83}.  They are used in code \texttt{exactshelf.m}.}
 
-\exer{15}{Modify the code \texttt{ssaflowline} to solve the ice stream version of the SSA \eqref{ssa}.  For boundary conditions it would be reasonable to have fixed velocity at the upstream end and keep the calving front boundary condition at the downstream end, as in thec case that the calving front is at the point where the ice stream reaches flotation.  Build a test case; can you find an exact solution?}
+\exer{15}{Modify the code \texttt{ssaflowline.m} to solve the ice stream SSA equation \eqref{ssa}.  For boundary conditions it would be reasonable to have fixed velocity at the upstream end, but keep the calving front boundary condition at the downstream end.  (I.e.~consider the case where the calving front is at the point where the ice stream reaches flotation.)  Build a test case.  Find an exact solution, if you can, to verify your code.}
 
 \end{document}
