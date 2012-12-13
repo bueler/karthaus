@@ -2,20 +2,6 @@
 
 all: slides.pdf
 
-zips: all
-	rm -rf bueler_karthaus/  # clean out if prior existence
-	mkdir bueler_karthaus/
-	make clean
-	cp slides.pdf README.md index.html bueler_karthaus/
-	cp notes/notes.pdf bueler_karthaus/
-	cp -rf mfiles/ bueler_karthaus/mfiles/
-	(cd bueler_karthaus/mfiles/ && rm -rf other/ && rm -rf *.mat && rm -rf *.m~)
-	cp -rf petsc/ bueler_karthaus/petsc/
-	(cd bueler_karthaus/petsc/ && cp notes/jacobiannotes.pdf .)
-	(cd bueler_karthaus/petsc/ && rm -rf notes/ && rm -rf ssaflowline)
-	zip -r bueler_karthaus.zip bueler_karthaus/
-	tar -cvzf bueler_karthaus.tar.gz bueler_karthaus/*
-
 # list file names
 figures := iceshelfedge.jpg flowline.png fofv.png \
 	palmer_land.png polaris.png schoof_planform.png schoof_sliders.png \
@@ -80,18 +66,9 @@ mfiles/%.slim.m: mfiles/%.m
 	sed -e 's/ *fprintf/%/' -e 's/ *%/%/' -e '/^%/ d' -e 's/%.*//' $@.tmp > $@
 	rm -rf $@.tmp
 
-.PHONY: zips clean showEnv
-
-showEnv:
-	@echo 'figures = ' $(figures)
-	@echo 'epsfigures = ' $(epsfigures)
-	@echo 'svgfigures = ' $(svgfigures)
-	@echo 'animfigures = ' $(animfigures)
-	@echo 'minputs = ' $(minputs)
-	@echo 'mslim = ' $(mslim)
-	@echo 'texinputs = ' $(texinputs)
+.PHONY: clean
 
 clean:
 	@rm -f *.out *.aux *.log *.bbl *.blg *.snm *.toc *.nav *.vrb \
-	       mfiles/*.slim.m pdffigs/*.pdf anim/*.png bueler_karthaus.*
+	       mfiles/*.slim.m pdffigs/*.pdf anim/*.png
 
