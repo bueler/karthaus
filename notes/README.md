@@ -4,8 +4,7 @@ karthaus/notes/
 Copyright 2009--2012  Ed Bueler
 
 These are notes for my numerical lectures at the Karthaus (Italy)
-Summer School on Ice Sheets and Glaciers.  They are also a draft of
-my chapter in the "Karthaus book".
+Summer School on Ice Sheets and Glaciers.
 
 The Karthaus school page website is at
 
