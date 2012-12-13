@@ -26,6 +26,8 @@
 *.mtc
 *.mtc0
 *~
+slides.pdf
+notes/notes.pdf
 projects/upwindnotes.pdf
 projects/diffusion.m
 projects/exactshelf.m
