@@ -11,7 +11,7 @@ for tyears = 10.0.^(-0.5:0.25:6)
   xlabel('x  (km)'),  ylabel('y  (km)'),  zlabel('H  (m)')
   axis tight, view(3)
   axis([-L/1000 L/1000 -L/1000 L/1000 0 8000])
-  print(sprintf('../anim/halfar%d.png',count), '-dpng')
+  print(sprintf('../anim/halfar%d.png',count), '-dpng', '-r100')
   count = count + 1;
 end
 
