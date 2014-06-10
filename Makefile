@@ -52,11 +52,17 @@ pdffigs/%.pdf: pdffigs/%.svg
 # see advice at http://www.ipgp.fr/~lucas/Contrib/animbeamer.html:
 anim/heatmelt0.png: anim/Heat_eqn.gif
 	(cd anim/ && convert Heat_eqn.gif heatmelt%d.png)
-# change to 'matlab' if using that to generate movies
-ANIMMATOCT := octave
-anim/halfar0.png: mfiles/halfarmovie.m
-	(cd mfiles/ && $(ANIMMATOCT) halfarmovie.m)
-	(cd anim && mogrify -trim halfar*.png)
+
+# the old way to generate the Halfar movie:
+## change to 'matlab' if using that to generate movies
+#ANIMMATOCT := octave
+#anim/halfar0.png: mfiles/halfarmovie.m
+#	(cd mfiles/ && $(ANIMMATOCT) halfarmovie.m)
+#	(cd anim && mogrify -trim halfar*.png)
+
+# the new way to generate the Halfar movie:
+anim/halfar0.png: anim/halfarfigs.tar.gz
+	(cd anim/ && tar -xzvf halfarfigs.tar.gz)
 
 # the purpose of this nonsense is to put only the "meat" of codes into the
 # PDF lectures.  thus we remove comments and print statements.  the flag
