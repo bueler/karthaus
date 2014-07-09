@@ -9,6 +9,7 @@
 \usepackage{palatino}
 \usepackage[sc]{mathpazo}
 \usepackage[T1]{fontenc}
+\usepackage{underscore}
 
 % check if we are compiling under latex or pdflatex
 \ifx\pdftexversion\undefined
@@ -125,7 +126,9 @@ Additionally $P = ((\rho_w g)/(LW\phi)) S_{en}$ and $S_{sub} = (fLW/h) A_c$ so $
 
 To determine sliding, note equation (1) in Barth gives $z_w$ from $S_{en}$, thus $P$, and then equation (2) from Barth gives the effective pressure $N$.  Then equation (3) in Barth gives sliding velocity $u_b$.  This can all be post-processing on solution to ODE system.
 
-Use ODE solver to solve system \eqref{eq:system} above.  Synthetic case from Figure 6 in Barth first.  Then use data (FIXME: which I need to get from Tim) and get Figure 7 in Barth.
+Use ODE solver to solve system \eqref{eq:system} above.  Synthetic case from Figure 6 in Barth first.
+
+Then use data from Tim in file \texttt{Bartholomaus2011_Fig7.txt} and get Figure 7 in Barth.  (View the data, and see by example how to read it, by running \texttt{show-barth-data.m} in Octave or Matlab.)
 
 \subsection*{Extension 1}  From formula (4) in Barth for $Z$, it makes sense, given all that is unknown subglacially, to write equation \eqref{eq:barth:cavityevolution} as
 \begin{equation*}
