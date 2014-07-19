@@ -1,10 +1,6 @@
 Here are two project ideas.  Which we do is up to you.
 
-1.  DO ICE SHELVES HAVE MEMORY, BEYOND THE OBVIOUS?
-
-Ice shelf flow in one horizontal dimension combines the SSA stress balance described in the notes together with the mass continuity equation.  Over time, mass continuity equation alters the shape of the ice shelf by advecting the thickness H at the velocity u.  Of course this feeds back to change the velocity profile.  A thickness perturbation certainly survives until the ice shelf calves it off, that is, until that perturbation is advected the length of the ice shelf.  But is there longer-term memory than the "residence time" of the flow?  We will not move the grounding line in asking/answering this question, which is likely to be a dominant form of "memory".  The tools will be the codes from the lectures, plus a basic first-order upwinding code (upwind.m) from Bueler.  Students will have to integrate these together, add the coupling between the two equaitons, and then perform the experiments and create convincing (e.g. robust over grid refinement) results.
-
-Reference for this general topic:  C. Hulbe and M. Fahnestock (2007).  Century-scale discharge stagnation and reactivation of the Ross ice streams, West Antarctica. J. Geophys. Res. 112, F03S27, doi:10.1029/2006JF000603
+1.  FIXME:  NEW IDEA NEEDED
 
 
 2.  HOW FAST DOES A REGIONAL MODEL DIVERGE FROM A SURROUNDING WHOLE ICE SHEET MODEL?
