@@ -11,6 +11,6 @@ The Karthaus school page website is at
   http://www.projects.science.uu.nl/iceclimate/karthaus/
 
 The lectures and codes are in the main `karthaus/` directory.  Build those
-first.  Then create a link to `pism/doc/ice_bib.bib` in the current
+first.  Then create a link to `pism/doc/ice-bib.bib` in the current
 `karthaus/notes/` subdirectory.  Then do `make` in this subdirectory.
 
