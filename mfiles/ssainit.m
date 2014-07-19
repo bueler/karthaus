@@ -1,5 +1,5 @@
 function u0 = ssainit(p,x,drivestress,gamma,initchoice)
-% ssainit  Computes the initial guess velocity u0, used
+% SSAINIT  Computes the initial guess velocity u0, used
 %          in ssaflowline.m to solve the SSA flow line
 %          stress balance.
 % form
@@ -13,7 +13,7 @@ function u0 = ssainit(p,x,drivestress,gamma,initchoice)
 %                use 1 for ice shelves and 2 for ice streams
 % outputs:
 %   u0 = the velocity initial guess (m s-1), same size as x
-% see ssaflowline.m
+% Called by SSAFLOWLINE
 
 if nargin ~= 5, error('exactly 5 input arguments required'), end
 
