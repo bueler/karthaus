@@ -1,5 +1,8 @@
-\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
-\usepackage[total={6.2in,9.4in},top=1.2in,left=1.05in]{geometry}
+%\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
+\documentclass[letterpaper,final,12pt]{amsart}
+
+%\usepackage[total={6.2in,9.4in},top=1.2in,left=1.05in]{geometry}
+\usepackage[total={6.3in,9.2in},top=1.1in,left=0.95in]{geometry}
 
 % this lets us avoid the scrartcl/hyperref conflict...
 %\let\ifvtex\relax
@@ -10,6 +13,8 @@
 \usepackage{animate}
 \usepackage{graphicx}
 \usepackage{fancyvrb}
+
+%\usepackage{palatino}
 
 % hyperref should be the last package we load
 \usepackage[pdftex,
@@ -26,6 +31,8 @@ urlcolor=blue     % only if colorlinks=true
 /Subject (numerical modelling of ice sheets)
 /Keywords (numerical modelling, numerical analysis, glacier, ice sheet, ice shelf, shallow models)
 }
+
+\renewcommand{\baselinestretch}{1.05}
 
 \newcommand{\ddt}[1]{\ensuremath{\frac{\partial #1}{\partial t}}}
 \newcommand{\ddx}[1]{\ensuremath{\frac{\partial #1}{\partial x}}}
@@ -46,15 +53,12 @@ urlcolor=blue     % only if colorlinks=true
 \end{center}}
 
 \newcommand{\minput}[1]{
-\bigskip
-\begin{quote}
-\bigskip
-\VerbatimInput[frame=single,framesep=3mm,label=\fbox{\normalsize \textsl{\,#1.m\,}},fontfamily=courier,fontsize=\scriptsize]{../mfiles/#1.slim.m}
-\bigskip
-\end{quote}
+\vspace{0.8cm}
+\VerbatimInput[frame=single,framesep=3mm,label=\fbox{\normalsize \textsl{\,#1.m\,}},fontfamily=courier,fontsize=\footnotesize]{../mfiles/#1.slim.m}
+\vspace{0.5cm}
 }
 
-%\onefigsize{name}{caption}{width}
+% usage:  \onefigsize{name}{caption}{width}
 \newcommand{\onefigsize}[3]{
 \begin{figure}[ht]
 \centering
@@ -63,10 +67,10 @@ urlcolor=blue     % only if colorlinks=true
 \label{fig:#1}
 \end{figure}}
 
-%\onefig{name}{caption}
+% usage:  \onefig{name}{caption}
 \newcommand{\onefig}[2]{\onefigsize{#1}{#2}{3.0in}}
 
-%\twofigsizes{left-name}{right-name}{caption}{left-width}{right-width}
+% usage:  \twofigsizes{left-name}{right-name}{caption}{left-width}{right-width}
 \newcommand{\twofigsizes}[5]{
 \begin{figure}[ht]
 \centering
@@ -76,7 +80,7 @@ urlcolor=blue     % only if colorlinks=true
 \label{fig:#1}
 \end{figure}}
 
-%\twofig{left-name}{right-name}{caption}
+% usage:  \twofig{left-name}{right-name}{caption}
 \newcommand{\twofig}[3]{\twofigsizes{#1}{#2}{#3}{2.5in}{2.5in}}
 
 
@@ -86,13 +90,20 @@ urlcolor=blue     % only if colorlinks=true
 \begin{titlepage}
 
   \begin{center}
-    {\Large\usekomafont{title} Numerical modelling \\ of ice sheets, streams, and shelves}
-    \vspace{0.5cm}
+  \phantom{foo}
+    \vspace{1.0cm}
+
+     {\Large \textsc{Numerical modelling}}
+    \vspace{0.7cm}
+
+     {\Large \textsc{of ice sheets, streams, and shelves}}
+
+    \vspace{1.5cm}
 
     {\large Ed Bueler}
     \vspace{1cm}
 
-    %Karthaus, September 2012
+    %Karthaus, September 2014
     version July 2014
 
     \vfill
@@ -101,7 +112,7 @@ urlcolor=blue     % only if colorlinks=true
   
     \scriptsize \emph{Illustrates the notation used in this chapter.  Figure modified from \cite{SchoofMarine1}.} \normalsize
     
-    \vspace{2.0in}
+    \vspace{1.5in}
   \end{center}
 \end{titlepage}
 
@@ -110,23 +121,23 @@ urlcolor=blue     % only if colorlinks=true
 \setcounter{section}{1}
 \subsection{Introduction}
 
-Numerical models can actually help you, the reader, understand the behavior of particular ice flows.  Their most common use may be to help you ask: When I put together my incomplete understanding of glacier processes into a mathematical model, does the combination behave as I expect?  Or why does it mis-behave?  Though numerical models rarely generate new theoretical understandings---a human brain seems to be needed to get new insights from observations---they can demonstrate flaws in our understanding of glacier processes, and they can illuminate how these processes combine to give overall behavior.
+The most common use of numerical models in glaciology may be to help you ask: When I put together my incomplete understanding of glacier processes into a mathematical model, does the combination behave as I expect?  In fact, numerical models can at least demonstrate flaws in our understanding of glacier processes, and they can show us how these processes combine to give overall behavior.  But they should be built with care.  The worst outcome is to spend time (and reputation) explaining, through physical argumentation and perhaps using observational evidence, numerical model behavior that is an artifact of poor computer programming or numerical analysis.
 
-Numerical models should be built with care.  The worst outcome is to spend time explaining, through physical argumentation and using observational evidence, numerical model behavior that is an artifact of poor computer programming or numerical analysis.  The reader of this chapter may be surprised that a continuum model, and not a code, seems to be our focus much of the time.  All numerical codes produce numbers, but we want numbers that actually come from our continuum model.  We analyse numerical implementations to see if they match the continuum model and its solutions.
+So the reader of this chapter may be surprised that a continuum model, and not a computer code, seems to be our focus much of the time.  While all numerical codes produce some numbers, we want numbers that actually come from our continuum model.  We will therefore analyse numerical implementations to see if they match the continuum model and its solutions.
 
-This chapter has a limited scope:
+These notes have a limited scope:
   \begin{quote}\emph{shallow approximations of ice flow.}\end{quote}
-It adopts a constructive approach:
+They adopt a constructive approach; we provide:
   \begin{quote}\emph{example numerical codes that actually work.}\end{quote}
-Within our scope are the shallow ice approximation (SIA) in two horizontal dimensions (2D), the shallow shelf approximation (SSA) in 1D, and the mass continuity and surface kinematical equations.  We recall the Stokes model, but we do not address its numerical solution.  Our numerical ideas include finite difference schemes, solving algebraic systems from stress balances, and the verification of codes using exact solutions.
+Within our scope are the shallow ice approximation (SIA) in two horizontal dimensions (2D), the shallow shelf approximation (SSA) in 1D, and the mass continuity and surface kinematical equations.  We recall the Stokes model, but we do not address its numerical solution.  Our numerical concepts include finite difference schemes, solving algebraic systems from stress balances, and the verification of codes using exact solutions.
 
-Our notation is common in the glaciological literature (Table \ref{tab:notation}).  Coordinates are $t,x,y,z$, with $z$ perpendicular to the geoid and positive-upward.  If these coordinates appear as subscripts then they denote partial derivatives: $u_x = \partial u/\partial x$.  Tensor notation uses subscripts from the list $\{1,2,3,i,j\}$, so that, for example, $\tau_{ij}$ and $\tau_{13}$ are entries of the deviatoric stress tensor.
+Our notation is common in the glaciological literature (Table \ref{tab:notation}).  Cartesian coordinates $x,y,z$ have $z$ perpendicular to the geoid and positive-upward.  If these coordinates or ``$t$'' appear as subscripts then they denote partial derivatives: $u_x = \partial u/\partial x$.  Tensor notation uses subscripts from the list $\{1,2,3,i,j\}$, so that, for example, ``$\tau_{ij}$'' or ``$\tau_{13}$'' denote are entries of the deviatoric stress tensor.
 
-This chapter is based on sixteen Matlab codes, each about one-half page, of which only five are printed in this text.  All have been tested in Matlab and Octave.  They are distributed in \texttt{.zip} form at
+This chapter is based on eighteen Matlab codes, each about one-half page.  All have been tested in Matlab and Octave.  They are distributed in \texttt{.zip} form at
 \begin{quote}
-\fbox{\url{http://www.dms.uaf.edu/~bueler/karthaus/}}
+\fbox{\url{https://github.com/bueler/karthaus/releases}}
 \end{quote}
-\noindent When displayed in these notes these codes have their comments stripped for compactness and clarity.  The electronic versions have generous comments and help files.
+\noindent Only five of the codes are printed here, with their comments stripped for compactness and clarity.  The electronic versions, however, have generous comments and help files.
 
 \begin{table}[ht]
 \caption{Notation used in this chapter.}
