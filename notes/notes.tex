@@ -1,11 +1,6 @@
-%\documentclass[titlepage,letterpaper,final,12pt]{scrartcl}
-\documentclass[letterpaper,final,12pt]{amsart}
+\documentclass[letterpaper,final,12pt,reqno1]{amsart}
 
-%\usepackage[total={6.2in,9.4in},top=1.2in,left=1.05in]{geometry}
 \usepackage[total={6.3in,9.2in},top=1.1in,left=0.95in]{geometry}
-
-% this lets us avoid the scrartcl/hyperref conflict...
-%\let\ifvtex\relax
 
 \usepackage{verbatim}
 \usepackage{empheq}
@@ -78,6 +73,7 @@ urlcolor=blue     % only if colorlinks=true
 
 % usage:  \twofig{left-name}{right-name}{caption}
 \newcommand{\twofig}[3]{\twofigsizes{#1}{#2}{#3}{2.5in}{2.5in}}
+
 
 
 \begin{document}
@@ -175,31 +171,33 @@ My first goal in these notes is to get to an equation for which I can say:
 \begin{center}
 \emph{by numerically solving this equation, we have a usable model for an ice sheet.}
 \end{center}
-\noindent Of course a ``usable'' model is \emph{understood} as much as it is \emph{correct}.  To get to my goal I will quickly recall the continuum mechanical equations of ice flow.  
+\noindent A ``usable'' model tends to be \emph{understood} as much as it is \emph{correct}.  And this first model will not be complete by any modern standard.  To get to my goal I first (briefly!) recall the continuum mechanical equations of ice flow.  
 
-Ice in glaciers is a fluid, so we describe its motion by a velocity field $\mathbf{u}(t,x,y,z)$.  If the ice fluid were faster-moving than it actually is, and if it were linearly-viscous like liquid water, then it would be a ``typical'' fluid.  We would use the Navier-Stokes equations as the model:
+As ice in glaciers is a moving fluid, we describe its motion by a velocity field $\mathbf{u}(t,x,y,z)$.  If the ice fluid were faster-moving than it actually is, and if it were linearly-viscous like liquid water, then it would be a ``typical'' fluid.  We would use the Navier-Stokes equations as the model:
 \begin{align}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressible} \\
 \rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nabla \cdot (\nu \nabla \mathbf{u}) + \rho \mathbf{g} &&\text{\emph{stress balance}} \label{navierstokes}
 \end{align}
-In Equation \eqref{navierstokes} the term $\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}$ is an acceleration.  The right-hand side is the total stress, and the equation says ``$ma=F$'', i.e.~Newton's second law.
+In Equation \eqref{navierstokes} the term $\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}$ is an acceleration.  The right-hand side of \eqref{navierstokes} is the total stress, and the equation says ``$ma=F$'', i.e.~it is Newton's second law.
 
-Numerical ice flow modelling is a topic in computational fluid dynamics.  Ice sheets are a large scale fluid problem like atmosphere and ocean circulation in climate systems.  But ice flow is an odd one!  Consider some topics which might make ocean circulation modelling exciting, for example:
+Now, numerical ice flow modelling \emph{is} a topic in computational fluid dynamics.  Ice sheets are a large-scale fluid problem like atmosphere and ocean circulation in climate systems.  But ice flow is an odd one!  Consider some topics which might make ocean circulation modelling exciting, for example:
   \begin{center} turbulence \qquad convection \qquad  coriolis force  \qquad stratification
   \end{center}
-None of these topics are relevant to ice flow.  What could be interesting about the flow of slow, laminar, boring old ice?
+None of these topics are relevant to ice flow.  What could be interesting about the flow of slow and old, and thus surely boring, ice?
 
-We first observe that ice is a slow, shear-thinning fluid.  In terms of equations, ``slow'' means $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$, which says that the forces of inertia are negligible.  ``Shear-thinning'' flows have specific non-Newtonian behavior in which larger strain rate implies smaller viscosity.  The viscosity $\nu$ in \eqref{navierstokes} is not constant so we add an empirical flow law.
+We first observe that ice is indeed a slow fluid.  In terms of equation \eqref{navierstokes}, ``slow'' means $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$, which says that the forces (stresses) of inertia are negligible.  
 
-Thus the standard model for isothermal flow is this set of Stokes equations:
+Furthermore, ice is a ``shear-thinning'' fluid with a specific kind of nonlinearly-viscous (``non-Newtonian'') behavior in which larger strain rates imply smaller viscosity.  The viscosity $\nu$ in \eqref{navierstokes} is therefore not constant, and so we add an empirical flow law.
+
+So now the standard model for isothermal flow is this set of Stokes equations:
 \begin{align}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressibleagain} \\
 0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{stress balance}} \label{forcebalance} \\
 Du_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{$n$=3 Glen flow law}} \label{flowlaw}
 \end{align}
-In the flow law, the deviatoric stress tensor $\tau_{ij}$ and the strain rate tensor $Du_{ij}$ appear; previous lectures cover these.  Here we merely note that each tensor in \eqref{flowlaw} has trace zero and that $2\,Du_{ij} = (u_i)_{x_j}+(u_j)_{x_i}$ (denoting $x_1,x_2,x_3=x,y,z$).
+In the flow law \eqref{flowlaw}, the deviatoric stress tensor $\tau_{ij}$ and the strain rate tensor $Du_{ij}$ appear; previous lectures cover these.  Here we merely note that each tensor in \eqref{flowlaw} has trace zero and that $Du_{ij} = (1/2)((u_i)_{x_j}+(u_j)_{x_i})$, indexing coordinates by $x_1,x_2,x_3=x,y,z$.
 
-The Stokes equations do not contain a time derivative.  Therefore geometry, boundary stresses, and ice softness together determine the velocity and stress fields (i.e.~$\bu$, $p$, $\tau_{ij}$) instantaneously.  Indeed, ice flow simulation codes have no memory of momentum or velocity, and velocity is a ``diagnostic'' output which is not needed for restarting a simulation.
+The Stokes equations do not contain a time derivative.  Therefore geometry, boundary stresses, gravity, and ice softness together determine the velocity and stress fields (i.e.~$\bu$, $p$, $\tau_{ij}$) instantaneously.  Indeed, ice flow simulation codes have no memory of momentum or velocity.  More practically, velocity is a ``diagnostic'' output of ice flow codes, because it is not needed for (re)starting a simulation.
 
 
 \subsubsection*{Slab-on-a-slope}  Consider now the $x,z$-plane flow case of equations \eqref{incompressibleagain}, \eqref{forcebalance}, and \eqref{flowlaw}.  ``Plane flow'' means that velocity component $v$ is zero and that all derivatives with respect to $y$ are zero:
@@ -210,41 +208,48 @@ p_z &= \tau_{13,x} - \tau_{11,z} - \rho g &&\text{\emph{stress balance} ($z$)} \
 u_x &= A \tau^2 \tau_{11} &&\text{\emph{flow law} (diagonal)}  \label{forceflowx} \\
 u_z + w _x &= 2 A \tau^2 \tau_{13} &&\text{\emph{flow law} (off-diagonal)} \label{forceflowz}
 \end{empheq}
-Note that $\tau_{13}$ is a ``vertical'' shear stress while $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are deviatoric longitudinal stresses.  Also $\tau = (\tau_{11}^2+\tau_{13}^2)^{1/2}$ in this case.  This is a system of five nonlinear equations in five scalar unknowns ($u,w,p,\tau_{11},\tau_{13}$).
+Note that $\tau_{13}$ is a ``vertical'' shear stress while $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are deviatoric longitudinal stresses.  Also $\tau = (\tau_{11}^2+\tau_{13}^2)^{1/2}$ in this case.  Equations \eqref{incompressiblexz}--\eqref{forceflowz} form a system of five nonlinear equations in five scalar unknowns ($u,w,p,\tau_{11},\tau_{13}$).
 
-This is complicated enough to make us pause before jumping in to numerical solution methods.  Can we handle a simplified situation?  Our first example, a uniform slab or a ``slab-on-a-slope'', is both a case in which we actually solve the Stokes equations, and a motivation for the shallow model in the next subsection.
+This may be complicated enough to make us pause before jumping in to numerical solution methods.  But maybe we can handle a simplified situation.  Our first example, a uniform slab or a ``slab-on-a-slope'', is both a case in which we actually solve the Stokes equations, and a motivation for the shallow model in the next subsection.
 
 \onefig{slab}{Rotated axes for a slab-on-a-slope flow calculation.}
 
-We rotate our coordinates only for this example and not elsewhere in these notes.  The two-dimensional axes ($x$,$z$) shown in Figure \ref{fig:slab} are rotated downward at angle $\alpha>0$ so that the gravity vector has components $\mathbf{g} = (g \sin\alpha,- g \cos \alpha)$.  Equations \eqref{stokespx}, \eqref{stokespz}, in these rotated coordinates, are
+We rotate our coordinates only for this example and not elsewhere in these notes.  The two-dimensional axes ($x$,$z$) shown in Figure \ref{fig:slab} are rotated downward (clockwise) at angle $\alpha>0$ so that the gravity vector has components $\mathbf{g} = (g \sin\alpha,- g \cos \alpha)$.  Equations \eqref{stokespx} and \eqref{stokespz} in these rotated coordinates are
 \begin{align}
 p_x &= \tau_{11,x} + \tau_{13,z} + \rho g \sin\alpha, \label{stokespxrot} \\
 p_z &= \tau_{13,x} - \tau_{11,z} - \rho g \cos\alpha. \label{stokespzrot}
 \end{align}
 By now assuming additionally that there is no variation with $x$, the whole set of Stokes equations \eqref{incompressiblexz}, \eqref{forceflowx}, \eqref{forceflowz}, \eqref{stokespxrot}, \eqref{stokespzrot} simplifies greatly:
-\begin{align*}
-w_z &= 0 &   0 &= \tau_{11} \\
-\tau_{13,z} &= - \rho g \sin\alpha &   u_z &= 2 A \tau^2 \tau_{13} \\
-p_z &= - \rho g \cos\alpha
-\end{align*}
+\begin{align}
+w_z &= 0 &   0 &= \tau_{11} \label{stokesslab} \\
+\tau_{13,z} &= - \rho g \sin\alpha &   u_z &= 2 A \tau^2 \tau_{13} \notag \\
+p_z &= -\tau_{11,z} = - \rho g \cos\alpha \notag
+\end{align}
 We apply boundary conditions for these functions of $z$:
 	$$w(0)=0, \qquad p(H)=0, \qquad u(0)=u_0.$$
-The basal velocity $u_0$ will remain undetermined for now.  By integrating vertically, we get $w=0$, $p = \rho g \cos\alpha (H-z)$, and $\tau_{13} = \rho g \sin\alpha (H-z)$.  Note that $H-z$ is the depth within the ice and that both the pressure $p$ and shear stress $\tau_{13}$ are linear in depth.
+The basal velocity $u_0$ will remain undetermined for now.
 
-By integrating vertically again we find a formula for the horizontal velocity,
+By integrating equations \eqref{stokesslab} vertically and using $\tau_{11}=0$, we get $w=0$, $p = \rho g \cos\alpha (H-z)$, and $\tau_{13} = \rho g \sin\alpha (H-z)$.  Note that $H-z$ is the depth below the ice surface.  Both the pressure $p$ and shear stress $\tau_{13}$ are thus proportional to depth.
+
+Because $u_z = 2 A \tau^2 \tau_{13}$, by integrating vertically again we find a formula for the horizontal velocity,
 \begin{align}
 u &= u_0 + 2 A (\rho g \sin\alpha)^3 \int_0^z (H-z')^3\,dz' \notag \\
   &= u_0 + \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)  \label{uslab}
 \end{align}
+
 Do we believe formula \eqref{uslab}?  Figure \ref{fig:slabvel} compares to observations of a mountain glacier.  This comparison shows we have done a credible job of capturing deformation flow velocity, though we do not yet have a model for the sliding velocity $u_0$ (i.e.~basal motion).  
 
 \twofigsizes{slabvel}{athabasca_deform}{Left:  Velocity from slab-on-a-slope formula \eqref{uslab}.  Right:  Velocity in a mountain glacier (Athabasca Glacier, Canada), from inclinometry \cite{SavagePaterson}.}{2.0in}{1.8in}
 
-Now that we have calculated the velocity $u$, so what?  The equations so far do not address the change in shape of the glacier or ice sheet.  For this we need another equation, the \emph{mass continuity equation}.  To explain it, define the vertical average of velocity:
+We have calculated the velocity $u$, but what does this accomplish?  Observe that the equations so far do not address the change in shape of the glacier or ice sheet.  For this we need another equation, the \emph{mass continuity equation}.  First, define the vertical average of velocity:
 	$$\bar u = \frac{1}{H}\int_0^{H} u\,dz.$$
-The flux $q=\bar u\, H$ is the rate of flow input into a side of the area in Figure \ref{fig:slabmasscontfig}.  Now, how does the ice area $A$ in the figure change?\footnote{In three-dimensions it would be ``how does the ice volume change?''}  We add the contributions around the edges,
-	$$\frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2$$
-If the width $\Delta x=x_2-x_1$ is small then $A\approx \Delta x\, H$.  So we divide by $\Delta x$, take $\Delta x \to 0$, and get
+The flux $q=\bar u\, H$ is the rate of flow input into the side of the area in Figure \ref{fig:slabmasscontfig}.  How does the ice area $A$ in the figure change?\footnote{In three-dimensions it would be ``how does the ice volume change?''}  We add the contributions around the edges,
+\begin{equation}
+\frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2 \label{masscontintegrated}
+\end{equation}
+where $M(x)$ is the climatic mass balance at the ice surface.
+
+If the width $\Delta x=x_2-x_1$ is small then $A\approx \Delta x\, H$.  So we divide by $\Delta x$ and take $\Delta x \to 0$ in \eqref{masscontintegrated} and get
 \begin{equation}
 H_t = M - \left(\bar u H\right)_x \label{masscont1D}
 \end{equation}
