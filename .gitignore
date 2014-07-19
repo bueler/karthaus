@@ -30,14 +30,10 @@ projects/upwindnotes.pdf
 projects/diffusion.m
 projects/exactshelf.m
 projects/siageneral.m
-kartbook-elb.pdf
-kartrefs.tex
 *.slim.m
 pdffigs/*.pdf
 anim/*.png
 ice-bib.bib
-mfiles/*.nc
-mfiles/other/*.nc
-bueler_karthaus/*
-bueler_karthaus.*
+mfiles/ant/*.nc
 petsc/ssaflowline
+slides.pdf

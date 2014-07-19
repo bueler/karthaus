@@ -48,10 +48,6 @@ urlcolor=blue     % only if colorlinks=true
 \newcommand{\Div}{\nabla\cdot}
 \newcommand{\devstress}{\tau}
 
-\newcommand{\mmess}[1]{\vspace{-0.1in}\begin{center}
-\fbox{\url{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/#1.m}}
-\end{center}}
-
 \newcommand{\minput}[1]{
 \vspace{0.8cm}
 \VerbatimInput[frame=single,framesep=3mm,label=\fbox{\normalsize \textsl{\,#1.m\,}},fontfamily=courier,fontsize=\footnotesize]{../mfiles/#1.slim.m}
@@ -131,7 +127,7 @@ They adopt a constructive approach; we provide:
   \begin{quote}\emph{example numerical codes that actually work.}\end{quote}
 Within our scope are the shallow ice approximation (SIA) in two horizontal dimensions (2D), the shallow shelf approximation (SSA) in 1D, and the mass continuity and surface kinematical equations.  We recall the Stokes model, but we do not address its numerical solution.  Our numerical concepts include finite difference schemes, solving algebraic systems from stress balances, and the verification of codes using exact solutions.
 
-Our notation is common in the glaciological literature (Table \ref{tab:notation}).  Cartesian coordinates $x,y,z$ have $z$ perpendicular to the geoid and positive-upward.  If these coordinates or ``$t$'' appear as subscripts then they denote partial derivatives: $u_x = \partial u/\partial x$.  Tensor notation uses subscripts from the list $\{1,2,3,i,j\}$, so that, for example, ``$\tau_{ij}$'' or ``$\tau_{13}$'' denote are entries of the deviatoric stress tensor.
+Our notation, which generally follows \cite{GreveBlatter2009}, is common in the glaciological literature, but see Table \ref{tab:notation}.  Cartesian coordinates $x,y,z$ have $z$ perpendicular to the geoid and positive-upward.  If these coordinates or ``$t$'' appear as subscripts then they denote partial derivatives: $u_x = \partial u/\partial x$.  Tensor notation uses subscripts from the list $\{1,2,3,i,j\}$, so that, for example, ``$\tau_{ij}$'' or ``$\tau_{13}$'' denote are entries of the deviatoric stress tensor.
 
 This chapter is based on eighteen Matlab codes, each about one-half page.  All have been tested in Matlab and Octave.  They are distributed in \texttt{.zip} form at
 \begin{quote}
@@ -140,25 +136,28 @@ This chapter is based on eighteen Matlab codes, each about one-half page.  All h
 \noindent Only five of the codes are printed here, with their comments stripped for compactness and clarity.  The electronic versions, however, have generous comments and help files.
 
 \begin{table}[ht]
-\caption{Notation used in this chapter.}
-\begin{tabular}{cll}
-variable  & description & SI units \\ 
+\caption{Notation used in these notes, with values for some constants.}
+\begin{tabular}{clll}
+variable  & description & SI units & value \\
 \hline
 $A$ & $A=A(T)=$ ice softness in the Glen flow law & $\text{Pa}^{-n}\,\text{s}^{-1}$ \\
 $B$ & ice hardness; $B=A^{-1/n}$ & $\text{Pa}\,\text{s}^{1/n}$ \\
 $b$ & bedrock elevation & m \\
+$c$ & specific heat in general & J kg$^{-1}$ K$^{-1}$ \\
 $\nabla$ & (spatial) gradient & m$^{-1}$ \\
 $\nabla\cdot$ & (spatial) divergence & m$^{-1}$ \\
-$\mathbf{g}$ & gravity & m s$^{-2}$ \\
+$\mathbf{g}$ & gravity & m s$^{-2}$\phantom{foobar} & 9.81 \\
 $H$ & ice thickness & m \\
 $h$ & ice surface elevation & m \\
+$\kappa$ & conductivity in general & J s$^{-1}$ m$^{-1}$ K$^{-1}$ \\
 $M$ & climatic mass balance & m s$^{-1}$ \\
-$n$ & exponent in Glen flow law & \\
+$n$ & exponent in Glen flow law & & 3 \\
 $\nu$ & viscosity & Pa s \\
 $p$ & pressure & Pa \\
 $\bq$ & map-plane ice flux: $\bq = \int_{b}^{h} \bU\,dx = \bar{\bU} H$ & $\text{m}^2\,\text{s}^{-1}$ \\
-$\rho$ & density of ice & kg m$^{-3}$ \\
-$\rho_w$ & density of sea water & kg m$^{-3}$ \\
+$\rho$ & (1) density in general & kg m$^{-3}$ & \\
+  & (2) density of ice & kg m$^{-3}$ & 910 \\
+$\rho_w$ & density of sea water & kg m$^{-3}$ & 1028 \\
 $T$ & temperature & K \\
 $\tau$ & magnitude of $\tau_{ij}$: $2 \tau^2 = \sum_{ij} \tau_{ij}^2$ & Pa \\
 $\tau_{ij}$ & deviatoric stress tensor & Pa \\
