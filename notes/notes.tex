@@ -382,7 +382,7 @@ How accurate is scheme \eqref{heat1Dfd}?  Its construction tells us that the dif
 
 To get convergence the PDE problem must generate adequately smooth solutions, and also scheme \eqref{heat1Dfd} must be \emph{stable}, which we address below.  (The main theorem for numerical PDE schemes is ``consistency plus stability implies convergence''; see Notes and References.)  In these notes we do something rather practical, namely verification.  We find problems for which we already know an exact solution $T(t,x)$, and then we compute the differences $|T_j^n - T(t_n,x_j)|$.  This determines directly whether the \emph{implementation} (i.e.~computer code form) of our FD scheme actually converges, not just in theory.
 
-\subsubsection*{A first implemented scheme}  For the first Matlab implementation we consider the two spatial dimension Equation \eqref{heat} with $D$ constant and $F=0$:
+\subsubsection*{A first implemented scheme}  Our first Matlab implementation we consider the two spatial dimension Equation \eqref{heat} with $D$ constant and $F=0$:
 \begin{equation}
 T_t = D (T_{xx}+T_{yy}).\label{heat2D}
 \end{equation}
@@ -392,9 +392,9 @@ Writing $T_{jk}^n \approx T(t_n,x_j,y_k)$, the 2D explicit scheme is
 \end{equation}
 The stencil for the right-hand side of \eqref{heat2dexplicit} is in Figure \ref{fig:expstencil}.
 
-\twofigsizes{expstencil}{exp2dstencil}{Left: Space-time stencil for the explicit scheme \eqref{heat1Dfd} for the 1D heat equation.  Right: Two spatial dimension stencil for scheme \eqref{heat2dexplicit}.}{2.0in}{2.1in}
+\twofigsizes{expstencil}{exp2dstencil}{Left: Space-time stencil for the explicit scheme \eqref{heat1Dfd} for the 1D heat equation.  Right: Spatial-only stencil for scheme \eqref{heat2dexplicit}.}{2.0in}{2.1in}
 
-Scheme \eqref{heat2dexplicit} has implementation \texttt{heat.m} below.  We use $T=0$ values on the boundary of the square $-1 < x < 1$, $-1 < y < 1$.  The initial condition is gaussian: $T(0,x,y) = \exp(-30 (x^2+y^2))$.  The code uses Matlab ``colon'' notation to remove loops over spatial variables.  Here is an example run:
+Scheme \eqref{heat2dexplicit} has implementation \texttt{heat.m} below.  For simplicity we set $T=0$ on the boundary of the square $-1 < x < 1$, $-1 < y < 1$.  The initial condition is gaussian: $T(0,x,y) = \exp(-30 (x^2+y^2))$.  The code uses Matlab ``colon'' notation to remove loops over spatial variables.  Here is an example run:
 \begin{Verbatim}
 >>  heat(1.0,30,30,0.001,20);
 \end{Verbatim}
@@ -402,14 +402,14 @@ This sets $D=1.0$ and uses a $30\times 30$ spatial grid.  We take $N=20$ time st
 
 \minput{heat}
 
-Very similar runs seem to fail, however.  Results from these calls are in Figure \ref{fig:stability}:
+However, very similar runs seem to succeed or fail according to some yet unclear circumstance.  For example, results from these calls are shown in Figure \ref{fig:stability}:
 \begin{Verbatim}
 >> heat(1.0,40,40,0.0005,100);    % Figure 7, left
 >> heat(1.0,40,40,0.001,50);      % Figure 7, right
 \end{Verbatim}
-Both runs compute temperature $T$ on the same spatial grid, at the same final time, but they have different time steps.  The second run clearly shows instability.
+Both runs compute temperature $T$ on the same spatial grid, for the same final time $t_f = N \Delta t = 0.05$, but with different time steps.  The second run clearly shows instability.
 
-\twofig{stability}{instability}{Numerically-computed temperature at time $t_f=0.05$ on $40\times 40$ grids.  Everything in the two runs is the same, except that the left figure has $\Delta t=0.0005$ so $D\Delta t/(\Delta x)^2= 0.2$, while the right has $\Delta t=0.001$ so $D\Delta t/(\Delta x)^2= 0.4$.}
+\twofig{stability}{instability}{Numerically-computed temperature on $40\times 40$ grids.  The two runs are the same except that the left has $\Delta t=0.0005$ so $D\Delta t/(\Delta x)^2= 0.2$, while the right has $\Delta t=0.001$ so $D\Delta t/(\Delta x)^2= 0.4$.  Compare \eqref{stabcrit}.}
 
 %>> heat(1.0,40,40,0.001,50);
 %  doing N = 50 steps of dt = 0.00100 for 0.0 < t < 0.050
@@ -420,34 +420,40 @@ Both runs compute temperature $T$ on the same spatial grid, at the same final ti
 %  nu = 1 * dt / dx^2 = 0.20000
 %>> print -dpdf stability.pdf
 
-\subsubsection*{Stability criteria and adaptive time stepping}  How to avoid the instability?  We need to understand the scheme better.  It turns out we have not made an implementation error, but we must be more careful with choice of space and time steps.
+\subsubsection*{Stability criteria and adaptive time stepping}  To avoid the instability shown at right in Figure \ref{fig:stability}, we need to understand the scheme better.  It turns out we have not made an implementation error, but more care is required when choosing space and time steps.
 
-Recall the 1D explicit scheme in form \eqref{heat1Dfd}: $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$.  The new value $T_j^{n+1}$ is an average of the old values, in the sense that the coefficients add to one.  Actually, this is an average \emph{if} the middle coefficient is positive.  A linear combination with coefficients which add to one is not an average if any coefficients are negative!  (For example, we would not accept 13 as an ``average'' of 5 and 7, but of course we can write $13 = -3 \times 5 + 4 \times 7$, and $-3+4=1$.)  Averaging is stable because averaged wiggles are always smaller than the original wiggles.  We want this property.
+Recall the 1D explicit scheme in form \eqref{heat1Dfd}: $T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n$.  The new value $T_j^{n+1}$ is an average of the old values, in the sense that the coefficients add to one.  Averaging is stable because averaged wiggles are smaller than the wiggles themselves.  Actually, however, the scheme is only an average \emph{if} the middle coefficient is positive, as a linear combination with coefficients which add to one is not an average if any coefficients are negative.  (For example, we would not accept 15 as an ``average'' of 5 and 7, but we can write $15 = -4 \times 5 + 5 \times 7$, and $-4+5=1$.)
 
-So, what would follow from requiring the middle coefficient in \eqref{heat1Dfd} to be positive?:
+So, what follows from requiring the middle coefficient in \eqref{heat1Dfd} to be positive so it computes such an average?  A \emph{stability criterion} follows, with these equivalent forms:
 \begin{equation}
    1 - 2 \mu \ge 0 \quad \iff \quad \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}.  \label{stabcrit}
 \end{equation}
-This condition on the size of $\Delta t$ is a \emph{sufficient} stability criterion.  (It is enough to guarantee stability, though something weaker might do.)  For given $\Delta x$, shortening the time step so that $\Delta t \le \Delta x^2/(2 D)$ will make the scheme into an averaging process.
+This condition on the size of $\Delta t$ is a \emph{sufficient} stability criterion; it is enough to guarantee stability, though something weaker might do.  In summary, for given $\Delta x$, shortening the time steps $\Delta t$ so that \eqref{stabcrit} holds will make FD scheme \eqref{heat1Dfd} into an averaging process.
 
-Applying this same idea to the 2D heat equation \eqref{heat2D} leads to the stability condition that $1-2\mu^x-2\mu^y \ge 0$ where $\mu^x = D \Delta t / (\Delta x^2)$ and $\mu^y = D \Delta t / (\Delta y^2)$.  In the cases shown in Figure  \ref{fig:stability} with $\Delta x=\Delta y$, this condition requires $D \Delta t /(\Delta x^2) \le 0.25$, which precisely distinguishes between the two parts of the Figure.  In summary, instability in runs of \texttt{heat.m} happens if the time step $\Delta t$ is too big relative to the spacing $\Delta x$.
+Applying this same idea to the 2D heat equation \eqref{heat2D} leads to the stability condition that $1-2\mu^x-2\mu^y \ge 0$ where $\mu^x = D \Delta t / (\Delta x^2)$ and $\mu^y = D \Delta t / (\Delta y^2)$.  In the cases like those shown in Figure \ref{fig:stability} with $\Delta x=\Delta y$, this condition requires $D \Delta t /(\Delta x^2) \le 0.25$, which precisely distinguishes between the two parts of the Figure.  Runs of \texttt{heat.m} are unstable if the time step $\Delta t$ is too big relative to the spacing $\Delta x$.
 
-The stability criterion above is easily satisfied by making each time step shorter.  Doing so in a program is an \emph{adaptive} implementation.  It has guaranteed stability.  To show how easy it is to implement, \texttt{heatadapt.m} (not shown) is the same as \texttt{heat.m} except that the time step is chosen from the stability criterion.  It cannot generate the instability seen in Figure \ref{fig:stability}.  However, if the diffusivity $D$ is large or the spatial steps $\Delta x$, $\Delta y$ are small, then explicit, adaptive implementations like this one must take short time steps to assure stability.
+The stability criterion above is easily satisfied by making each time step shorter.  Doing so at each time step makes an \emph{adaptive} implementation which can be stable even if the diffusivity $D$ is changing in time.  To show how easy this is to implement, \texttt{heatadapt.m} (not shown) is the same as \texttt{heat.m} except that the time step comes from the stability criterion, so it cannot generate the instability seen in Figure \ref{fig:stability}.  However, if the diffusivity $D$ is large or the grid spacings $\Delta x$, $\Delta y$ are small, then adaptive explicit implementations must take many short time steps to assure stability.
 
 
 \subsubsection*{Implicit schemes}  There is an alternative stability fix instead of adaptivity, namely ``implicitness.''  For example, the finite difference scheme
 \begin{equation}
   \frac{T_j^{n+1} - T_j^n}{\Delta t} = D\,\frac{T_{j+1}^{n+1} - 2\, T_j^{n+1} + T_{j-1}^{n+1}}{\Delta x^2} \label{implicit1D}
 \end{equation}
-is an $O(\Delta t,(\Delta x)^2)$ accurate implicit scheme for Equation \eqref{heat1D}.  Such implicit schemes for the heat equation are stable for \emph{any} positive time step $\Delta t>0$ (``unconditionally stable'').  Another well-known example implicit scheme is \emph{Crank-Nicolson}, which is unconditionally stable for the heat equation and which also has yet smaller error $O((\Delta t)^2,(\Delta x)^2)$.
+is an $O(\Delta t + (\Delta x)^2)$ implicit scheme for Equation \eqref{heat1D}.  Such implicit schemes for the heat equation are stable for \emph{any} positive time step $\Delta t>0$ (``unconditionally stable''); see Notes and References.  Another well-known implicit scheme is \emph{Crank-Nicolson}, which is unconditionally stable for the heat equation, but with smaller error $O((\Delta t)^2 +(\Delta x)^2)$.
 
-But implicit schemes are harder to implement.  First, the unknown solution values at time step $t_{n+1}$ are treated as a vector in a large system of equations which must be formed and solved at each time step.  If the PDE is nonlinear---the SIA is a highly nonlinear diffusion equation---then the system of equations may be hard to solve.  For these notes we stay with the adaptive explicit idea.  Generally, there is a tradeoff between the implementability of adaptive explicit schemes and the stability of implicit schemes.
+Implicit schemes are harder to implement because the unknown solution values at time step $t_{n+1}$ are treated as a vector in a large system of equations which must be formed and solved at each time step.  If the PDE is nonlinear then the system of equations may be hard to solve.  Of course, the SIA is a highly nonlinear diffusion equation.
 
-\subsubsection*{Numerical solution of diffusion equations}  We are trying to numerically model ice flows, not heat conduction.  We have an analogy, however, which says that the SIA is like the heat equation: both are diffusions.  Heat equation \eqref{heat} is called the ``diffusion equation'' if the unknown is not a temperature.  In this section, because we wish to solve the SIA on real bedrock, we construct a numerical scheme for a generalized diffusion which additionally has a ``shift'' inside the gradient, namely
+Generally, there is a tradeoff between the easy implementability of adaptive explicit schemes and the better stability of implicit schemes.  For these notes we stay with adaptive explicit FD schemes.
+
+\subsubsection*{Numerical solution of diffusion equations}  We are trying to numerically model ice flows, not heat conduction.  We have an analogy, however, which says that the SIA is diffusive like the heat equation.  In this section, because we wish to solve the SIA on real bedrock, we construct a numerical scheme for a more general diffusion equation which has an extra ``shift'' inside the gradient, namely
 \begin{equation}
   T_t = F + \Div \left(D \grad (T + b)\right). \label{gendiffusion}
 \end{equation}
-In equation \eqref{gendiffusion}, the source term $F(x,y)$, the diffusivity $D(x,y)$, and the ``shift'' $b(x,y)$ may all vary in space.  We now provide a code that solves \eqref{gendiffusion} and is used in SIA solutions.
+In equation \eqref{gendiffusion}, the source term $F(x,y)$, the diffusivity $D(x,y)$, and the ``shift'' $b(x,y)$ may all vary in space.
+
+The following code solves \eqref{gendiffusion}.  It is called by the SIA-specific schemes we build next.
+
+\minput{diffusion}
 
 An adaptive explicit method for the diffusion equation is conditionally stable, with the same essential time step restriction as for the constant diffusivity case, as long as we evaluate $D(x,y)$ at \emph{staggered} grid points.  That is, we use this expression for the second derivative:
 \begin{align*}
@@ -459,8 +465,6 @@ where $X=T+b$.  Figure \ref{fig:diffstencil} shows the stencil.
 \twofigsizes{diffstencil}{mahaffystencil}{Left:  Spatial stencil for staggered grid evaluation of diffusivity (at triangles) in the diffusion equation \eqref{gendiffusion}.  Right: Stencil showing how the staggered-grid diffusivity (triangle) can be evaluated in the SIA, from surface elevation (diamonds) and thicknesses (squares).}{2.2in}{2.2in}
 
 Code \texttt{diffusion.m} (below) solves \eqref{gendiffusion} numerically.  The user supplies the diffusivity $D(x,y)$ on the staggered grid.  Initial temperature $T(0,x,y)$, source term $F(x,y)$, and ``shift'' $b(x,y)$ are supplied on the regular grid.  When using this code for standard diffusions, or the flat-bed SIA, we would take $b=0$.
-
-\minput{diffusion}
 
 
 \subsection{Numerically solving the SIA} \label{sec:numericalsia}
