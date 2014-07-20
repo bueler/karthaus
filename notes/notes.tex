@@ -1,6 +1,6 @@
-\documentclass[letterpaper,final,12pt,reqno1]{amsart}
+\documentclass[letterpaper,final,12pt,reqno]{amsart}
 
-\usepackage[total={6.3in,9.2in},top=1.1in,left=0.95in]{geometry}
+\usepackage[total={6.3in,9.2in},top=1.1in,left=1.1in]{geometry}
 
 \usepackage{verbatim}
 \usepackage{empheq}
@@ -16,8 +16,8 @@
 colorlinks=true,
 plainpages=false, % only if colorlinks=true
 linkcolor=blue,   % only if colorlinks=true
-citecolor=blue,   % only if colorlinks=true
-urlcolor=blue     % only if colorlinks=true
+citecolor=Red,   % only if colorlinks=true
+urlcolor=ForestGreen     % only if colorlinks=true
 ]{hyperref}
 
 \pdfinfo{
@@ -127,7 +127,7 @@ Our notation, which generally follows \cite{GreveBlatter2009}, is common in the 
 
 This chapter is based on eighteen Matlab codes, each about one-half page.  All have been tested in Matlab and Octave.  They are distributed in \texttt{.zip} form at
 \begin{quote}
-\fbox{\url{https://github.com/bueler/karthaus/releases}}
+\url{https://github.com/bueler/karthaus/releases}
 \end{quote}
 \noindent Only five of the codes are printed here, with their comments stripped for compactness and clarity.  The electronic versions, however, have generous comments and help files.
 
@@ -260,7 +260,7 @@ This mass continuity equation describes the change in the ice thickness in terms
 
 \subsection{Shallow ice sheets}
 
-Our slab-on-a-slope example gives us a rough explanation of the shallow ice approximation (SIA), which is a model we will apply more generally.  To complete it, vertically integrating velocity formula \eqref{uslab} in the $u_0=0$ (non-sliding) case gives
+Our slab-on-a-slope example will give us a rough explanation of the shallow ice approximation (SIA), which is a model we will apply more generally.  To show the SIA in its standard form, we vertically integrate velocity formula \eqref{uslab} in the $u_0=0$ (non-sliding) case to get
 \begin{equation}
 \bar u H = \int_0^H \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)\,dz = \frac{2}{5} A (\rho g \sin\alpha)^3 H^5. \label{siaubar}
 \end{equation}
@@ -268,16 +268,17 @@ Note $\sin \alpha \approx \tan\alpha = - h_x$.  Combining these statements with 
 \begin{equation}
   H_t = M + \left(\frac{2}{5} (\rho g)^3 A H^5 |h_x|^2 h_x\right)_x. \label{sia1D}
 \end{equation}
+Equation \eqref{sia1D} is the SIA equation for nonsliding plane flow.  It is a model for the evolution of an ice sheet's thickness $H$ in terms of surface mass balance $M$, ice softness $A$, and bed elevation $b$ (because $h=H+b$).
 
-Equation \eqref{sia1D} is the SIA equation for nonsliding plane flow.  It determines the evolution of an ice sheet's shape in terms of mass balance, ice softness, and bed elevation.  Additional arguments (not shown) are needed to demonstrate that the SIA is ``general purpose'' and not special to a simple slab.  Such arguments reduce the Stokes equations under the assumption that the surface and bed slopes, and the depth-to-width ratio, are small; see Notes and References.  We will numerically solve \eqref{sia1D} in section \ref{sec:numericalsia}.  First we state it in two horizontal dimensions and attempt to understand it better.
+Additional arguments are needed to demonstrate that the SIA is more general-purpose than the special case of a simple slab; see Notes and References.  Such arguments reduce the Stokes equations under the assumption that the surface and bed slopes, and the depth-to-width ratio, are small.  We will numerically solve the SIA in section \ref{sec:numericalsia}, but first we will restate the SIA in two horizontal dimensions and we solve it in some special cases.
 
 \subsubsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they experience some contact slip (basal sliding).  The first ice flow model we consider, the non-sliding, isothermal SIA, accounts for (\emph{i})--(\emph{iii}).
 
-Regarding property (\emph{ii}), Figure \ref{fig:green_transect} shows a no-vertical-exaggeration cross-section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is more familiar in the glaciological literature.  Thus: Remember that ice sheets are shallow.
+Regarding the property of shallowness, Figure \ref{fig:green_transect} shows both a no-vertical-exaggeration cross-section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is more familiar in the glaciological literature.  Ice sheets are shallow, though of course the portion of an ice sheet which you want to model may not be.
 
-\onefig{green_transect}{A vertically-exaggerated cross-section of the Greenland ice sheet ($71^\circ$ N) is shown by the green and blue curves.  Without exaggeration it appears as a horizontal line (red).}
+\onefig{green_transect}{A vertically-exaggerated cross-section of the Greenland ice sheet ($71^\circ$ N) is shown by the green and blue curves.  Without exaggeration it appears as nearly a horizontal line (red).}
 
-The SIA uses the formulas from slab-on-a-slope, generalized to two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The shear stress approximation is $(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$, which becomes an equality in the SIA.  From Equation \eqref{flowlaw}, a further approximation of shear strain rates gives the SIA formula
+The SIA uses the formulas from slab-on-a-slope, generalized to two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The shear stress approximation is $(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$, which appeared as ``$\tau_{13}= \rho g \sin \alpha (h-z)$ and $\sin \alpha \approx -h_x$'' in the previous section, becomes an equality in the SIA.  Equation \eqref{flowlaw} then gives the SIA formula for shear strain rates
 \begin{equation*}
 \mathbf{U}_z = 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) = - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h.
 \end{equation*}
@@ -290,30 +291,29 @@ Mass continuity in two horizontal dimensions, which generalizes the 1D version \
 \begin{equation}
     H_t = M - \Div\left(\bar{\mathbf{U}} H\right)  \label{masscont}
 \end{equation}
-Equation \eqref{masscont} may be written $H_t = M - \Div \bq$ in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{U}\,dz = \bar{\mathbf{U}}\,H$.
-
-Define the positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$.  Combining Equations \eqref{siavelocity} and \eqref{masscont}, we get an equation for the rate of thickness change in terms of mass balance $M$, thickness, and surface slope $\grad h$:
+Equation \eqref{masscont} may be written $H_t = M - \Div \bq$ in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{U}\,dz = \bar{\mathbf{U}}\,H$.  Define the positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$.  Combining Equations \eqref{siavelocity} and \eqref{masscont}, we get an equation for the rate of thickness change in terms of mass balance $M$, thickness, and surface slope $\grad h$:
 \begin{equation}
 H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 \end{equation}
+This equation is the SIA in two dimensions.  Recalling our earlier promise, if we can solve \eqref{sia} numerically then we have, following Mahaffy \cite{Mahaffy}, a usable model for the Barnes ice cap in Canada, a particularly simple ice sheet on a rather flat bed.
 
-Fulfilling an earlier promise, if we can solve \eqref{sia} numerically then we have a usable model for the Barnes ice cap in Canada \cite{Mahaffy}.  The Barnes ice cap is a particularly simple ice sheet on a rather flat bed.
+\subsubsection*{Analogy with the heat equation}  The SIA model is easy to compare with the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
 
-\subsubsection*{Analogy with the heat equation}  A step toward understanding the SIA model is to recognize its analogy with the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
-
-The temperature $T(t,x)$ of a conducting rod satisfies the one-dimensional (1D) heat equation
+In the simplest one-dimensional (1D) case, the heat equation for the temperature $T(t,x)$ of a conducting rod is
 \begin{equation}
   T_t = D T_{xx}. \label{heat1D}
 \end{equation}
-This form applies when material properties are constant.  The constant $D$ is the ``diffusivity''.  This equation has a smoothing effect on the solution $T$ as it evolves in time, because any local maximum in the temperature is flattened (i.e.~$T_{xx}<0$ implies $T$ decreases), while any local minimum is also flattened (i.e.~$T_{xx}>0$ implies $T$ increases).
+This form applies when material properties are constant and there are no heat sources.  The positive constant $D$ is the ``diffusivity,'' with units which can be read from comparing sides of the equation: $D\sim \text{m}^2 \text{s}^{-1}$.  Observe that equation \eqref{heat1D} has a smoothing effect on the solution $T$ as it evolves in time, because any local maximum in the temperature is flattened (i.e.~$T_{xx}<0$ implies $T_t<0$ so $T$ decreases), while any local minimum is also flattened (i.e.~$T_{xx}>0$ implies $T_t>0$ so $T$ increases).
 
-The 2D heat equation, which we will see is analogous to equation \eqref{sia}, describes the temperature $T(t,x,y)$ at position $x,y$ in a planar object at time $t$.  Recall Fourier's law is the formula $\mathbf{Q} = - k \grad T$ for heat flux.  If we allow an additional heat source $f$, conservation of internal energy says $\rho c T_t = f - \Div \mathbf{Q}$.  Combining these we get the 2D heat equation:
-	$$\rho c T_t = f + \Div (k \grad T).$$
-Here $\rho$ is density, $c$ is specific heat, and $k$ is conductivity.  Assuming $\rho c$ is constant, define the ``diffusivity'' $D=k/(\rho c)$ and source term $F = f/(\rho c)$; generally these may vary.  The revised 2D heat equation is
+The 2D heat equation, analogous to equation \eqref{sia}, describes the temperature $T(t,x,y)$ at position $x,y$ and time $t$.  Recall that Fourier's law for conduction is the formula $\mathbf{Q} = - \kappa \grad T$ for heat flux $\mathbf{Q}$, where $\kappa$ is conductivity.  We will assume, for the purposes of our analogy, that $\kappa(x,y)$ may vary in space.  Also suppose a variable heat source $f(t,x,y)$, with units of Watts per cubic meter.  Then conservation of internal energy says
+\begin{equation}
+\rho c T_t = f + \Div (\kappa \grad T). \label{heatearly}
+\end{equation}
+Here $\rho$ is density and $c$ is specific heat capacity.  Assuming $\rho c$ is constant, define the ``diffusivity'' $D=\kappa/(\rho c)$ and the rescaled source term $F = f/(\rho c)$.  The revised 2D heat equation is
 \begin{equation}
 T_t = F + \Div (D\, \grad T). \label{heat}
 \end{equation}
-Figure \ref{fig:initialheat} shows a solution of the heat equation, where the initial condition is a localized ``hot spot''.  Solutions of the heat equation involve the spreading, in all directions, of any local heat maxima or minima, that is, diffusion.
+Figure \ref{fig:initialheat} shows a solution of this heat equation, where the initial condition is a localized ``hot spot''.  Solutions of equation \eqref{heat} always involve the spreading, in all directions, of any local heat maxima or minima, that is, diffusion.
 
 \twofigsizes{initialheat}{finalheat}{A solution of heat equation \eqref{heat} with $D=1$ and $F=0$.  Left: Initial condition $T(0,x,y)$.   Right: Solution $T(t,x,y)$ at $t=0.02$.}{2.8in}{2.8in}
 
@@ -324,48 +324,63 @@ SIA:\, $H$ is ice thickness & \phantom{foo bar} heat: $T$ is temperature\phantom
 	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
 \end{tabular}
 \end{center}
-Notice that the number of derivatives (one time and two space derivatives) and the signs are the same.  Mass balance $M$ is analogous to heat source $F$.  
+Notice that the number of derivatives (one time and two space derivatives) and the signs are the same.  Surface mass balance $M$ is analogous to heat source $F$.  
 
-The analogy suggests that we identify the diffusivity in the SIA:
+The analogy suggests that we identify the \emph{diffusivity in the SIA} as:
 	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
-The non-sliding shallow ice flow \emph{diffuses} the ice sheet.  When $\Gamma$ or $H$ or $|\grad h|$ are large, the diffusion acts more quickly because $D$ is larger.  This analogy explains generally why the surfaces of ice sheets are smooth, at least if we ignore non-fluid processes like crevassing and wind-driven snow.  There are, however, some issues with this analogy:
+A non-sliding SIA flow therefore diffuses the thickness of the ice sheet.  When this product of $\Gamma$ and the powers of $H$ and $|\grad h|$ comes out large then the diffusion acts most quickly.
+
+This diffusion equation analogy explains generally why the surfaces of ice sheets are smooth, at least if we overlook non-fluid processes like crevassing and wind-driven (snow) dunes.  There are, however, some issues with the analogy:
 \begin{itemize}
-\item The diffusivity $D$ depends on the solution thickness $H$ and surface elevation $h$, and also these are not the same functions.
+\item The diffusivity $D$ depends on the solution thickness $H$ and surface elevation $h$, and also $h$ and $H$ are not the same function, but differ by the bed elevation $b$.
 \item The diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
 \end{itemize}
-Nonetheless we will provide a verified numerical scheme for \eqref{sia} in Section \ref{sec:numericalsia}.
+More importantly, however,
+\begin{itemize}
+\item Ice flow is much less diffusive when longitudinal (membrane) stresses are important, as when ice is sliding or when the flow is confined by mountainous terrain.
+\end{itemize}
+But we will continue with the SIA, working toward a verified numerical scheme for \eqref{sia} in Section \ref{sec:numericalsia}.
 
 \subsection{Finite difference numerics} 
 
-As already noted, numerical schemes for the heat equation are a good starting place for solving the SIA equation \eqref{sia} numerically.  Finite difference numerical schemes, in particular, replace derivatives in a differential equation by arithmetic.  The basic fact is \emph{Taylor's theorem}, which says that for a smooth function $f(x)$,
+Numerical schemes for the heat equation are a good starting place for solving the SIA equation \eqref{sia}.  Here we demonstrate only finite difference (FD) schemes.  These schemes replace derivatives in a differential equation by mere arithmetic.
+
+The basic fact on which FD schemes are based is \emph{Taylor's theorem}, which says that for a smooth function $f(x)$,
 	$$f(x+\Delta) = f(x) + f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 + \frac{1}{3!} f'''(x) \Delta^3 + \dots$$
 You can replace ``$\Delta$'' by its multiples, for example:
 \begin{align*}
-f(x-\Delta) &= f(x) - f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 - \frac{1}{3!} f'''(x) \Delta^3 + \dots \\
-f(x+2\Delta) &= f(x) + 2 f'(x) \Delta + 2 f''(x) \Delta^2 + \frac{4}{3} f'''(x) \Delta^3 + \dots
+f(x+2\Delta) &= f(x) + 2 f'(x) \Delta + 2 f''(x) \Delta^2 + \frac{4}{3} f'''(x) \Delta^3 + \dots \\
+f(x-\Delta) &= f(x) - f'(x) \Delta + \frac{1}{2} f''(x) \Delta^2 - \frac{1}{3!} f'''(x) \Delta^3 + \dots
 \end{align*}
-The idea for constructing finite difference schemes is to combine expressions like these to give approximations of derivatives.  Thereby function values on a grid combine to approximate the differential equation.
+The idea for constructing FD schemes is to combine expressions like these to give approximations of derivatives.  Thereby function values on a grid combine to approximate the differential equation.
 
-Here we want partial derivative approximations, so we apply the Taylor's expansions one variable at a time.  For example with a general function $u=u(t,x)$,
+Here we want partial derivative approximations, so we apply the Taylor's expansions one variable at a time.  For example, with a general function $u=u(t,x)$,
 \begin{align*}
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} + O(\Delta t), \\
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t-\Delta t,x)}{2\Delta t} + O((\Delta t)^2), \\
 u_x(t,x) &= \frac{u(t,x+\Delta x) - u(t,x-\Delta x)}{2\Delta x} + O((\Delta x)^2), \\
 u_{xx}(t,x) &= \frac{u(t,x+\Delta x) - 2\, u(t,x) + u(t,x-\Delta x)}{\Delta x^2} + O((\Delta x)^2)
 \end{align*}
-Note that if $\Delta$ is a small number then ``$+O(\Delta^2)$'' is better, in the sense that the approximation is closer, than ``$+O(\Delta)$''
+Note that if $\Delta$ is a small number then ``$+O(\Delta^2)$'' is smaller than ``$+O(\Delta)$'', so the approximation is closer when you drop it.
 
-\subsubsection*{Explicit scheme for the heat equation}  Now we can state the simplest ``explicit'' scheme which approximates the 1D heat equation \eqref{heat1D}:
-	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2\, T(t,x) + T(t,x-\Delta x)}{\Delta x^2}.$$
-The finite difference scheme is not just an approximation of the PDE, but an actual method for computing numbers on a grid.  Let $(t_n,x_j)$ denote the time-space grid points.  Denote our approximation\footnote{Evaluating the exact solution at a grid point would give a different value from the one we compute by the scheme!  Of course we plan that these numbers will be close, but that needs checking or proof.} of the solution value $T(t_n,x_j)$ by $T_j^n$.  Then the finite difference scheme is
+\subsubsection*{Explicit scheme for the heat equation}  We can build the simplest ``explicit'' scheme which approximates the 1D heat equation \eqref{heat1D} by observing that these two FD expressions are nearly equal:
+\begin{equation}
+\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2\, T(t,x) + T(t,x-\Delta x)}{\Delta x^2}.  \label{heat1Dapproximated}
+\end{equation}
+The FD scheme itself is not just an approximation of a PDE, like \eqref{heat1Dapproximated}, but an actual method for computing numbers on a grid.  Let $(t_n,x_j)$ denote the time-space grid points.  Denote our approximation of the solution value $T(t_n,x_j)$ by $T_j^n$.  Then the finite difference scheme is
 	$$\frac{T_j^{n+1} - T_j^n}{\Delta t} = D\,\frac{T_{j+1}^n - 2\, T_j^n + T_{j-1}^n}{\Delta x^2}.$$
 To get a computable formula, let $\mu = D \Delta t / (\Delta x)^2$ and solve for $T_j^{n+1}$:
 \begin{equation}
   T_j^{n+1} = \mu T_{j+1}^n + (1 - 2 \mu) T_j^n + \mu T_{j-1}^n \label{heat1Dfd}
 \end{equation}
-The scheme is ``explicit'' because we have been able to solve it for $T_j^{n+1}$ in terms of values at time $t_n$.  Figure \ref{fig:expstencil} shows the ``stencil'' for scheme \eqref{heat1Dfd}: three values at the current time $t_n$ are combined to update the one value at the next time $t_{n+1}$.
 
-How accurate is scheme \eqref{heat1Dfd}?  Its construction tells us that the difference between the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t,(\Delta x)^2)$.  This difference between scheme and PDE goes to zero as we refine the grid in space and time (``consistency'').  With care about the smoothness of boundary conditions, and using mathematical facts about the heat equation itself, one can show that the difference between $T_j^n$ and $T(t_n,x_j)$ is \emph{also} $O(\Delta t,(\Delta x)^2)$, which is ``convergence''; see Notes and References.  However, to get convergence, the PDE problem must be known to generate smooth solutions and the scheme \eqref{heat1Dfd} must be stable, which we address below.  Then the main theorem for numerical PDE schemes is ``consistency plus stability implies convergence''; see Notes and References.  In these notes we do something rather practical, namely we find problems for which we already know exact values $T(t,x)$, and we compute the differences $|T_j^n - T(t_n,x_j)|$.  Thus we determine directly whether they go to zero.  This is ``verification''; more below.
+FD scheme \eqref{heat1Dfd} is \emph{explicit} because it directly computes $T_j^{n+1}$ in terms of values at time $t_n$.  Figure \ref{fig:expstencil} shows the ``stencil'' for scheme \eqref{heat1Dfd}: three values at the current time $t_n$ are combined to update the one value at the next time $t_{n+1}$.
+
+Before moving on, notice that evaluating a heat equation solution at a grid point (i.e.~the expression ``$T(t_n,x_j)$'') generally gives a different value from the value $T_j^n$ computed by a scheme like \eqref{heat1Dfd}.  Of course we plan that these numbers will be close, but that needs checking (``verification'') or an \emph{a priori} proof.  Specifically we intend that the numbers $T(t_n,x_j)$ and $T_j^n$ become close to each other when the grid is made finer (i.e.~$\Delta t \to 0$ and $\Delta x \to 0$), as the FD expressions become closer to the derivatives they approximate.  That is, we intend our FD scheme to \emph{converge} under \emph{grid refinement}.
+
+How accurate is scheme \eqref{heat1Dfd}?  Its construction tells us that the difference between the scheme \eqref{heat1Dfd} and the PDE \eqref{heat1D} is $O(\Delta t + (\Delta x)^2)$, so this difference goes to zero as we refine the grid in space and time, a property called \emph{consistency}.  With care about the smoothness of boundary conditions, and using mathematical facts about the heat equation itself, one can show that the difference between $T_j^n$ and $T(t_n,x_j)$ is also $O(\Delta t + (\Delta x)^2)$, which is thus the \emph{convergence rate}; see Notes and References.
+
+To get convergence the PDE problem must generate adequately smooth solutions, and also scheme \eqref{heat1Dfd} must be \emph{stable}, which we address below.  (The main theorem for numerical PDE schemes is ``consistency plus stability implies convergence''; see Notes and References.)  In these notes we do something rather practical, namely verification.  We find problems for which we already know an exact solution $T(t,x)$, and then we compute the differences $|T_j^n - T(t_n,x_j)|$.  This determines directly whether the \emph{implementation} (i.e.~computer code form) of our FD scheme actually converges, not just in theory.
 
 \subsubsection*{A first implemented scheme}  For the first Matlab implementation we consider the two spatial dimension Equation \eqref{heat} with $D$ constant and $F=0$:
 \begin{equation}
