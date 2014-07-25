@@ -63,7 +63,6 @@ while maxdiff > tol
   fprintf('.')
 end
 fprintf('\nSSA solver did %d Picard iterations on dx = %.3f km grid\n',iter,dx/1000.0)
-%STRIPFROMHERE    (hide helper functions in lecture.pdf)
 
   function fav = stagav(f)
   % average regular grid values onto staggered grid
