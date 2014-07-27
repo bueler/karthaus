@@ -734,26 +734,30 @@ Nonetheless ``diagnostic'' (i.e.~fixed geometry) ice shelf modelling in two hori
 
 \section{A summary of numerical ice sheet modelling}
 
-These notes illustrate some general principles about numerical modelling:
+These notes are brief, and so they give a very incomplete view of numerical models for glaciers and ice sheets.  They do, however, illustrate some general principles about numerical modelling.  One should:
 \begin{itemize}
-\item Spend time with the continuum model.
-\item Modularize your codes.
-\item Test the parts: Is the component robust? Does it show convergence to exact solutions?
+\item Return often to the continuum model.
+\item Modularize codes.
+\item Test the parts: Is the component robust? Does it show convergence?
 \end{itemize}
 
-Regarding the specific problems of ice flow, distributed stress balance equations like the SSA determine horizontal velocity from geometry and boundary conditions.  These equations are nonlinear so iteration is necessary.  At each iteration a sparse matrix ``inner'' problem is solved; non-experts should give this matrix problem to a solver package.  The SIA stress balance is not horizontally-distributed, however, and velocity follows immediately by integration of the driving stress.
+Regarding the specific ice flow models covered in these notes, here are three high-level points, as a kind of conclusion:
+\begin{itemize}
+\item The mass continuity equation is the part of a model which describes how the ice geometry evolves.  It is a kind of transport equation in the map-plane, but with diffusive character at larger spatial scales.  The numerical approach to this equation depends on which is the stress balance which supplies the ice velocity or ice flux.  For sure mass continuity is a diffusion for frozen bed, large scale flows, and in that case the SIA is a good choice.  Mass continuity is \emph{not} very diffusive for membrane stresses (e.g.~SSA), especially with no basal resistance as in ice shelves.  It has some diffusiveness for ice streams, though how much is hard to quantify.
+\item Membrane stress balance equations like the SSA (and the Blatter-Pattyn and Stokes models not covere here) determine horizontal velocity from geometry and boundary conditions.  Because of the Glen law these equations are nonlinear, so iteration is necessary.  At each iteration a sparse matrix ``inner'' problem is solved; non-experts should give this matrix problem to a solver package.
+\item The SIA stress balance is exceptional because it is not horizontally-distributed.  In the SIA, velocity follows immediately by vertical integration of the driving stress.
+\end{itemize}
 
-The mass continuity equation has a time-derivative, and it describes how the ice geometry evolves.  The numerical nature of this equation depends on which is the stress balance which supplies the velocity.  It is a diffusion for frozen bed, large scale flows (SIA).  It is \emph{not} very diffusive for membrane stresses (e.g.~SSA), especially with no basal resistance as in ice shelves.  It has some diffusiveness for ice streams (but how much?), and more for outlet glaciers.  In any case it is a kind of transport equation, but with diffusive character at larger spatial scales.
 
 
 %\small
 \section{Notes} \label{sec:nr}
 
-The SIA model, which was derived by several authors \cite{FowlerLarson1978,Hutter,MorlandJohnson}, follows by scaling the Stokes equations using the aspect ratio $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension.  After scaling one drops the terms that are small if $\eps$ is small \cite{Fowler,Hutter}; this is a ``small-parameter argument''.  In one such derivation there are no $O(\eps)$ terms in the scaled equations so one only drops $O(\eps^2)$ terms \cite{Fowler}.  The SIA is re-formulated as a well-posed free boundary problem in \cite{JouvetBueler2012}, which provides the correct boundary condition at grounded margins.  The Mahaffy scheme for diffusivity used here \cite{Mahaffy} is not the only one \cite{HindmarshPayne}.
+The SIA model, which was derived by several authors \cite{FowlerLarson1978,Hutter,MorlandJohnson}, follows by scaling the Stokes equations using the aspect ratio $\eps = [H]/[L]$, where $[H]$ is a typical thickness of an ice sheet and $[L]$ is a typical horizontal dimension.  After scaling one drops the terms that are small if $\eps$ is small \cite{Fowler,Hutter}; this is a ``small-parameter argument''.  In one scaling there are no $O(\eps)$ terms in the scaled equations so one only drops $O(\eps^2)$ terms \cite{Fowler}.  The SIA is re-formulated as a well-posed free boundary problem in \cite{JouvetBueler2012}, which provides the correct boundary condition at grounded margins.  The Mahaffy \cite{Mahaffy} scheme for diffusivity used here is not the only one \cite{HindmarshPayne}.
 
-The SSA model \cite{WeisGreveHutter} was derived in \cite{Morland} for ice shelves and in \cite{MacAyeal} for ice streams.  A well-posed steady whole ice sheet model using only the SSA is in \cite{SchoofStream}.
+The SSA model \cite{WeisGreveHutter} was derived in \cite{Morland} for ice shelves and in \cite{MacAyeal} for ice streams.  In deriving the SSA, the aspect ratio $\eps$ above is one small parameter but additionally a second parameter describing the magnitude of surface undulations must be assumed to be small  \cite{SchoofStream,SchoofHindmarsh}.  A well-posed model for the emergence of ice streams though till failure, using only the SSA, is in \cite{SchoofStream}.
 
-As noted, basal water is required for ice streaming.  To model such water one must at least compute the ice base temperature and the basal melt rate through the energy conservation equation \cite{AschwandenBuelerKhroulevBlatter,BBssasliding,Clarke05,Raymondenergy}.  Evidence that outlet glaciers have thick temperate ice is in \cite{Luethietal2009}.
+Pressurized basal water is required for most ice sliding.  To model the production of such water in ice sheets one must at least compute the ice base temperature and the basal melt rate through the energy conservation equation \cite{BBssasliding,Clarke05,Raymondenergy,Tulaczyketal2000b}.  Evidence that outlet glaciers have thick temperate ice is in \cite{Luethietal2009}, which is one reason to want models which allow the emergence of polythermal conditions in otherwise cold ice sheets \cite{AschwandenBuelerKhroulevBlatter,Greve}.
 
 One of the most significant issues in modelling ice sheets using shallow models is to describe the ``switch'', in space and time, between shear-dominated and membrane-stress-dominated flow.  It is not a good idea to abruptly switch from the SIA model to the SSA model at the edge of an ice stream, by whatever criterion that switch might be applied, though this has been attempted \cite{HulbeMacAyeal,Ritzetal2001}; these might be called ``horizontal hybrid'' schemes.  However, ``vertical'' hybrid schemes exist which solve the SIA and SSA everywhere in the ice sheet, combining the results without such an either/or decision \cite{BBssasliding,Goldberg2011,PollardDeConto,Winkelmannetal2011}.  The latter hybrids can be used at high spatial resolution and long time scales because the SSA model is an easier stress balance to solve than ``higher-order'' membrane-stress-resolving alternatives.
 
