@@ -1,5 +1,7 @@
 
-\section{preamble}
+\section{introduction}
+
+\subsection{preamble}
 
 \begin{frame}{slogans \& scope}
 
@@ -12,20 +14,20 @@ slogans: I will
 
 scope: I will cover
   \begin{itemize}
-  \item[$\circ$] continuum models
+  \item continuum models
 
     \begin{itemize}
-    \item shallow ice approximation (SIA) in 2D
-    \item shallow shelf approximation (SSA) in 1D
-    \item mass continuity \& surface kinematical equations
+    \item[$\circ$] shallow ice approximation (SIA) in 2D
+    \item[$\circ$] shallow shelf approximation (SSA) in 1D
+    \item[$\circ$] mass continuity \& surface kinematical equations
     \end{itemize}
 
-  \item[$\circ$] numerical ideas
+  \item numerical ideas
 
     \begin{itemize}
-    \item finite difference schemes
-    \item solving algebraic systems from stress balances
-    \item verification
+    \item[$\circ$] finite difference schemes
+    \item[$\circ$] solving algebraic systems from stress balances
+    \item[$\circ$] verification
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -83,47 +85,46 @@ scope: I will cover
 \begin{frame}{Matlab/Octave codes}
 
 \begin{itemize}
-\item lectures are structured around 18 ice flow codes
+\item lectures and notes are structured around 18 ice flow codes
+\item several codes will appear in these lectures, but not all
 \item each is $\sim$ 1/2 page of Matlab/Octave code
-\item \texttt{.zip} and \texttt{.tar.gz} forms available from memory stick
-\item online:
+\item please give them a try!
 
-\bigskip\bigskip\small
-\centerline{\fbox{\url{https://github.com/bueler/karthaus}}}
+  \begin{itemize}
+  \item[$\circ$] \texttt{.zip} and \texttt{.tar.gz} forms available from memory stick
+  \item[$\circ$] online:
+
+  \bigskip\bigskip\small
+  \centerline{\fbox{\url{https://github.com/bueler/karthaus}}}
+  
+  \end{itemize}
 \end{itemize}
 \end{frame}
 
 
 \subsection{ice flow equations}
 
-\begin{frame}{my first goal}
-
-\begin{itemize}
-\item my goal is to get to an equation for which I can say:
-\bigskip
-
-\begin{center}
-\emph{numerically solve just this equation, and you've got a usable model for a flowing ice sheet}
-\end{center}
-\bigskip
-
-\item to get to my goal I will quickly recall the continuum mechanics of ice flow
-\item a ``usable'' model is \emph{understood} more than it is \emph{correct}
-\end{itemize}
-\end{frame}
-
 \begin{frame}{ice in glaciers is a \emph{fluid}}
 
 \begin{itemize}
-\item we describe fluids primarily by a \emph{velocity field} $\mathbf{u}(t,x,y,z)$
+\item what's a fluid?
+\item we describe fluids by
+  \begin{itemize}
+  \item[$\circ$] a \emph{density field}\quad $\rho(t,x,y,z)$
+  \item[$\circ$] a \emph{pressure field}\quad $p(t,x,y,z)$
+  \item[$\circ$] a vector \emph{velocity field}\quad $\mathbf{u}(t,x,y,z)$
+  \end{itemize}
+
+\bigskip\bigskip
+
 \item if ice fluid were
   \begin{itemize}
-  \item[$\circ$] faster-moving than it actually is (e.g.: gravity stronger?), and
+  \item[$\circ$] faster-moving than it actually is, and
   \item[$\circ$] linearly-viscous like liquid water
   \end{itemize}
   
   then ice flow would be a more-familiar, ``typical'' fluid
-\item in that case we would all use the Navier-Stokes equations as our flow model:
+\item for typical fluids one uses the Navier-Stokes equations as the model:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 \rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nu \nabla^2 \mathbf{u} + \rho \mathbf{g} &&\text{\emph{force balance}}
@@ -134,13 +135,15 @@ scope: I will cover
 
 \begin{frame}{\emph{hmmm} \dots \emph{does not sound like glaciology to me!}}
 
-is numerical ice flow modeling a part of computational fluid dynamics?
+is numerical ice flow modelling actually ``computational fluid dynamics''?
 
 \begin{itemize}
 \item \alert{yes}
-\item large scale like atmosphere/ocean
-\item \dots but it is a weird one
-\item consider what makes atmosphere/ocean flow modeling exciting:
+\item large scale like atmosphere and ocean modelling
+  \begin{itemize}
+  \item[$\circ$] \dots\, but it is a weird one
+  \end{itemize}
+\item consider what makes atmosphere/ocean flow modelling exciting:
   \begin{itemize}
   \item[$\circ$] turbulence
   \item[$\circ$] convection
@@ -150,8 +153,9 @@ is numerical ice flow modeling a part of computational fluid dynamics?
   \end{itemize}
 \item none of the above list is relevant to ice flow
 \item so what could be interesting about the flow of slow, cold, stiff, laminar, inert old ice?
-
- \qquad \dots \qquad it's \emph{ice dynamics!}
+  \begin{itemize}
+  \item[$\circ$] it's \emph{ice dynamics!}
+  \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -161,21 +165,24 @@ is numerical ice flow modeling a part of computational fluid dynamics?
 \begin{itemize}
 \item our fluid is
 
+\smallskip
   \begin{tabular}{lc}
-  \emph{slow}: & $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$ \\
-  \emph{non-Newtonian}: & viscosity $\nu$ is not constant
+  \emph{slow}\,: & $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$ \\
+  \emph{non-Newtonian}\,: & viscosity $\nu$ is not constant
   \end{tabular}
-\item ``shear-thinning'' flow: bigger strain rate means smaller viscosity
+\item ``shear-thinning'' non-Newtonian
+  \begin{itemize}
+  \item[$\circ$] higher strain rates means lower viscosity
+  \end{itemize}
+
+\bigskip
 \item the standard ``full'' model is Glen-law ($n=3$) Stokes:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance}} \\
 \mathbf{D}_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{flow law}}
 \end{align*}
-\item these equations above are true at every instant, and
-  \begin{quote}
-  \emph{geometry, boundary stress, and ice viscosity determine velocity instantaneously}
-  \end{quote}
+
 \end{itemize}
 \end{frame}
 
@@ -187,7 +194,7 @@ is numerical ice flow modeling a part of computational fluid dynamics?
   $$\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0 \qquad \iff \qquad \begin{pmatrix} \text{forces of inertia} \\ \text{are negligible} \end{pmatrix}$$
 \item a time-stepping ice sheet code recomputes the full velocity field at every time step, without requiring velocity from the previous step\footnote{to be a weatherman you've got to know which way the wind blows \dots but don't expect that from a glaciologist}
 \item thus no memory of previous momentum/velocity, so
-  \begin{quote}\emph{velocity is a ``diagnostic'' output of an ice flow model}\end{quote}
+  \begin{quote}\emph{velocity is a ``diagnostic'' output of ice flow models}\end{quote}
 \end{itemize}
 \end{frame}
 
