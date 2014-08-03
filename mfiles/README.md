@@ -1,4 +1,4 @@
-Bueler's ice sheet and ice shelf modelling m-files
+Bueler's numerical ice sheet modelling m-files
 ========
 
 Copyright 2009--2014  Ed Bueler
