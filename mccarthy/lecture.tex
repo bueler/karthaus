@@ -19,24 +19,14 @@
 \newcommand{\Div}{\nabla\cdot}
 \newcommand{\devstress}{\tau}
 
-\newcommand{\mname}[1]{\href{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/#1}{\texttt{#1}}}
-
-\newcommand{\txtinput}[1]{\scriptsize\verbatiminput{#1}}
-
-\newcommand{\txtinputtiny}[1]{\tiny\verbatiminput{#1}}
-
-\newcommand{\mmessage}[1]{\begin{center}
-\emph{see code} \url{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/#1.m}
-\end{center}}
-
 \newcommand{\mmess}[1]{\vspace{-0.1in}\begin{center}
-\fbox{\url{http://www.dms.uaf.edu/~bueler/mccarthy/mfiles/#1.m}}
+\fbox{\url{#1.m}}
 \end{center}}
 
-\newcommand{\minput}[1]{\scriptsize\verbatiminput{mfiles/#1.slim.m}
+\newcommand{\minput}[1]{\scriptsize\verbatiminput{../mfiles/#1.slim.m}
 \tiny\mmess{#1}\normalsize}
 
-\newcommand{\minputtiny}[1]{\tiny\verbatiminput{mfiles/#1.slim.m}
+\newcommand{\minputtiny}[1]{\tiny\verbatiminput{../mfiles/#1.slim.m}
 \mmess{#1}\normalsize}
 
 

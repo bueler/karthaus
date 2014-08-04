@@ -1,15 +1,15 @@
 
 \section{shallow ice sheets}
 
-\begin{frame}{slow, non-Newtonian, some basal slip, and shallow}
+\begin{frame}{slow, non-Newtonian, shallow, and sliding}
 
 \begin{itemize}
 \item ice sheets have four outstanding properties \emph{as fluids}:
   \begin{enumerate}
   \item slow
   \item non-Newtonian
+  \item shallow (usually)
   \item contact slip (sometimes)
-  \item shallow
   \end{enumerate}
 \end{itemize}
 \end{frame}
@@ -377,7 +377,8 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 
 \begin{frame}{\textsl{adaptive} implementation: guaranteed stability}
 
-\scriptsize\mmess{heatadapt}\normalsize
+%\scriptsize\mmess{heatadapt}\normalsize
+\minput{heatadapt}
 
 \begin{itemize}
 \item same as \texttt{heat.m} except
@@ -455,7 +456,7 @@ in stencil at right:
 \begin{frame}
   \frametitle{general diffusion equation code}
 
-\minput{diffusion}
+\minputtiny{diffusion}
 
 \small
 \begin{itemize}

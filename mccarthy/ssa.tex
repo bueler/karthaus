@@ -165,7 +165,8 @@ without vertical exaggeration.  (\tiny Figure 1 in Truffer and Echelmeyer (2003)
   \includegraphics[width=0.45\textwidth]{steadyshelfvelocity}
 \end{center}
 
-\hfill \includegraphics[width=0.3\textwidth]{Rocket_nozzle_expansion}
+\bigskip\bigskip
+\includegraphics[width=0.3\textwidth]{Rocket_nozzle_expansion}
 \end{frame}
 
 
@@ -318,11 +319,27 @@ $$b_{J+1} = -2 \gamma \Delta x W_{J+3/2} + \beta_{J+1} \Delta x^2$$
 \begin{frame}[fragile]
   \frametitle{\emph{numerical} thickness and velocity for steady ice shelf}
 
-lines below are a convergence analysis of \mname{testshelf.m}, which calls \mname{ssaflowline.m}:
+lines below are a convergence analysis of \texttt{testshelf.m}, which calls \texttt{ssaflowline.m}:
 
 \begin{center}
-  \includegraphics[width=0.9\textwidth]{shelfconv}
+  \includegraphics[width=0.75\textwidth]{shelfconv}
 \end{center}
+\end{frame}
+
+
+\begin{frame}{SSA model output}
+
+\begin{center}
+  \includegraphics[width=0.45\textwidth]{steadyshelfprofile} \quad
+  \includegraphics[width=0.45\textwidth]{steadyshelfvelocity}
+\end{center}
+
+\bigskip
+
+\begin{itemize}
+\item \emph{this looks suspiciously like figures for the exact solution \dots}
+\item yes
+\end{itemize}
 \end{frame}
 
 
@@ -330,7 +347,7 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
 
 \begin{itemize}
 \item flow lines are never very realistic
-\item you can add ``side drag'' \dots but I don't really know how to parameterize it
+\item you can add parameterized ``side drag'' \dots
 \item also, ice shelves have surprises:
   \begin{itemize}
   \item[$\circ$] high basal melt near grounding lines
@@ -352,11 +369,11 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
 \begin{frame}{ice shelf modeling in 2D}
 
 \begin{itemize}
-\item ``diagnostic'' (static geometry) ice shelf modeling in two horizontal variables has been quite successful
-\item observed surface velocities should validate stress balance models
+\item nonetheless ``diagnostic'' (static geometry) ice shelf modeling in 2d has been quite successful
+\item observed surface velocities validate SSA stress balance model
   \begin{itemize}
-  \item[$\circ$] Ross ice shelf example below using PISM
-  \item[$\circ$] \dots but many models can do this (MacAyeal et al 1996\nocite{MacAyealetal})
+  \item[$\circ$] e.g.~Ross ice shelf example below using PISM
+  \item[$\circ$] \dots but many models can do this
   \end{itemize}
 \end{itemize}
 
@@ -369,15 +386,18 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
 \begin{frame}{numerical solution of stress balances: a summary}
 
 \begin{itemize}
-\item stress balance equations (e.g.~SSA) determine horizontal velocity from geometry and boundary conditions
+\item stress balance equations (e.g.~SSA or Stokes) determine velocity from geometry and boundary conditions
   \begin{itemize}
   \item[$\circ$] nonlinear so iteration is necessary
-  \item[$\circ$] at each iteration a sparse matrix ``inner'' problem is solved
-  \item[$\circ$] give the ``inner'' problem to a matrix solver software package
+  \item[$\circ$] at each iteration a sparse matrix ``inner'' problem is solved \dots give it to a matrix solver software package
   \end{itemize}
 
 \bigskip
-\item general principles: \emph{modularize your code} and \emph{test the parts}
+\item general principles:
+  \begin{itemize}
+  \item[$\circ$] \alert{modularize your code}
+  \item[$\circ$] \alert{test the parts}
+  \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -391,9 +411,9 @@ lines below are a convergence analysis of \mname{testshelf.m}, which calls \mnam
   \begin{itemize}
   \item[$\circ$] the equation is a diffusion for frozen bed, large scale flows (i.e.~SIA)
   \item[$\circ$] it is \emph{not} very diffusive for membrane stresses and no basal resistance (e.g.~SSA for ice shelves)
-  \item[$\circ$] it is significantly diffusive for ice streams (but how much?)
-  \item[$\circ$] there is not much helpful theory on to solve this transport problem
-  \item[$\circ$] maybe \emph{you} will help find this theory!
+  \item[$\circ$] it is diffusive for ice streams (but how much?)
+  \item[$\circ$] there is \emph{not} much helpful theory on this transport problem
+  \item[$\circ$] \dots maybe you will help find this theory!
   \end{itemize}
 \end{itemize}
 \end{frame}
