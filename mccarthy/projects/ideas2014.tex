@@ -105,7 +105,7 @@
 \noindent REQUIRED STUDENT BACKGROUND: Minimal exposure to differential equations and use of Matlab or similar.
 \end{quote}
 
-\subsection*{Details}  I'll refer to  \cite{Bartholomausetal2011} as ``Barth.''  Read it.  Note that my J.~Glaciol.~``Correspondence'' \citep{Bueler2014correspondence} is an attempt to clarify Barth for the modern reader!
+\subsection*{Details}  I'll refer to  \cite{Bartholomausetal2011} as ``Barth.''  Please read it first.  Note that my J.~Glaciol.~``Correspondence'' \citep{Bueler2014correspondence} is an attempt to clarify Barth for the modern reader!
 
 The basic mass conservation idea is unstated (but implicit) in Barth:
 \begin{equation}
@@ -141,9 +141,11 @@ Use ODE solver to solve system \eqref{eq:system} above.  Values of $\phi,g,\rho_
 
 Do the synthetic case from Figure 6 in Barth first.  Then use data from Tim in file \texttt{Bartholomaus2011_Fig7.txt} and get Figure 7 in Barth.  View the data, and see by example how to read it, by running \texttt{showbarthdata.m} in Octave or Matlab.
 
-Comment:  Instead of the above strategy, one could instead use ODE system \eqref{eq:massconserve} and \eqref{eq:cavityevolution} with $P$ in \eqref{eq:cavityevolution} written as $P= c_1 S_{en} = c_1 (S - S_{sub}) = c_1 (S - c_2 A_c)$; this is closer to what Barth did I think \dots
+\subsection*{Comments}  Instead of the above strategy, one could instead use ODE system \eqref{eq:massconserve} and \eqref{eq:cavityevolution} with $P$ in \eqref{eq:cavityevolution} written as $P= c_1 S_{en} = c_1 (S - S_{sub}) = c_1 (S - c_2 A_c)$; this is closer to what Barth did.
 
-The following extensions are probably not something we will get to, but they might help conceptually to state:\begin{itemize}
+The following extensions are probably not something we will get to, but they might help conceptually to state:
+
+\begin{itemize}
 
 \item[Extension 1.\quad] \emph{Inversion for subglacial parameters}.  From formula (4) in Barth for the evolution of $A_c$, it makes sense, given all that is \emph{unknown} subglacially, to write equation \eqref{eq:cavityevolution} as
 \begin{equation}
@@ -161,7 +163,7 @@ Using this requires speculation on Darcy flux, a formula for $Q$ in terms of $A_
 
 
 
-\bigskip\bigskip
+\newpage
 \section*{Project 6: From ice shelves in the lab to good numerical models}
 
 \begin{quote}
@@ -177,13 +179,29 @@ Using this requires speculation on Darcy flux, a formula for $Q$ in terms of $A_
 \noindent REQUIRED STUDENT BACKGROUND: Minimal exposure to differential equations and use of Matlab or similar.
 \end{quote}
 
-\subsection*{Details} FIXME  \cite{PeglerListerWorster2012,PeglerWorster2012,SayagPeglerWorster2012} but especially \cite{Pegleretal2013}
+\subsection*{Details}  I'll refer to  \cite{Pegleretal2013} as ``Pegler.''  Please read it first.
+
+These Cambridge applied math types have built \emph{laboratory} fluid analogs of glacier and ice sheet flows.  They have built such analogs for moving-margin grounded ice sheets \citep{SayagWorster2013}, radial marine ice sheets with moving grounding lines \citep{PeglerWorster2012,SayagPeglerWorster2012}, and the laterally-confined flow-line marine ice sheet which we will look at in detail here (i.e.~Pegler).  I am interested in this work because I want ice sheet numerical models to be able to accurately approximate (i.e.~``reproduce'') these laboratory results.  That is, laboratory experiments should validate numerical models using better-measured flows than the poorly-observed ice sheet flows themselves.
+
+Note that my McCarthy lectures, and the notes that go with them, introduce the dynamics of flow-line ice shelves.  But I do it in the entirely unconfined case, as there is no ``side drag'' for my ice shelf example, which comes from van der Veen.  Pegler addresses one end of a range of possible flow-line ice shelves, and van der Veen addresses the other.  Please skim the ice shelf material in my notes as soon as you can, but note that you will not need detailed knowledge from there.
+
+The project is to build a numerical approximation of the model in Pegler.  Then to produce time-dependent output from your numerical model so that it looks like Figures 2 and 5 in Pegler.
+
+Note that the dashed curves in Figure 2 in Pegler, and the solid curves in Figure 5, are from a by-hand calculation in Pegler.  That by-hand calculation gives a formula, the ``similarity solution'' in (3.17a,b).  But you don't need to know that!  My suggestion is that you build a numerical solution to the model and compare its output to the experimental results shown in Figure 2 and 5.  Thus there is no need to understand Pegler beyond equation (3.9).
+
+The continuum model you do want to know about is in equations (3.1a,b), (3.5a,b), (3.6), (3.7), (3.8a,b), and (3.9a,b).  Please read, and discuss with me and your colleagues, these equations until you have some understanding of them.  Start by making your own table of notation, which is something missing from Pegler as you will see.
+
+The main equation is (3.6), a partial differential equation (PDE) which is called a ``porous medium equation'', and which is a ``nonlinear diffusion'' as stated by Pegler.  I have a worked-out assignment from a course I just taught this spring on numerical PDEs.  This assignment and its solutions, of which you will get a copy, solves a similar porous medium equation.  See ``Assignment \#8''.  I will supply the Matlab codes from that assignment.  Thus you do not, by any means, need to start from scratch on building a numerical method.
+
+There are two interesting aspects of this problem, as a PDE problem.  One is that there is a coefficient in (3.6) that changes discontinuously.  This discontinuity is stated in (3.5a,b), but see also (3.1a,b) and (3.8a,b).  This is the (famous?) ``grounding line issue'', but in this laterally-confined case it is least troublesome.  Nonetheless you will probably see numerical effects from it, for example if you plot the flux output $q(t,x)$ as a function of $x$ at some time $t$.
+
+The other interesting aspect is in equation (3.9a,b).  The problem is a ``free boundary''.  I claim that as long as you understand that the obvious fact ``$H\ge 0$'' is part of the problem, then you can ignor the (3.9b) and still get the rate of motion of the shelf front correct (in a numerical approximation sense).  That is, I assert that (3.9b) is not needed even if your goal is to get a good match to the experimental data for $x_N$ in Figure 5.
+
+\subsection*{Comments}  You might be interested in where equation (3.6) comes from.  First of all, section 7.6 of \cite{Acheson} explains where equations (3.2) in Pegler come from; I can supply this book if you are interested.  Then calculation described on page 722\footnote{Namely, ``By integrating (3.2a) subject to no-slip conditions at the cell walls, and using the integrated form of (3.2b) to substitute for the leading-order hydrostatic pressure, we determine \dots''} then gives (3.4a,b) in Pegler, and this integration is something that is probably not obvious but I can supply the details.
+
 
 \small
-\bibliography{ice-bib}  % generally requires link to pism/doc/ice_bib.bib
+\bibliography{ice-bib}  % generally requires link to pism/doc/ice-bib.bib
 \bibliographystyle{agu}
-\normalsize
-
-
 
 \end{document}
