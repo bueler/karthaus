@@ -400,7 +400,7 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \begin{frame}{alternative instability fix: implicitness}
 
 \begin{itemize}
-\item explicit scheme is only ``conditionally stable'', but there are methods which are stable for \emph{any} positive time step $\Delta t$
+\item \alert{implicit} methods can be stable for \emph{any} positive time step $\Delta t$
 \end{itemize}
 
 \begin{columns}
@@ -418,7 +418,7 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \end{columns}
 
 \begin{itemize}
-\item \emph{but} you have to solve linear systems of equations to take each time step
+\item \emph{but} you have to solve linear (or nonlinear) systems of equations to take each time step
 \medskip
 
 \item \scriptsize Donald Knuth has advice for ice sheet modelers: \begin{quote}
@@ -476,14 +476,35 @@ in stencil at right:
 
 \subsection{solutions}
 
+\begin{frame}{verification of numerical ice flow codes}
+\begin{itemize}
+\item how do we make sure an \emph{implemented} numerical scheme is correct?
+  \begin{itemize}
+  \item[$\circ$] \emph{technique} 1: don't make any mistakes
+  \item[$\circ$] \emph{technique} 2: compare your model with others, and hope that the outliers are the ones with errors
+  \item[$\circ$] \emph{technique} 3: build-in a comparison to an exact solution, and actually measure the numerical error $=$ \alert{verification}
+  \end{itemize}
+\item where to get exact solutions for ice flow models?
+  \begin{itemize}
+  \item[$\circ$] textbook: Greve and Blatter (2009)\nocite{GreveBlatter2009}
+  \item[$\circ$] similarity solutions to SIA (Halfar 1983\nocite{Halfar83}; Bueler et al 2005\nocite{BLKCB})
+  \item[$\circ$] manufactured solutions to thermo-coupled SIA (Bueler et al 2007\nocite{BBL})
+  \item[$\circ$] flowline and cross-flow SSA solutions (Bodvardsson, 1955; van der Veen, 1985; Schoof, 2006)\nocite{SchoofStream,vanderVeen85}
+  \item[$\circ$] flowline Blatter solutions (Glowinski and Rappaz 2003)\nocite{GlowinskiRappaz}
+  \item[$\circ$] flowline Stokes solutions for constant viscosity (Ladyzhenskaya 1963\nocite{Ladyzhenskaya}, Balise and Raymond 1985\nocite{BaliseRaymond1985})
+  \item[$\circ$] manufactured solutions to the Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011)\nocite{JouvetRappaz2011,SargentFastook2010}
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
 \begin{frame}{exact solution of heat equation}
 
 \begin{itemize}
-\item before getting to ice flow, one more heat equation topic \dots
 \item the simple heat equation in 1D with constant diffusivity $D>0$ is:
 	$$u_t = D u_{xx}$$
-\item many \emph{exact} solutions to the heat equation are known, but I'll show the ``Green's function''
-\item \dots also known as ``fundamental solution'' or ``heat kernel''
+\item many \emph{exact} solutions to the heat equation are known
+\item I'll show the ``Green's function'' (a.k.a.~``fundamental solution'' or ``heat kernel'')
 \item it starts at time $t=0$ with a ``delta function'' of heat at the origin $x=0$ and then it spreads out over time
 \item we find it by a method which generalizes to the SIA
 \end{itemize}
@@ -577,9 +598,8 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \begin{frame}{is the Halfar solution \emph{good for any modeling}?}
 
 \begin{itemize}
-\item John Nye and others (2000)\nocite{NyeIcarus2000} compared the long-time consequences of different flow laws for the South Mars Polar Cap
-\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters
-\item \dots by comparing the long-time behavior of the corresponding Halfar solutions
+\item John Nye and others (2000)\nocite{NyeIcarus2000} compared different flow laws for the South Polar Cap on Mars
+\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters by comparing the long-time behavior of the corresponding Halfar solutions
 \item conclusions:
   \begin{quote}
   \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
@@ -589,7 +609,7 @@ if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
 \end{frame}
 
 
-
+\begin{comment}
 \begin{frame}{on ``degenerate'' diffusivity}
 
 \begin{itemize}
@@ -614,7 +634,7 @@ $H$ is continuous \\ but $\grad h$ is singular
 \item degenerate diffusion equations are automatically free boundary problems
 \end{itemize}
 \end{frame}
-
+\end{comment}
 
 \begin{frame}
   \frametitle{computing diffusivity in SIA}
@@ -650,28 +670,6 @@ to get the diffusivity on staggered grid
 
 \minputtiny{siaflat}
 
-\end{frame}
-
-
-\begin{frame}{verification of numerical ice flow codes}
-\begin{itemize}
-\item how do we make sure an \emph{implemented} numerical scheme is correct?
-  \begin{itemize}
-  \item[$\circ$] \emph{technique} 1: don't make any mistakes
-  \item[$\circ$] \emph{technique} 2: compare your model with others, and hope that the outliers are the ones with errors
-  \item[$\circ$] \emph{technique} 3: build-in a comparison to an exact solution, and actually measure the numerical error \alert{$=$ verification}
-  \end{itemize}
-\item where to get exact solutions for ice flow models?
-  \begin{itemize}
-  \item[$\circ$] textbook: Greve and Blatter (2009)\nocite{GreveBlatter2009}
-  \item[$\circ$] similarity solutions to SIA (Halfar 1983\nocite{Halfar83}; Bueler et al 2005\nocite{BLKCB})
-  \item[$\circ$] manufactured solutions to thermo-coupled SIA (Bueler et al 2007\nocite{BBL})
-  \item[$\circ$] flowline and cross-flow SSA solutions (van der Veen, 1985; Schoof, 2006)\nocite{SchoofStream,vanderVeen85}
-  \item[$\circ$] flowline Blatter solutions (Glowinski and Rappaz 2003)\nocite{GlowinskiRappaz}
-  \item[$\circ$] flowline Stokes solutions for constant viscosity (Ladyzhenskaya 1963\nocite{Ladyzhenskaya}, Balise and Raymond 1985\nocite{BaliseRaymond1985})
-  \item[$\circ$] manufactured solutions to the Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011)\nocite{JouvetRappaz2011,SargentFastook2010}
-  \end{itemize}
-\end{itemize}
 \end{frame}
 
 
@@ -747,7 +745,7 @@ see \texttt{roughice.m}, which calls \texttt{siaflat.m} after setting-up the nas
   \begin{itemize}
   \item[$\circ$] observed accumulation as surface mass balance,
   \item[$\circ$] allow non-flat bed (so $H\ne h$),
-  \item[$\circ$] differentiate the surface correctly where floating, and
+  \item[$\circ$] compute surface slopes correctly where floating, and
   \item[$\circ$] calve at current calving front location
   \end{itemize}
 here are results from this \emph{toy} Antarctic flow model
@@ -767,6 +765,7 @@ here are results from this \emph{toy} Antarctic flow model
 \end{frame}
 
 
+\begin{comment}
 \begin{frame}{final comments on SIA: origin and rigor}
 
 where does the ``shallow ice approximation'' come from?:
@@ -778,3 +777,4 @@ where does the ``shallow ice approximation'' come from?:
 \item more precisely, by using the small aspect ratio \, $\eps = [H]/[L]$ \, of ice sheets to scale the Stokes model to see which terms make small contributions
 \end{itemize}
 \end{frame}
+\end{comment}
