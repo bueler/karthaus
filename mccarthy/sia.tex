@@ -59,11 +59,11 @@ a model which applies to
 \emph{the SIA uses the formulas from slab-on-a-slope}
 \end{center}
 \item shear stress approximation:
-	$$(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$$
+	$$(\tau_{13},\tau_{23}) = - \rho g (h-z) \nabla h$$
 \item let $\mathbf{u} = (u,v)$, the horizontal velocity
 \item we further approximate
 \begin{align*}
-\mathbf{u}_z &\approx 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) \\
+\mathbf{u}_z &= 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) \\
      &= - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h
 \end{align*}
 \item by integrating vertically, in the non-sliding case,
@@ -90,16 +90,24 @@ H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
   \item[$\circ$] $n$ is the exponent in the Glen flow law
   \item[$\circ$] $\Gamma = 2 A (\rho g)^n / (n+2)$ is a positive constant
   \end{itemize}
-\item numerically solve just equation (1), and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976)\nocite{Mahaffy}
+\item numerically solve (1) and you've got a usable model for \dots \emph{the Barnes ice cap} (Mahaffy, 1976)\nocite{Mahaffy}
 \end{itemize}
 \medskip
 
+\begin{columns}
+\begin{column}{0.7\textwidth}
+\small
 \noindent good questions:
 \begin{enumerate}
 \item where does equation (1) come from?
 \item how to solve it numerically?
 \item how to \emph{think} about it?
 \end{enumerate}  
+\end{column}
+\begin{column}{0.3\textwidth}
+\includegraphics[width=0.8\textwidth]{mahaffy-profiles}
+\end{column}
+\end{columns}
 \end{frame}
 
 
@@ -136,7 +144,7 @@ where $T$ is object temperature and $K$ relates to material and geometry of obje
 \end{columns}
 \end{frame}
 
-
+\begin{comment}
 \begin{frame}{more complete and 2D version of heat equation}
 
 \small
@@ -167,9 +175,9 @@ u_t = F + \Div (D\, \grad u) \label{heat}
 \item this is like the SIA model for ice sheets: temperature $u$ solves a \emph{diffusive, time-evolving partial differential equation (PDE)}
 \end{itemize}
 \end{frame}
+\end{comment}
 
-
-\begin{frame}{analogy: SIA versus heat equation}
+\begin{frame}{analogy: SIA versus 2D heat equation}
 
 \begin{itemize}
 \item side-by-side comparison:
@@ -291,8 +299,8 @@ and so on
 \small
 \begin{itemize}
 \item solves $u_t = D(u_{xx} + u_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
-\item uses gaussian initial condition: $u_0(x,y) = e^{-30 r^2}$
-\item uses ``colon notation'' to remove loops over spatial variables
+\item example uses initial condition $u_0(x,y) = e^{-30 r^2}$
+\item code uses ``colon notation'' to remove loops (over space)
 \item \texttt{>>  heat(1.0,30,30,0.001,20)}
 
 approximates $u$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$

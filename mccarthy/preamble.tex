@@ -1,7 +1,14 @@
 
-\section{introduction}
 
-\subsection{preamble}
+%\subsection{preamble}
+
+\begin{frame}{what are you trying to do with this thing?}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{computer}
+\end{center}
+\end{frame}
+
 
 \begin{frame}{slogans \& scope}
 
@@ -9,12 +16,13 @@ slogans: I will
   \begin{itemize}
   \item \alert{focus on approximating ice flow}
   \item \alert{provide numerical codes that actually work}
+  \item \alert{always care about the continuum model}
   \end{itemize}
 \medskip
 
-scope: I will cover
+scope: I will cover these
   \begin{itemize}
-  \item continuum models
+  \item models
 
     \begin{itemize}
     \item[$\circ$] shallow ice approximation (SIA) in 2D
@@ -33,6 +41,7 @@ scope: I will cover
 \end{frame}
 
 
+\begin{comment}
 \begin{frame}{outside of scope}
 
 \large\emph{not} \normalsize covered here:\normalsize
@@ -52,7 +61,7 @@ scope: I will cover
   \end{itemize}
 
 \end{frame}
-
+\end{comment}
 
 \begin{frame}{notation} 
 
@@ -92,7 +101,7 @@ scope: I will cover
 
   \begin{itemize}
   \item[$\circ$] \texttt{.zip} and \texttt{.tar.gz} forms available from memory stick
-  \item[$\circ$] online:
+  \item[$\circ$] and online:
 
   \bigskip\bigskip\small
   \centerline{\fbox{\url{https://github.com/bueler/karthaus}}}
@@ -101,6 +110,8 @@ scope: I will cover
 \end{itemize}
 \end{frame}
 
+
+\section[introduction]{introduction: view from outside glaciology}
 
 \subsection{ice flow equations}
 
@@ -111,8 +122,9 @@ scope: I will cover
 \item we describe fluids by
   \begin{itemize}
   \item[$\circ$] a \emph{density field}\quad $\rho(t,x,y,z)$
-  \item[$\circ$] a \emph{pressure field}\quad $p(t,x,y,z)$
   \item[$\circ$] a vector \emph{velocity field}\quad $\mathbf{u}(t,x,y,z)$
+  \item[$\circ$] a \emph{pressure field}\quad $p(t,x,y,z)$
+  \item[$\circ$] a \emph{stress field}
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -132,7 +144,7 @@ scope: I will cover
 \item for typical fluids one uses the Navier-Stokes equations as the model:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
-\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance}} \\
+\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance (``$m a = F$'')}} \\
 2 \nu \mathbf{D}_{ij} &= \tau_{ij} &&\text{\emph{flow law}}
 \end{align*}
 \end{itemize}
@@ -381,20 +393,17 @@ Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Sa
 \bigskip
 \small
 \begin{itemize}
-\item ``area'', in this context, becomes ``volume'' in 3D
-\item I'll return to this topic \dots
+\item ``area'' here becomes ``volume'' in 3D
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{combine velocity and mass-continuity equations so far \dots}
 
-\small
 \begin{itemize}
 \item from slab-on-slope velocity formula in $u_0=0$ case,
 \begin{align*}
 \bar u H &= \int_0^H \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)\,dz \\
-	&= \frac{1}{2} A (\rho g \sin\theta)^3  \left(\frac{4}{5} H^5\right) \\
 	&= \frac{2}{5} A (\rho g \sin\theta)^3 H^5
 \end{align*}
 \item note $\sin \theta \approx \tan\theta = - h_x$
@@ -402,7 +411,6 @@ Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Sa
   $$H_t = M + \left(\frac{2}{5} (\rho g)^5 A H^5 |h_x|^2 h_x\right)_x$$
 
 \medskip
-\item this is a rough explanation of ``shallow ice approximation'' (SIA)
-\item next \dots
+\item this is a rough explanation of ``shallow ice approximation'' (SIA) \dots next
 \end{itemize}
 \end{frame}

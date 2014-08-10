@@ -43,15 +43,15 @@
   \maketitle
 \end{frame}
 
-\AtBeginSection[]{}
+%\AtBeginSection[]{}
 
-%\AtBeginSection[]
-%{
-%  \begin{frame}<beamer>
-%    \frametitle{Outline}
-%    \tableofcontents[currentsection,hideallsubsections]
-%  \end{frame}
-%}
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,hideallsubsections]
+  \end{frame}
+}
 
 \input{preamble.tex}
 
@@ -61,7 +61,7 @@
 
 \input{ssa.tex}
 
-\input{advanced.tex}
+%\input{advanced.tex}
 
 % bibliography will actually not appear in slides unless bibtex is run
 %   (i.e. not normally)
