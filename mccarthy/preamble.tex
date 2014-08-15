@@ -78,7 +78,7 @@ scope: I will cover these
   \item $H=$ ice thickness
   \item $h=$ ice surface elevation
   \item $b=$ bedrock surface elevation
-  \item $T=$ ice temperature
+  \item $T=$ temperature
   \item $\mathbf{u}=(u,v,w)=$ ice velocity
   \item $\rho=$ density of ice
   \item $\rho_w=$ density of ocean water
@@ -119,12 +119,12 @@ scope: I will cover these
 
 \begin{itemize}
 \item what's a fluid?
-\item we describe fluids by
+
+\bigskip\bigskip
+\item at minimum, we describe fluids by
   \begin{itemize}
   \item[$\circ$] a \emph{density field}\quad $\rho(t,x,y,z)$
   \item[$\circ$] a vector \emph{velocity field}\quad $\mathbf{u}(t,x,y,z)$
-  \item[$\circ$] a \emph{pressure field}\quad $p(t,x,y,z)$
-  \item[$\circ$] a \emph{stress field}
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -144,9 +144,12 @@ scope: I will cover these
 \item for typical fluids one uses the Navier-Stokes equations as the model:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
-\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance (``$m a = F$'')}} \\
+\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{force balance}} \\
 2 \nu \mathbf{D}_{ij} &= \tau_{ij} &&\text{\emph{flow law}}
 \end{align*}
+
+\bigskip
+\item  force balance equation is ``$m a = F$''
 \end{itemize}
 \end{frame}
 
@@ -319,7 +322,7 @@ p_z &= - \rho g \cos\theta \notag
 	$$w(\text{base})=0, \qquad p(\text{surface})=0, \qquad u(\text{base})=u_0$$
 \item by integrating vertically, get:
   $$w=0, \qquad p = \rho g \cos\theta (H-z), \qquad \tau_{13} = \rho g \sin\theta (H-z)$$
-\item and from ``$u_z = 2 A \tau^2 \tau_{13}$'' get velocity formula
+\item and from ``$u_z = 2 A \tau^2 \tau_{13}$'' get \alert{velocity formula}
 \vspace{-0.05in}
 \begin{align*}
 u(z) &= u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' \\
@@ -393,7 +396,7 @@ Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Sa
 \bigskip
 \small
 \begin{itemize}
-\item ``area'' here becomes ``volume'' in 3D
+\item ``area'' in 2D becomes ``volume'' in 3D
 \end{itemize}
 \end{frame}
 

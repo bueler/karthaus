@@ -151,12 +151,12 @@ where $T$ is object temperature and $K$ relates to material and geometry of obje
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-\item $u(t,x,y)$ is temperature in object at position $x,y$ and time $t$
-\item Fourier rewrote Newton's law as a rule for heat flux: $\mathbf{q} = - k \grad u$
+\item $T(t,x,y)$ is temperature in object at position $x,y$ and time $t$
+\item Fourier rewrote Newton's law as a rule for heat flux: $\mathbf{q} = - k \grad T$
 \item allow an additional heat source $f$
 \item coefficients: $\rho$ is density, $c$ is specific heat, $k$ is conductivity
 \item by conservation of energy get heat equation:
-	$$\rho c u_t = f + \Div (k \grad u)$$
+	$$\rho c T_t = f + \Div (k \grad T)$$
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
@@ -170,9 +170,9 @@ where $T$ is object temperature and $K$ relates to material and geometry of obje
 \item define the ``diffusivity constant'' $D=k/(\rho c)$ and also $F := f/(\rho c)$
 \item for 2D object (e.g.~a plate):
 \begin{equation}
-u_t = F + \Div (D\, \grad u) \label{heat}
+T_t = F + \Div (D\, \grad T) \label{heat}
 \end{equation}
-\item this is like the SIA model for ice sheets: temperature $u$ solves a \emph{diffusive, time-evolving partial differential equation (PDE)}
+\item this is like the SIA model for ice sheets: temperature $T$ solves a \emph{diffusive, time-evolving partial differential equation (PDE)}
 \end{itemize}
 \end{frame}
 \end{comment}
@@ -183,8 +183,8 @@ u_t = F + \Div (D\, \grad u) \label{heat}
 \item side-by-side comparison:
 \begin{center}
 \begin{tabular}{cc}
-\scriptsize SIA:\, $H(t,x,y)$ is ice thickness & \scriptsize heat: $u(t,x,y)$ is temperature \normalsize \\
-	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{u_t = F + \Div (D\, \grad u)}
+\scriptsize SIA:\, $H(t,x,y)$ is ice thickness & \scriptsize heat: $T(t,x,y)$ is temperature \normalsize \\
+	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
 \end{tabular}
 \end{center}
 
@@ -226,7 +226,7 @@ f(x+2\Delta x) &= f(x) + 2 f'(x) \Delta x + 2 f''(x) \Delta x^2 + \frac{4}{3} f'
 \begin{frame}{finite differences for partial derivatives}
 
 \begin{itemize}
-\item we want partial derivative expressions, for example with $u=u(t,x)$:
+\item we want partial derivative expressions, for example with any function $u=u(t,x)$:
 \small
 \begin{align*}
 u_t(t,x) &= \frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} + O(\Delta t), \\
@@ -249,16 +249,17 @@ and so on
 \label{slide:explicit}
 
 \begin{itemize}
-\item consider 1D heat equation $u_t = D u_{xx}$
-\item an \emph{explicit} scheme:
+\item consider 1D heat equation $T_t = D T_{xx}$
+\item an \emph{explicit} scheme comes from:
 \small
-	$$\frac{u(t+\Delta t,x) - u(t,x)}{\Delta t} = D\,\frac{u(t,x+\Delta x) - 2 u(t,x) + u(t,x-\Delta x)}{\Delta x^2}$$
+	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2 T(t,x) + T(t,x-\Delta x)}{\Delta x^2}$$
 \normalsize
-\item the difference between the equation $u_t = D u_{xx}$ and the scheme is $O(\Delta t,\Delta x^2)$ (Morton and Mayers, 2005)\nocite{MortonMayers}
-\item notation: $(t_n,x_j)$ and $u_j^n \approx u(t_n,x_j)$
-\item let $\nu = D \Delta t / (\Delta x)^2$, so
+\item the difference between the equation $T_t = D T_{xx}$ and the scheme is $O(\Delta t,\Delta x^2)$ (Morton and Mayers, 2005)\nocite{MortonMayers}
+\item notation: $(t_n,x_j)$ is a point in the time-space grid
+\item notation: $T_j^n \approx T(t_n,x_j)$
+\item let $\nu = D \Delta t / (\Delta x)^2$, so scheme is
 \small
-	$$u_j^{n+1} = \nu u_{j+1}^n + (1 - 2 \nu) u_j^n + \nu u_{j-1}^n$$
+	$$T_j^{n+1} = \nu T_{j+1}^n + (1 - 2 \nu) T_j^n + \nu T_{j-1}^n$$
 \normalsize
 \end{itemize}
 \begin{columns}
@@ -268,7 +269,7 @@ and so on
 \end{itemize}
 \end{column}
 \begin{column}{0.45\textwidth}
-\includegraphics[width=0.85\textwidth]{expstencil}
+\includegraphics[width=0.7\textwidth]{expstencil}
 \end{column}
 \end{columns}
 \end{frame}
@@ -277,11 +278,11 @@ and so on
 \begin{frame}{explicit scheme in two space dimensions}
 
 \begin{itemize}
-\item recall heat equation in 2D: $u_t = D(u_{xx} + u_{yy})$
-\item in two spatial variables we write $u_{jk}^n \approx u(t_n,x_j,y_k)$
+\item recall heat equation in 2D: $T_t = D(T_{xx} + T_{yy})$
+\item in two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$
 \item so the 2D explicit scheme is
 \small
-	$$\frac{u_{jk}^{n+1} - u_{jk}^n}{\Delta t} = D\,\left(\frac{u_{j+1,k}^n - 2 u_{jk}^n + u_{j-1,k}^n}{\Delta x^2} + \frac{u_{j,k+1}^n - 2 u_{jk}^n + u_{j,k-1}^n}{\Delta y^2}\right)$$
+	$$\frac{T_{jk}^{n+1} - T_{jk}^n}{\Delta t} = D\,\left(\frac{T_{j+1,k}^n - 2 T_{jk}^n + T_{j-1,k}^n}{\Delta x^2} + \frac{T_{j,k+1}^n - 2 T_{jk}^n + T_{j,k-1}^n}{\Delta y^2}\right)$$
 \end{itemize}
 
 \bigskip
@@ -298,12 +299,12 @@ and so on
 
 \small
 \begin{itemize}
-\item solves $u_t = D(u_{xx} + u_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
-\item example uses initial condition $u_0(x,y) = e^{-30 r^2}$
+\item solves $T_t = D(T_{xx} + T_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
+\item example uses initial condition $T_0(x,y) = e^{-30 r^2}$
 \item code uses ``colon notation'' to remove loops (over space)
 \item \texttt{>>  heat(1.0,30,30,0.001,20)}
 
-approximates $u$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$
+approximates $T$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$
 \end{itemize}
 \end{frame}
 
@@ -311,25 +312,25 @@ approximates $u$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $
 \begin{frame}{the look of success}
 
 \begin{itemize}
-\item solving $u_t = u_{xx} + u_{yy}$ on $30\times 30$ grid
+\item solving $T_t = D(T_{xx} + T_{yy})$ on $30\times 30$ grid
 \end{itemize}
 
 \bigskip\bigskip
 \begin{columns}
 \begin{column}{0.5\textwidth}
-initial condition $u(0,x,y)$
+initial condition $T(0,x,y)$
 
 \bigskip
 \begin{center}
-\includegraphics[width=1.2\textwidth]{initialheat}
+\includegraphics[width=1.0\textwidth]{initialheat}
 \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
-approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$ 
+approximate solution $T(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$ 
 
 \bigskip
 \begin{center}
-\includegraphics[width=1.2\textwidth]{finalheat}
+\includegraphics[width=1.0\textwidth]{finalheat}
 \end{center}
 \end{column}
 \end{columns}
@@ -339,7 +340,7 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \begin{frame}{the look of instability}
 
 \begin{itemize}
-\item both figures are from solving $u_t = u_{xx} + u_{yy}$ on the same space grid, but with slightly different time steps
+\item both figures are from solving $T_t = D(T_{xx} + T_{yy})$ on the same space grid, but with slightly different time steps
 \end{itemize}
 
 \bigskip\bigskip
@@ -369,7 +370,7 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 
 \begin{itemize}
 \item recall 1D explicit scheme had the form 
-	$$u_j^{n+1} = \nu u_{j+1}^n + (1 - 2 \nu) u_j^n + \nu u_{j-1}^n$$
+	$$T_j^{n+1} = \nu T_{j+1}^n + (1 - 2 \nu) T_j^n + \nu T_{j-1}^n$$
 \item thus the new value $u_j^{n+1}$ is an \emph{average} of the old values, \emph{if the middle coefficient is positive}:
 	$$1 - 2 \nu \ge 0 \quad \iff \quad  \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}$$
 \item averaging is always stable because averaged wiggles are always smaller than the original wiggles
@@ -385,7 +386,6 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 
 \begin{frame}{\textsl{adaptive} implementation: guaranteed stability}
 
-%\scriptsize\mmess{heatadapt}\normalsize
 \minput{heatadapt}
 
 \begin{itemize}
@@ -433,12 +433,12 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \begin{itemize}
   \item recall the analogy: \qquad (SIA) $\leftrightarrow$ (heat eqn)
   \item the SIA has a diffusivity which varies in space, so consider a more general heat equation:
-  		$$u_t = F + \Div \left(D(x,y) \grad u\right)$$
+  		$$T_t = F + \Div \left(D(x,y) \grad T\right)$$
   \item the explicit method is conditionally stable with the same time step restriction if we evaluate diffusivity $D(x,y)$ at \alert{staggered} grid points:
   \scriptsize
 \begin{align*}
-\Div \left(D(x,y) \grad u\right) &\approx \frac{D_{j+1/2,k}(u_{j+1,k} - u_{j,k}) - D_{j-1/2,k}(u_{j,k} - u_{j-1,k})}{\Delta x^2} \\
-	&\qquad + \frac{D_{j,k+1/2}(u_{j,k+1} - u_{j,k}) - D_{j,k-1/2}(u_{j,k} - u_{j,k-1})}{\Delta y^2}
+\Div \left(D(x,y) \grad u\right) &\approx \frac{D_{j+1/2,k}(T_{j+1,k} - T_{j,k}) - D_{j-1/2,k}(T_{j,k} - T_{j-1,k})}{\Delta x^2} \\
+	&\qquad + \frac{D_{j,k+1/2}(T_{j,k+1} - T_{j,k}) - D_{j,k-1/2}(T_{j,k} - T_{j,k-1})}{\Delta y^2}
 \end{align*}
 \end{itemize}
 
@@ -448,7 +448,7 @@ approximate solution $u(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$
 \begin{column}{0.55\textwidth}
 in stencil at right:
 \begin{itemize}
-\item[] diamonds: $u$
+\item[] diamonds: $T$
 \item[] triangles: $D$
 \end{itemize}
 \end{column}
@@ -468,7 +468,7 @@ in stencil at right:
 
 \small
 \begin{itemize}
-\item solves abstract diffusion equation $u_t = \Div \left(D(x,y)\, \grad u\right)$
+\item solves abstract diffusion equation $T_t = \Div \left(D(x,y)\, \grad T\right)$
 \item user supplies diffusivity on staggered grid
 \end{itemize}
 \end{frame}
@@ -484,6 +484,8 @@ in stencil at right:
   \item[$\circ$] \emph{technique} 2: compare your model with others, and hope that the outliers are the ones with errors
   \item[$\circ$] \emph{technique} 3: build-in a comparison to an exact solution, and actually measure the numerical error $=$ \alert{verification}
   \end{itemize}
+
+\medskip
 \item where to get exact solutions for ice flow models?
   \begin{itemize}
   \item[$\circ$] textbook: Greve and Blatter (2009)\nocite{GreveBlatter2009}
@@ -502,7 +504,7 @@ in stencil at right:
 
 \begin{itemize}
 \item the simple heat equation in 1D with constant diffusivity $D>0$ is:
-	$$u_t = D u_{xx}$$
+	$$T_t = D T_{xx}$$
 \item many \emph{exact} solutions to the heat equation are known
 \item I'll show the ``Green's function'' (a.k.a.~``fundamental solution'' or ``heat kernel'')
 \item it starts at time $t=0$ with a ``delta function'' of heat at the origin $x=0$ and then it spreads out over time
@@ -536,9 +538,9 @@ in stencil at right:
 
 \begin{itemize}
 \item Green's function of heat equation in 1D is
-	$$u(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
+	$$T(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
 \item ``similarity'' variables for 1D heat equation are
-	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad u(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
+	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad T(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
 \end{itemize}
 \begin{columns}
 \begin{column}{0.6\textwidth}
