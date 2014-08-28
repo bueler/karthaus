@@ -95,8 +95,8 @@ urlcolor=ForestGreen     % only if colorlinks=true
     {\large Ed Bueler}
     \vspace{1cm}
 
-    %Karthaus, September 2014
-    version July 2014
+    Karthaus, September 2014
+    %version July 2014
 
     \vfill
     
@@ -113,9 +113,9 @@ urlcolor=ForestGreen     % only if colorlinks=true
 %\setcounter{section}{1}
 \section{Introduction}
 
-The most common use of numerical models in glaciology may be to help you ask: When I put together my incomplete understanding of glacier processes into a mathematical model, does the combination behave as I expect?  In fact, numerical models can at least demonstrate flaws in our understanding of glacier processes, and they can show us how these processes combine to give overall behavior.  But they should be built with care.  The worst outcome is to spend time (and reputation) explaining, through physical argumentation and perhaps using observational evidence, numerical model behavior that is an artifact of poor computer programming or numerical analysis.
+The most common use of numerical models in glaciology may be to help you ask: When I put together my incomplete understanding of glacier processes into a mathematical model, does the combination behave as I expect?  Numerical models can at least demonstrate flaws in our understanding of glacier processes, and they can show us how these processes combine to give overall behavior, but they should be built with care.  The worst outcome is to spend time (and perhaps reputation) explaining, through physical argumentation and perhaps using observational evidence, numerical model behavior that is an artifact of poor computer programming or numerical analysis.
 
-So the reader of this chapter may be surprised that a continuum model, and not a computer code, seems to be our focus much of the time.  While all numerical codes produce some numbers, we want numbers that actually come from our continuum model.  We will therefore analyse numerical implementations to see if they match the continuum model and its solutions.
+So the reader of this chapter may be surprised that a continuum model, and not a computer code, seems to be our focus much of the time.  While all codes produce some numbers, we want numbers that actually come from our continuum model.  We will therefore analyse numerical implementations to see if they match the continuum model and its solutions.
 
 These notes have a limited scope:
   \begin{quote}\emph{shallow approximations of ice flow.}\end{quote}
@@ -123,13 +123,13 @@ They adopt a constructive approach; we provide:
   \begin{quote}\emph{example numerical codes that actually work.}\end{quote}
 Within our scope are the shallow ice approximation (SIA) in two horizontal dimensions (2D), the shallow shelf approximation (SSA) in 1D, and the mass continuity and surface kinematical equations.  We recall the Stokes model, but we do not address its numerical solution.  Our numerical concepts include finite difference schemes, solving algebraic systems from stress balances, and the verification of codes using exact solutions.
 
-Our notation, which generally follows \cite{GreveBlatter2009}, is common in the glaciological literature, but see Table \ref{tab:notation}.  Cartesian coordinates $x,y,z$ have $z$ perpendicular to the geoid and positive-upward.  If these coordinates or ``$t$'' appear as subscripts then they denote partial derivatives: $u_x = \partial u/\partial x$.  Tensor notation uses subscripts from the list $\{1,2,3,i,j\}$, so that, for example, ``$\tau_{ij}$'' or ``$\tau_{13}$'' denote are entries of the deviatoric stress tensor.
+Our notation, which generally follows \cite{GreveBlatter2009}, is common in the glaciological literature, but see Table \ref{tab:notation}.  Cartesian coordinates $x,y,z$ have $z$ perpendicular to the geoid and positive-upward.  If these coordinates or ``$t$'' appear as subscripts then they denote partial derivatives: $u_x = \partial u/\partial x$.  Tensor notation uses subscripts from the list $\{1,2,3,i,j\}$.  For example, ``$\tau_{ij}$'' or ``$\tau_{13}$'' denote entries of the deviatoric stress tensor.
 
 This chapter is based on eighteen Matlab codes, each about one-half page.  All have been tested in Matlab and Octave.  They are distributed in \texttt{.zip} form at
 \begin{quote}
 \url{https://github.com/bueler/karthaus/releases}
 \end{quote}
-\noindent Only five of the codes are printed here, with their comments stripped for compactness and clarity.  The electronic versions, however, have generous comments and help files.
+\noindent Though only five of the codes are printed here, with their comments stripped for compactness and clarity, the electronic versions have generous comments and help files.
 
 \begin{table}[ht]
 \caption{Notation used in these notes, with values for some constants.}
@@ -171,46 +171,43 @@ My first goal in these notes is to get to an equation for which I can say:
 \begin{center}
 \emph{by numerically solving this equation, we have a usable model for an ice sheet.}
 \end{center}
-\noindent A ``usable'' model tends to be \emph{understood} as much as it is \emph{correct}.  And this first model will not be complete by any modern standard.  To get to my goal I first (briefly!) recall the continuum mechanical equations of ice flow.  
+\noindent A ``usable'' model tends to be \emph{understood} as much as it is \emph{correct}.  Also, this first model will not be complete by any modern standard.  To get to my goal I first (briefly!) recall the continuum mechanical equations of ice flow.  
 
-As ice in glaciers is a moving fluid, we describe its motion by a velocity field $\mathbf{u}(t,x,y,z)$.  If the ice fluid were faster-moving than it actually is, and if it were linearly-viscous like liquid water, then it would be a ``typical'' fluid.  We would use the Navier-Stokes equations as the model:
+As ice in glaciers is a moving fluid, we describe its motion by a velocity field $\mathbf{u}(t,x,y,z)$.  If the ice fluid were faster-moving than it actually is, and if it were linearly-viscous like liquid water, then it would be a ``typical'' incompressible fluid.  We would use the Navier-Stokes equations as the model:
 \begin{align}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressible} \\
 \rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nabla \cdot (\nu \nabla \mathbf{u}) + \rho \mathbf{g} &&\text{\emph{stress balance}} \label{navierstokes}
 \end{align}
-In Equation \eqref{navierstokes} the term $\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}$ is an acceleration.  The right-hand side of \eqref{navierstokes} is the total stress, and the equation says ``$ma=F$'', i.e.~it is Newton's second law.
+In equation \eqref{navierstokes} the term $\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}$ is an acceleration.  The right-hand side of \eqref{navierstokes} is the total stress, and so equation \eqref{navierstokes} says ``$ma=F$'', i.e.~it is Newton's second law.  Much time has been spent to get partial understanding of the rich solutions of these Navier-Stokes equations; a book-length introduction like \cite{Acheson} is recommended.  Their numerical solution is \emph{computational fluid dynamics}.
 
-Now, numerical ice flow modelling \emph{is} a topic in computational fluid dynamics.  Ice sheets are a large-scale fluid problem like atmosphere and ocean circulation in climate systems.  But ice flow is an odd one!  Consider some topics which might make ocean circulation modelling exciting, for example:
-  \begin{center} turbulence \qquad convection \qquad  coriolis force  \qquad stratification
+But, is numerical ice flow modelling a part of computational fluid dynamics?  Ice sheets are a large-scale fluid problem like atmosphere and ocean circulation in climate systems, but ice flow is an odd one.  Consider some topics which might make ocean circulation modelling exciting, for example:
+  \begin{center} turbulence \qquad convection \qquad  coriolis force  \qquad density stratification
   \end{center}
 None of these topics are relevant to ice flow.  What could be interesting about the flow of slow and old, and thus surely boring, ice?
 
-We first observe that ice is indeed a slow fluid.  In terms of equation \eqref{navierstokes}, ``slow'' means $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$, which says that the forces (stresses) of inertia are negligible.  
+We first observe that ice is indeed a slow fluid.  In terms of equation \eqref{navierstokes}, ``slow'' means $\rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) \approx 0$, which says that the forces (stresses) of inertia are negligible.  Furthermore, ice is a ``shear-thinning'' fluid with a specific kind of nonlinearly-viscous (``non-Newtonian'') behavior in which larger strain rates imply smaller viscosity.  The viscosity $\nu$ in \eqref{navierstokes} is therefore not constant, and so we add an empirical flow law.
 
-Furthermore, ice is a ``shear-thinning'' fluid with a specific kind of nonlinearly-viscous (``non-Newtonian'') behavior in which larger strain rates imply smaller viscosity.  The viscosity $\nu$ in \eqref{navierstokes} is therefore not constant, and so we add an empirical flow law.
-
-So now the standard model for isothermal flow is this set of Stokes equations:
+\subsection*{Stokes equations}  So now the standard model for isothermal flow is this set of Stokes equations:
 \begin{align}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \label{incompressibleagain} \\
 0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{stress balance}} \label{forcebalance} \\
 Du_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{$n$=3 Glen flow law}} \label{flowlaw}
 \end{align}
-In the flow law \eqref{flowlaw}, the deviatoric stress tensor $\tau_{ij}$ and the strain rate tensor $Du_{ij}$ appear; previous lectures cover these.  Here we merely note that each tensor in \eqref{flowlaw} has trace zero and that $Du_{ij} = (1/2)((u_i)_{x_j}+(u_j)_{x_i})$, indexing coordinates by $x_1,x_2,x_3=x,y,z$.
+In the flow law \eqref{flowlaw}, the deviatoric stress tensor $\tau_{ij}$ and the strain rate tensor $Du_{ij}$ appear; previous lectures cover these.  Here we merely note that each tensor in \eqref{flowlaw} has trace zero and that $Du_{ij} = (1/2)((u_i)_{x_j}+(u_j)_{x_i})$, if we index coordinates by $x_1,x_2,x_3=x,y,z$.
 
-The Stokes equations do not contain a time derivative.  Therefore geometry, boundary stresses, gravity, and ice softness together determine the velocity and stress fields (i.e.~$\bu$, $p$, $\tau_{ij}$) instantaneously.  Indeed, ice flow simulation codes have no memory of momentum or velocity.  More practically, velocity is a ``diagnostic'' output of ice flow codes, because it is not needed for (re)starting a simulation.
+The Stokes equations do not contain a time derivative, so boundary stresses, the force of gravity $\rho \mathbf{g}$, and ice softness $A$ together determine the velocity and stress fields (i.e.~$\bu$, $p$, $\tau_{ij}$) instantaneously.  Therefore ice flow simulation codes have no memory of momentum or velocity.  More practically, velocity is a ``diagnostic'' output of ice flow codes, because it is not needed for (re)starting a simulation.
 
-
-\subsection*{Slab-on-a-slope}  Consider now the $x,z$-plane flow case of equations \eqref{incompressibleagain}, \eqref{forcebalance}, and \eqref{flowlaw}.  ``Plane flow'' means that velocity component $v$ is zero and that all derivatives with respect to $y$ are zero:
-\begin{empheq}[]{align}
+\subsection*{Plane-flow Stokes equations}  Consider now the $x,z$-plane case of equations \eqref{incompressibleagain}, \eqref{forcebalance}, and \eqref{flowlaw}.  ``Plane-flow'' means that velocity component $v$ is zero and that all derivatives with respect to $y$ are zero:
+\begin{align}
 u_x + w_z &= 0 &&\text{\emph{incompressibility}} \label{incompressiblexz} \\
 p_x &= \tau_{11,x} + \tau_{13,z} &&\text{\emph{stress balance} ($x$)} \label{stokespx} \\
 p_z &= \tau_{13,x} - \tau_{11,z} - \rho g &&\text{\emph{stress balance} ($z$)} \label{stokespz} \\
 u_x &= A \tau^2 \tau_{11} &&\text{\emph{flow law} (diagonal)}  \label{forceflowx} \\
 u_z + w _x &= 2 A \tau^2 \tau_{13} &&\text{\emph{flow law} (off-diagonal)} \label{forceflowz}
-\end{empheq}
+\end{align}
 Note that $\tau_{13}$ is a ``vertical'' shear stress while $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are deviatoric longitudinal stresses.  Also $\tau = (\tau_{11}^2+\tau_{13}^2)^{1/2}$ in this case.  Equations \eqref{incompressiblexz}--\eqref{forceflowz} form a system of five nonlinear equations in five scalar unknowns ($u,w,p,\tau_{11},\tau_{13}$).
 
-This may be complicated enough to make us pause before jumping in to numerical solution methods.  But maybe we can handle a simplified situation.  Our first example, a uniform slab or a ``slab-on-a-slope'', is both a case in which we actually solve the Stokes equations, and a motivation for the shallow model in the next subsection.
+\subsection*{Slab-on-a-slope}  Equations \eqref{incompressiblexz}--\eqref{forceflowz} are complicated enough to make us pause before jumping in to numerical solution methods.  Maybe we can handle a simplified situation first.  Our example, a uniform slab of ice, or a ``slab-on-a-slope'', is both a case in which we actually solve the Stokes equations, and a motivation for the shallow model in the next subsection.
 
 \onefig{slab}{Rotated axes for a slab-on-a-slope flow calculation.}
 
@@ -241,9 +238,13 @@ Do we believe formula \eqref{uslab}?  Figure \ref{fig:slabvel} compares to obser
 
 \twofigsizes{slabvel}{athabasca_deform}{Left:  Velocity from slab-on-a-slope formula \eqref{uslab}.  Right:  Velocity in a mountain glacier (Athabasca Glacier, Canada), from inclinometry \cite{SavagePaterson}.}{2.0in}{1.8in}
 
-We have calculated the velocity $u$, but what does this accomplish?  Observe that the equations so far do not address the change in shape of the glacier or ice sheet.  For this we need another equation, the \emph{mass continuity equation}.  First, define the vertical average of velocity:
+\subsection*{Plane-flow mass-continuity equation}  Observe that the equations so far do not address the change in shape of the glacier or ice sheet.  For this we need another equation, the \emph{mass continuity equation}.  First, define the vertical average of velocity:
 	$$\bar u = \frac{1}{H}\int_0^{H} u\,dz.$$
-The flux $q=\bar u\, H$ is the rate of flow input into the side of the area in Figure \ref{fig:slabmasscontfig}.  How does the ice area $A$ in the figure change?\footnote{In three-dimensions it would be ``how does the ice volume change?''}  We add the contributions around the edges,
+The flux $q=\bar u\, H$ is the rate of flow input into the side of the area in Figure \ref{fig:slabmasscontfig}.
+
+\onefigsize{slabmasscontfig}{Mass continuity equation \eqref{masscont1D} follows from considering the changing area $A$ of ice in a planar flow.  Ice can be added at the top by mass balance $M$, but a difference of flux $q=\bar u H$ into left and right sides also changes $A$.}{2.5in}
+
+How does the ice area $A$ in the Figure change?\footnote{In three-dimensions it would be ``how does the ice volume change?''}  We add the contributions around the edges,
 \begin{equation}
 \frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2 \label{masscontintegrated}
 \end{equation}
@@ -255,12 +256,16 @@ H_t = M - \left(\bar u H\right)_x \label{masscont1D}
 \end{equation}
 This mass continuity equation describes the change in the ice thickness in terms of surface mass balance and ice velocity.  This is the most common ``use'' of the velocity in ice flow simulations.
 
-\onefigsize{slabmasscontfig}{Mass continuity equation \eqref{masscont1D} follows from considering the changing area $A$ of ice in a planar flow.  Ice can be added at the top by mass balance $M$, but a difference of flux $q=\bar u H$ into left and right sides also changes $A$.}{2.5in}
-
 
 \section{Shallow ice sheets}
 
-Our slab-on-a-slope example will give us a rough explanation of the shallow ice approximation (SIA), which is a model we will apply more generally.  To show the SIA in its standard form, we vertically integrate velocity formula \eqref{uslab} in the $u_0=0$ (non-sliding) case to get
+Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they experience some contact slip (basal sliding).  The first ice flow model we consider, the non-sliding, isothermal \emph{shallow ice approximation} (SIA), accounts for (\emph{i})--(\emph{iii}).
+
+Regarding the property of shallowness, Figure \ref{fig:green_transect} shows both a no-vertical-exaggeration cross-section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is more familiar in the glaciological literature.  Ice sheets are shallow, though of course the portion of an ice sheet which you want to model may not be.
+
+\onefig{green_transect}{A vertically-exaggerated cross-section of the Greenland ice sheet ($71^\circ$ N) is shown by the green and blue curves.  Without exaggeration it appears as nearly a horizontal line (red).}
+
+Our slab-on-a-slope example gives us a rough explanation of the SIA.  To show the SIA in its plane-flow form, we vertically integrate velocity formula \eqref{uslab} in the $u_0=0$ (non-sliding) case to get
 \begin{equation}
 \bar u H = \int_0^H \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)\,dz = \frac{2}{5} A (\rho g \sin\alpha)^3 H^5. \label{siaubar}
 \end{equation}
@@ -270,15 +275,9 @@ Note $\sin \alpha \approx \tan\alpha = - h_x$.  Combining these statements with 
 \end{equation}
 Equation \eqref{sia1D} is the SIA equation for nonsliding plane flow.  It is a model for the evolution of an ice sheet's thickness $H$ in terms of surface mass balance $M$, ice softness $A$, and bed elevation $b$ (because $h=H+b$).
 
-Additional arguments are needed to demonstrate that the SIA is more general-purpose than the special case of a simple slab; see Notes and References.  Such arguments reduce the Stokes equations under the assumption that the surface and bed slopes, and the depth-to-width ratio, are small.  We will numerically solve the SIA in section \ref{sec:numericalsia}, but first we will restate the SIA in two horizontal dimensions and we solve it in some special cases.
+Additional arguments are needed to demonstrate that the SIA is more general-purpose than the special case of a simple slab; see Notes and References.  Such arguments reduce the Stokes equations under the assumption that the surface and bed slopes, and the depth-to-width ratio, are small.
 
-\subsection*{Understanding the shallow ice approx (SIA)}  Ice sheets have four outstanding properties as fluids.  They are (\emph{i}) slow, (\emph{ii}) shallow,  (\emph{iii}) non-Newtonian, and (\emph{iv}) they experience some contact slip (basal sliding).  The first ice flow model we consider, the non-sliding, isothermal SIA, accounts for (\emph{i})--(\emph{iii}).
-
-Regarding the property of shallowness, Figure \ref{fig:green_transect} shows both a no-vertical-exaggeration cross-section of Greenland at $71^\circ$, as well as the standard vertically-exaggerated version which is more familiar in the glaciological literature.  Ice sheets are shallow, though of course the portion of an ice sheet which you want to model may not be.
-
-\onefig{green_transect}{A vertically-exaggerated cross-section of the Greenland ice sheet ($71^\circ$ N) is shown by the green and blue curves.  Without exaggeration it appears as nearly a horizontal line (red).}
-
-The SIA uses the formulas from slab-on-a-slope, generalized to two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The shear stress approximation is $(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$, which appeared as ``$\tau_{13}= \rho g \sin \alpha (h-z)$ and $\sin \alpha \approx -h_x$'' in the previous section, becomes an equality in the SIA.  Equation \eqref{flowlaw} then gives the SIA formula for shear strain rates
+We will numerically solve the SIA in section \ref{sec:numericalsia}, but first we state it in two horizontal dimensions.  Let $\mathbf{U} = (u,v)$ be the vector horizontal velocity.  The shear stress approximation is $(\tau_{13},\tau_{23}) \approx - \rho g (h-z) \nabla h$, which appeared as ``$\tau_{13}= \rho g \sin \alpha (h-z)$ and $\sin \alpha \approx -h_x$'' in the previous section, becomes an equality in the SIA.  Equation \eqref{flowlaw} then gives the SIA formula for shear strain rates
 \begin{equation*}
 \mathbf{U}_z = 2 A |(\tau_{13},\tau_{23})|^{n-1} (\tau_{13},\tau_{23}) = - 2 A (\rho g)^n (h-z)^n |\nabla h|^{n-1} \nabla h.
 \end{equation*}
@@ -291,11 +290,13 @@ Mass continuity in two horizontal dimensions, which generalizes the 1D version \
 \begin{equation}
     H_t = M - \Div\left(\bar{\mathbf{U}} H\right)  \label{masscont}
 \end{equation}
-Equation \eqref{masscont} may be written $H_t = M - \Div \bq$ in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{U}\,dz = \bar{\mathbf{U}}\,H$.  Define the positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$.  Combining Equations \eqref{siavelocity} and \eqref{masscont}, we get an equation for the rate of thickness change in terms of mass balance $M$, thickness, and surface slope $\grad h$:
+Equation \eqref{masscont} may be written $H_t = M - \Div \bq$ in terms of the map-plane flux $\bq = \int_{b}^{h} \mathbf{U}\,dz = \bar{\mathbf{U}}\,H$.
+
+Combining Equations \eqref{siavelocity} and \eqref{masscont}, we get an equation for the rate of thickness change in terms of mass balance $M$, thickness, and surface slope $\grad h$:
 \begin{equation}
-H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
+H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right), \label{sia}
 \end{equation}
-This equation is the SIA in two dimensions.  Recalling our earlier promise, if we can solve \eqref{sia} numerically then we have, following Mahaffy \cite{Mahaffy}, a usable model for the Barnes ice cap in Canada, a particularly simple ice sheet on a rather flat bed.
+where we have defined the positive constant $\Gamma = 2 A (\rho g)^n / (n+2)$.  Equation \eqref{sia} is the SIA in two dimensions.  Recalling our earlier promise, if we can solve \eqref{sia} numerically then we have, following Mahaffy \cite{Mahaffy}, a usable model for the Barnes ice cap in Canada, a particularly simple ice sheet on a rather flat bed.
 
 \subsection*{Analogy with the heat equation}  The SIA model is easy to compare with the better-known heat equation.  All numerical methods for solving \eqref{sia} can be understood as modifications of well-known heat equation methods.
 
@@ -330,14 +331,14 @@ The analogy suggests that we identify the \emph{diffusivity in the SIA} as:
 	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
 A non-sliding SIA flow therefore diffuses the thickness of the ice sheet.  When this product of $\Gamma$ and the powers of $H$ and $|\grad h|$ comes out large then the diffusion acts most quickly.
 
-This diffusion equation analogy explains generally why the surfaces of ice sheets are smooth, at least if we overlook non-fluid processes like crevassing and wind-driven (snow) dunes.  There are, however, some issues with the analogy:
+This diffusion equation analogy explains generally why the surfaces of ice sheets are smooth, at least if we overlook non-flow processes like crevassing and wind-driven (snow) dunes.  There are, however, some issues with the analogy:
 \begin{itemize}
 \item The diffusivity $D$ depends on the solution thickness $H$ and surface elevation $h$, and also $h$ and $H$ are not the same function, but differ by the bed elevation $b$.
 \item The diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
 \end{itemize}
 More importantly, however,
 \begin{itemize}
-\item Ice flow is much less diffusive when longitudinal (membrane) stresses are important, as when ice is sliding or when the flow is confined by mountainous terrain.
+\item Ice flow is much less diffusive when longitudinal (membrane) stresses are important, as when ice is floating or sliding or when the flow is confined by mountainous terrain.
 \end{itemize}
 But we will continue with the SIA, working toward a verified numerical scheme for \eqref{sia} in Section \ref{sec:numericalsia}.
 
@@ -570,7 +571,7 @@ Areas of the Antarctic ice sheet with low-slope and (actual) fast-flowing ice ex
 Figure \ref{fig:antvolcompare} compares the ice volume time series for 50 km, 25 km, and 20 km grids.  This result, namely grid dependence of the ice volume, is typical.  One cause is that most steep gradients near the ice margin are poorly resolved, and this is true to differing degrees at these coarse resolutions.  Mainly Figure \ref{fig:antvolcompare} is a warning about the interpretation of model runs:  Even if the data is available only on a fixed grid, the model should be run at different resolutions to evaluate the robustness of the model results.
 
 
-\section{Mass continuity and kinematical equations}
+\section{Interlude: Mass continuity and kinematical equations}
 
 Recall that in the SIA the ``stress balance'' is essentially formula \eqref{siavelocity} for the velocity.  It combines with the mass continuity equation \eqref{masscont} to give model \eqref{sia} for the ice sheet thickness.  The major SIA equation \eqref{sia} thus combines two concepts which we will now think about separately, and in greater generality, in the remainder of these notes.
 
