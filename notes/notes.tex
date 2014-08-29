@@ -222,16 +222,13 @@ w_z &= 0 &   0 &= \tau_{11} \label{stokesslab} \\
 \tau_{13,z} &= - \rho g \sin\alpha &   u_z &= 2 A \tau^2 \tau_{13} \notag \\
 p_z &= -\tau_{11,z} = - \rho g \cos\alpha \notag
 \end{align}
-We apply boundary conditions for these functions of $z$:
-	$$w(0)=0, \qquad p(H)=0, \qquad u(0)=u_0.$$
-The basal velocity $u_0$ will remain undetermined for now.
+We apply boundary conditions for these functions of $z$: $w(0)=0$, $p(H)=0$, $u(0)=u_0$.  The basal velocity $u_0$ will remain undetermined for now.
 
 By integrating equations \eqref{stokesslab} vertically and using $\tau_{11}=0$, we get $w=0$, $p = \rho g \cos\alpha (H-z)$, and $\tau_{13} = \rho g \sin\alpha (H-z)$.  Note that $H-z$ is the depth below the ice surface.  Both the pressure $p$ and shear stress $\tau_{13}$ are thus proportional to depth.
 
 Because $u_z = 2 A \tau^2 \tau_{13}$, by integrating vertically again we find a formula for the horizontal velocity,
 \begin{align}
-u &= u_0 + 2 A (\rho g \sin\alpha)^3 \int_0^z (H-z')^3\,dz' \notag \\
-  &= u_0 + \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)  \label{uslab}
+u &= u_0 + \frac{1}{2} A (\rho g \sin\alpha)^3  \left(H^4 - (H-z)^4\right)  \label{uslab}
 \end{align}
 
 Do we believe formula \eqref{uslab}?  Figure \ref{fig:slabvel} compares to observations of a mountain glacier.  This comparison shows we have done a credible job of capturing deformation flow velocity, though we do not yet have a model for the sliding velocity $u_0$ (i.e.~basal motion).  
@@ -242,11 +239,11 @@ Do we believe formula \eqref{uslab}?  Figure \ref{fig:slabvel} compares to obser
 	$$\bar u = \frac{1}{H}\int_0^{H} u\,dz.$$
 The flux $q=\bar u\, H$ is the rate of flow input into the side of the area in Figure \ref{fig:slabmasscontfig}.
 
-\onefigsize{slabmasscontfig}{Mass continuity equation \eqref{masscont1D} follows from considering the changing area $A$ of ice in a planar flow.  Ice can be added at the top by mass balance $M$, but a difference of flux $q=\bar u H$ into left and right sides also changes $A$.}{2.5in}
+\onefigsize{slabmasscontfig}{Mass continuity equation \eqref{masscont1D} follows from considering the changing area $A$ of ice in a planar flow.  Ice can be added by surface mass balance $M$ or a difference of flux $q=\bar u H$ into the left and right sides.}{2.5in}
 
-How does the ice area $A$ in the Figure change?\footnote{In three-dimensions it would be ``how does the ice volume change?''}  We add the contributions around the edges,
+How does the ice area $A$ in the Figure change?\footnote{In three-dimensions it would be ``how does the ice volume change?''}  We add the boundary contributions,
 \begin{equation}
-\frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2 \label{masscontintegrated}
+\frac{dA}{dt} = \int_{x_1}^{x_2} M(x)\,dx + \bar u_1 H_1 - \bar u_2 H_2, \label{masscontintegrated}
 \end{equation}
 where $M(x)$ is the climatic mass balance at the ice surface.
 
@@ -256,6 +253,25 @@ H_t = M - \left(\bar u H\right)_x \label{masscont1D}
 \end{equation}
 This mass continuity equation describes the change in the ice thickness in terms of surface mass balance and ice velocity.  This is the most common ``use'' of the velocity in ice flow simulations.
 
+\subsection*{The hydrostatic and Blatter approximations}  We return now briefly to equations \eqref{incompressiblexz}--\eqref{forceflowz}, and reconsider how to simplify them.  One method, present in all shallow models, is the ``hydrostatic'' approximation which drops a single term in the $z$-component of the stress balance \eqref{stokespz}.  It assumes that $\tau_{13,x}$, the horizontal variation in the vertical shear stress, is small compared to the other terms.  Thus
+\begin{equation}
+p_z = - \tau_{11,z} - \rho g. \label{hydrostaticpz}
+\end{equation}
+Because the (Cauchy) stress tensor $\sigma_{ij}$ is related to the deviatoric tensor by $\sigma_{ij} = \tau_{ij} - p \delta_{ij}$, and thus $p + \tau_{11} = p - \tau_{33} = - \sigma_{33}$, equation \eqref{hydrostaticpz} says that the vertical normal stress $\sigma_{33}$ is linear in depth.  Taking it to have surface value zero we get
+\begin{equation}
+p + \tau_{11} = \rho g (h-z). \label{hydrostaticitself}
+\end{equation}
+FIXME: also rewrite in viscosity form
+
+FIXME: get hydrostatic equation
+\begin{equation}
+\rho g h_x = \left(4 \nu u_x\right)_x + \left(\nu (u_z+w_x)\right)_z \qquad\text{\emph{hydrostatic stress balance}} \label{stresshydrostatic}
+\end{equation}
+FIXME: drop $w_x$ to get Blatter equations
+\begin{equation}
+\rho g h_x = \left(4 \nu u_x\right)_x + \left(\nu u_z)\right)_z \qquad\text{\emph{Blatter stress balance}} \label{stressblatter}
+\end{equation}
+FIXME: in both models get $w$ from incompressibility \eqref{incompressiblexz}; all details are an exercise
 
 \section{Shallow ice sheets}
 
@@ -321,24 +337,27 @@ Figure \ref{fig:initialheat} shows a solution of this heat equation, where the i
 The SIA equation \eqref{sia} and the heat equation \eqref{heat} are each diffusive, time-evolving partial differential equations (PDEs).  A side-by-side comparison is illuminating:
 \begin{center}
 \begin{tabular}{cc}
+\vspace{1mm}
 SIA:\, $H$ is ice thickness & \phantom{foo bar} heat: $T$ is temperature\phantom{foo bar}  \\
-	\boxed{H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)}  &  \boxed{T_t = F + \Div (D\, \grad T)}
+\vspace{1mm}
+	$H_t = M + \Div \left({\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}\, \grad h \right)$  &  $T_t = F + \Div (D\, \grad T)$
 \end{tabular}
 \end{center}
+\vspace{1mm}
 Notice that the number of derivatives (one time and two space derivatives) and the signs are the same.  Surface mass balance $M$ is analogous to heat source $F$.  
 
 The analogy suggests that we identify the \emph{diffusivity in the SIA} as:
 	$$D = {\color{red}\Gamma H^{n+2} |\grad h|^{n-1}}.$$
-A non-sliding SIA flow therefore diffuses the thickness of the ice sheet.  When this product of $\Gamma$ and the powers of $H$ and $|\grad h|$ comes out large then the diffusion acts most quickly.
+A non-sliding SIA flow diffuses the thickness of the ice sheet.  When this $D$, a product of $\Gamma$ and the powers of $H$ and $|\grad h|$, comes out large then the diffusion acts most quickly.
 
 This diffusion equation analogy explains generally why the surfaces of ice sheets are smooth, at least if we overlook non-flow processes like crevassing and wind-driven (snow) dunes.  There are, however, some issues with the analogy:
 \begin{itemize}
-\item The diffusivity $D$ depends on the solution thickness $H$ and surface elevation $h$, and also $h$ and $H$ are not the same function, but differ by the bed elevation $b$.
+\item The diffusivity $D$ depends on the solution, both the thickness $H$ and surface elevation $h$.
 \item The diffusivity $D$ goes to zero at margins, where $H\to 0$, and at divides and domes, where $|\grad h|\to 0$.
 \end{itemize}
-More importantly, however,
+More important is a deficiency of the SIA model and not \emph{per se} the analogy, namely
 \begin{itemize}
-\item Ice flow is much less diffusive when longitudinal (membrane) stresses are important, as when ice is floating or sliding or when the flow is confined by mountainous terrain.
+\item Ice flow is much less diffusive when longitudinal (membrane) stresses are important, as when ice is floating or sliding or when the flow is confined by terrain.
 \end{itemize}
 But we will continue with the SIA, working toward a verified numerical scheme for \eqref{sia} in Section \ref{sec:numericalsia}.
 
@@ -470,9 +489,7 @@ The user supplies the diffusivity $D(x,y)$ to \texttt{diffusion.m} on the stagge
 
 \section{Numerically solving the SIA} \label{sec:numericalsia}
 
-In SIA equation \eqref{sia} we have diffusivity $D = \Gamma H^{n+2} |\grad h|^{n-1}$.  There are two interesting aspects of this formula.
-
-First, $D$ goes to zero, i.e.~it ``degenerates,'' when either $H\to 0$ or $\grad h \to 0$.  Degenerate diffusion equations are automatically free boundary problems, but this aspect of the thickness evolution problem is no surprise to a glaciologist.  Determining the location of the margin is an obvious part of modelling a glacier or ice sheet.  To address this free boundary issue in our explicit time-stepping code it suffices to numerically compute new thicknesses and then set them to zero if they come out negative.
+In SIA equation \eqref{sia} we have diffusivity $D = \Gamma H^{n+2} |\grad h|^{n-1}$.  There are two interesting aspects of this formula.  First, as already noted, $D$ goes to zero, i.e.~it ``degenerates,'' when either $H\to 0$ or $\grad h \to 0$.  Degenerate diffusion equations are automatically free boundary problems, but this aspect of the thickness evolution problem is no surprise to a glaciologist.  Determining the location of the margin is an obvious part of modelling a glacier or ice sheet.  To address this free boundary issue in our explicit time-stepping code it suffices to numerically compute new thicknesses and then set them to zero if they come out negative.
 
 Second, for numerical stability and mass conservation we should compute $D$ on a ``staggered'' grid.  Various finite difference schemes for computing it have been proposed.  All of these schemes involve averaging $H$ and differencing $h$ in a ``balanced'' way onto the staggered grid.  In the code \texttt{siaflat.m} below we use the Mahaffy \cite{Mahaffy} method, with the stencil for computing $D$ shown in Figure \ref{fig:diffstencil}.  This code only works for the flat bed, zero surface mass balance case, but we will correct these deficiencies later.
 
@@ -508,7 +525,7 @@ A numerical solver for the 1D heat equation which starts with initial values $T(
 \begin{equation}
 s = t^{-1/18} r, \qquad \qquad H(t,r)=t^{-1/9} \phi(s). \label{halfarscalings}
 \end{equation}
-Here $r=(x^2+y^2)^{1/2}$ is the distance from the origin.  The scalings in \eqref{halfarscalings} imply that, quite differently from heat, the diffusion of ice slows down severely as the shape flattens out.  The powers $t^{-1/9}$ and $t^{-1/18}$ change very slowly for large times $t$.
+Here $r=(x^2+y^2)^{1/2}$ is the distance from the origin.  These scalings are related to each other by conservation of mass, because no mass is gained or lost through the surface. Scalings \eqref{halfarscalings} imply that, quite differently from heat, the diffusion of ice slows down severely as the shape flattens out.  The powers $t^{-1/9}$ and $t^{-1/18}$ change very slowly for large times $t$.
 
 \onefigsize{siascaling}{A case of Halfar's solution \eqref{halfar} of the SIA equation \eqref{sia} on a flat bed with zero mass balance.  The solution is shown on $H$ (m) versus $r$ (km) axes for times $t=1,10,100,1000,10000$ years.}{5.5in}
 
@@ -520,7 +537,7 @@ Here the ``characteristic time'' $t_0 = (18 \Gamma)^{-1} (7/4)^3 R_0^4 H_0^{-7}$
 
 Formula \eqref{halfar} is plotted in Figure \ref{fig:siascaling}.  We see that for times significantly greater than $t_0$ (i.e.~$t/t_0 \gg 1$) the solution changes very slowly.  For example, the change between years $1$ and $100$ is larger than that between years $1000$ and $10000$.  The \emph{volume} of ice in this Halfar ice cap is, however, constant with $t$; see the Exercises.
 
-\subsection*{Using Halfar's solution}  Formula \eqref{halfar} is simple enough to use for verifying time-dependent SIA models.  The code \texttt{verifysia.m} (not shown) takes as input the number of grid points in each ($x,y$) direction.  It uses the Halfar solution at 200 a as the initial condition, does a numerical run of \texttt{siaflat.m} above to time 20000 a, and then compares to the Halfar formula for that time:
+\subsection*{Using Halfar's solution}  Formula \eqref{halfar} is simple enough to use for verifying time-dependent SIA models.  The code \texttt{verifysia.m} (not shown) takes as input the number of grid points in each ($x,y$) direction.  It uses the Halfar solution at 200 a as the initial condition, does a numerical run of \texttt{siaflat.m} above to a final time 20000 a, and then compares to the Halfar formula for that time.  By ``compares'' we mean it computes the thickness error, the absolute values of the differences between the numerical and exact thickness solutions at the final time:
 \small
 \begin{verbatim}
 >> verifysia(20)
@@ -533,7 +550,7 @@ average thickness error     = 2.800
 average thickness error     = 1.059
 \end{verbatim}
 \normalsize
-We see that the thickness error, namely the average of the absolute values of the differences between the numerical and exact thickness solutions at the final time, decreases with increasing grid resolution.  This is as expected for a correctly-implemented code.  What is less obvious, perhaps, is that almost any numerical implementation mistake---almost any bug---will break this property, and these errors will not shrink.
+We see that the average thickness error decreases with increasing grid resolution.  This is as expected for a correctly-implemented code.  What is less obvious, perhaps, is that almost any numerical implementation mistake---almost any bug---will break this property, and these errors will not shrink.
 
 You might ask, is the Halfar solution ever useful for modelling real ice masses?  The answer is yes.  In fact, J.~Nye and others (2000; \cite{NyeIcarus2000}) compared the long-time consequences of different flow laws for the south polar cap on Mars.  In particular, they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters by comparing the long-time behavior of the corresponding Halfar solutions to the observed polar cap properties.  Their conclusions:
   \begin{quote}
@@ -541,7 +558,7 @@ You might ask, is the Halfar solution ever useful for modelling real ice masses?
   \end{quote}
 This theoretical result has since been confirmed by the observation and sampling of the polar geology of Mars.
 
-Are exact solutions like Halfar's always available when needed?  The answer is ``no'', of course, though many ice flow models already have exact solutions which are relevant to verification; see the Notes and References..  For example, we will use van der Veen's solution for ice shelves in a later section.  On the other hand, the absence of exact solutions may show that not enough thought has gone into the continuum model itself.
+Are exact solutions like Halfar's always available when needed?  The answer is ``no'', of course, though many ice flow models do have exact solutions which are relevant to verification; see the Notes and References.  For example, we will use van der Veen's solution for ice shelves in a later section.  On the other hand, the absence of exact solutions may show that not enough thought has gone into the continuum model itself.
 
 \subsection*{A test of robustness}  Verification is an ideal way to start testing a code.  Another kind of test is for ``robustness''.  One asks: Does the model break when you ask it to do hard things?  Unlike for verification, we might not have precise knowledge of what it should do, but a well-implemented model should act in a ``reasonable'' way.
 
@@ -551,7 +568,7 @@ In \texttt{roughice.m} we give \texttt{siaflat.m} a randomly-generated initial i
 
 \twofig{roughinitial}{roughfinal}{The SIA model evolves the huge-driving-stress initial ice sheet at left to the ice cap at right in only 50 model years.}
 
-The shape at right in Figure \ref{fig:roughinitial} is rather close to a Halfar solution.  Indeed Halfar proved that all solutions of the SIA on a flat bed with no mass balance asymptotically approach the Halfar solution.
+The shape at right in Figure \ref{fig:roughinitial} is rather close to a Halfar solution.  Indeed Halfar proved that all solutions of the zero-mass-balance SIA on a flat bed asymptotically approach the Halfar solution.
 
 
 \section{Applying our numerical ice sheet model}
@@ -575,7 +592,7 @@ Figure \ref{fig:antvolcompare} compares the ice volume time series for 50 km, 25
 
 Recall that in the SIA the ``stress balance'' is essentially formula \eqref{siavelocity} for the velocity.  It combines with the mass continuity equation \eqref{masscont} to give model \eqref{sia} for the ice sheet thickness.  The major SIA equation \eqref{sia} thus combines two concepts which we will now think about separately, and in greater generality, in the remainder of these notes.
 
-The basic shallow assumption made by most ice flow theories\footnote{There are several inequivalent shallow theories: SIA, SSA, hybrids, Blatter-Pattyn, \dots} is that the surface and base of the ice are differentiable functions $z=h(t,x,y)$ and $z=b(t,x,y)$.  Thus surface overhang is not allowed.\footnote{By contrast, the Stokes theory of slow viscous fluids only needs a closed surface in three-dimensional space as a boundary surface for the fluid.}  Most ice sheet and glacier models take a map-plane perspective, so they have a well-defined ice thickness which is the difference of the upper and lower surfaces: $H=h-b$.
+The basic shallow assumption made by most ice flow theories\footnote{There are several inequivalent shallow theories: SIA, SSA, hybrids, Blatter-Pattyn, \dots} is that the surface and base of the ice are differentiable functions $z=h(t,x,y)$ and $z=b(t,x,y)$.  Thus surface overhang is not allowed, though, by contrast, the Stokes theory of slow viscous fluids only needs a closed surface in three-dimensional space as a boundary surface for the fluid.  Most ice sheet and glacier models take a map-plane perspective, however, and they have a well-defined ice thickness: $H=h-b$.
 
 To pursue such ideas a bit further, let us state the ``kinematical equations'' which apply at upper and lower surfaces of the ice sheet.  Let $a$ be the upper surface (climatic) mass balance function ($a>0$ is accumulation) and $s$ be the basal melt rate function ($s>0$ is basal melting).  In the equations which follow these are measured in thickness-per-time units, but they could be in mass-per-area-per-time units also.  The net map-plane mass balance $M=a-s$, which already appears in the mass continuity equation \eqref{masscont}, is the difference of these surface fluxes.
 
@@ -589,17 +606,17 @@ b_t = s - \mathbf{U}\big|_b \cdot \grad b + w\big|_b.  \label{basekine}
 \end{equation}
 (Recall $\mathbf{U}$ is the horizontal ice velocity and $w$ the vertical ice velocity.)  Equations \eqref{surfkine} and \eqref{basekine} describe the movement of the ice's upper surface and lower surfaces, respectively, from the velocity of the ice and the mass balance functions at the respective surfaces.
 
-We can now state an important mathematical fact which follows merely from the assumption of unique upper and basal surface elevations.  Namely, that the surface kinematical and mass continuity equations are equivalent.  More precisely, any pair of these equations implies the third:
+We can now state an important mathematical fact which follows merely from the assumption of well-defined upper and basal surface elevations.  Namely, that the surface kinematical and mass continuity equations are closely-related.  More precisely, any pair of these equations implies the third:
   \begin{itemize}
   \item the surface kinematical equation \eqref{surfkine},
   \item the base kinematical equation \eqref{basekine}, and
   \item the map-plane mass continuity equation \eqref{masscont}.
   \end{itemize}
-One proves these equivalences by using the incompressibility of ice \eqref{incompressible} and the Leibniz rule for differentiating integrals.  The details are left for exercises.
+One proves these facts by using the incompressibility of ice \eqref{incompressible} and the Leibniz rule for differentiating integrals.  The details are left for exercises.
 
-The bedrock is often regarded as fixed (i.e.~$b_t=0$), and in fact the basal kinematical equation is often not explicitly mentioned.  Instead one gets a simplified view.  In the case of a fixed base with no sliding, for example, the basal value of the vertical velocity equals the basal melt rate.  This simplification corresponds to $b_t=0$ and $\mathbf{U}\big|_b=0$ so that $w\big|_b=-s$ from \eqref{basekine}.
+The bedrock is often regarded as fixed (i.e.~$b_t=0$), and in fact the basal kinematical equation is often not explicitly mentioned.  Instead one gets a simplified view.  In the case of non-deformable bedrock and no sliding, for example, the basal value of the vertical velocity equals the basal melt rate.  This simplification corresponds to $b_t=0$ and $\mathbf{U}\big|_b=0$ so that $w\big|_b=-s$ from \eqref{basekine}.
 
-\subsection*{Prognostic models}  To conclude this short section we can now sketch the structure of a general ``prognostic,'' i.e.~ice geometry evolving, isothermal ice sheet model.  Each time step follows this recipe:
+\subsection*{Prognostic models}  We can now sketch the structure of a general ``prognostic,'' i.e.~ice geometry evolving, isothermal ice sheet model.  Each time step follows this recipe:
   \begin{itemize}
   \item numerically solve a stress balance, which gives velocity $\mathbf{u}=(u,v,w)$,
     \begin{itemize}
@@ -614,7 +631,7 @@ Like most ice sheet models, we use the mass continuity equation \eqref{masscont}
 
 The above ``standard'' ice sheet model has many variations.  Some glaciological questions are answered just by solving the stress balance for the velocity.  Sometimes the goal is the steady state configuration of the glacier, which might be computed more quickly by iteratively solving steady state equations than by time-stepping physical evolution equations to steady state.  Other processes are usually simulated at each time step, such as the conservation of energy within the ice, or subglacial and supraglacial processes.  Understanding the diverse time scales associated to these processes is usually an important step in designing the coupled model.
 
-When using the SIA equation \eqref{sia}, one can apparently bypass the computation of the velocity.  That is because the analogy to the heat equation allowed us to write the mass continuity equation as a diffusion, with $\bq=-D\nabla h$ for the flux instead of the more general $\bq = \bar{\bU} H$.  Fast flow in ice sheets is associated with sliding and floating ice, however, and for these flows the ice geometry evolution is not a diffusion.  Solving the stress balance for the velocity field is obligatory, and a nontrivial step.  We consider such a stress balance next.
+When using the SIA equation \eqref{sia}, one can seemingly bypass the computation of the velocity.  That is because we could write the mass continuity equation as a diffusion, with $\bq=-D\nabla h$ for the flux instead of the more general $\bq = \bar{\bU} H$.  Fast flow in ice sheets is associated with sliding and floating ice, however, and for these flows the ice geometry evolution is not a diffusion, and so only ``$\bq = \bar{\bU} H$'' applies.  Solving the stress balance for the velocity field is then an obligatory, and usually nontrivial, step.  We consider such a stress balance next.
 
 
 \section{Shelves and streams} \label{sec:shelvesandstreams}
@@ -742,11 +759,11 @@ These notes are brief, and so they give a very incomplete view of numerical mode
 \item Test the parts: Is the component robust? Does it show convergence?
 \end{itemize}
 
-Regarding the specific ice flow models covered in these notes, here are three high-level points, as a kind of conclusion:
+Regarding the specific ice flow models covered in these notes, here are three high-level points, as a meager conclusion:
 \begin{itemize}
-\item The mass continuity equation is the part of a model which describes how the ice geometry evolves.  It is a kind of transport equation in the map-plane, but with diffusive character at larger spatial scales.  The numerical approach to this equation depends on which is the stress balance which supplies the ice velocity or ice flux.  For sure mass continuity is a diffusion for frozen bed, large scale flows, and in that case the SIA is a good choice.  Mass continuity is \emph{not} very diffusive for membrane stresses (e.g.~SSA), especially with no basal resistance as in ice shelves.  It has some diffusiveness for ice streams, though how much is hard to quantify.
-\item Membrane stress balance equations like the SSA (and the Blatter-Pattyn and Stokes models not covere here) determine horizontal velocity from geometry and boundary conditions.  Because of the Glen law these equations are nonlinear, so iteration is necessary.  At each iteration a sparse matrix ``inner'' problem is solved; non-experts should give this matrix problem to a solver package.
+\item The mass continuity equation is the part of an ice sheet model which describes how the ice geometry evolves.  It is a kind of transport equation in the map-plane, but with diffusive character at larger spatial scales.  The numerical approach to this equation depends on which is the stress balance which supplies the ice velocity or ice flux.  Mass continuity is a diffusion for frozen bed, large scale flows, and in that case the SIA is a good choice.  Mass continuity is \emph{not} very diffusive for membrane stresses (e.g.~SSA), especially with no basal resistance as in ice shelves.  It has some diffusiveness for ice streams, though how much is hard to quantify.
 \item The SIA stress balance is exceptional because it is not horizontally-distributed.  In the SIA, velocity follows immediately by vertical integration of the driving stress.
+\item Membrane stress balance equations like the SSA (and the Blatter-Pattyn and Stokes models also) determine horizontal velocity from geometry and boundary conditions.  Because of the Glen law these equations are nonlinear, so iteration is necessary.  At each iteration a sparse matrix ``inner'' problem is solved; non-experts should give this matrix problem to a solver package.
 \end{itemize}
 
 
@@ -786,7 +803,8 @@ The finite difference material in this Chapter should probably be read with refe
 \bibliographystyle{siam}
 
 
-\clearpage\newpage
+%\clearpage\newpage
+\bigskip
 \small
 \section*{Exercises}
 
