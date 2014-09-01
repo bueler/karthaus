@@ -11,9 +11,9 @@ plot([0.0,5.0],[0.0,0.0], color='k', linewidth=2.0)
 plot([0.0,0.0],[0.0,H0], color='k', linewidth=2.0)
 plot([5.0,5.0],[0.0,H[-1]], color='k', linewidth=2.0)
 
-annotate(r'$\bar\mathbf{u}_1$', size=24.0,
+annotate(r'$\bar U_1$', size=24.0,
          xy=(0.5, H0/3.0), xytext=(-0.6, H0/3.0-0.05*H0), arrowprops=dict(arrowstyle="->") )
-annotate(r'$\bar\mathbf{u}_2$', size=24.0,
+annotate(r'$\bar U_2$', size=24.0,
          xy=(5.5, H0/3.0), xytext=(4.0, H0/3.0-0.05*H0), arrowprops=dict(arrowstyle="->") )
 
 annotate(r'$M(x)$', size=24.0,
