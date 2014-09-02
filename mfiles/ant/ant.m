@@ -3,6 +3,7 @@ function [t vol] = ant(filename,doplot,E)
 % extract data from re-gridded SeaRISE-Antarctic data.  See
 % Ant50km.nc for metadata.
 % Example: Using Ant50km.nc data for 40 ka run:
+%   >> addpath('../')   % so Matlab/Octave can find other codes
 %   >> ant
 % Using different gridded data and different enhancement factor
 % E=5.0, and saving volume time series for reload:
@@ -85,7 +86,7 @@ xlabel x, ylabel y, title('thickness change')
 figure(4)
 plot(t/secpera,vol/(1.0e6*1.0e9),'o-','markersize',11,'linewidth',2)
 xlabel('t  (a)','fontsize',14)
-%ylabel('volume  (10^6 km^3)','fontsize',14)
+ylabel('volume  (10^6 km^3)','fontsize',14)
 grid on
 %print -dpdf antvol.pdf
 
