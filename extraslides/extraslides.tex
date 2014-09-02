@@ -1,4 +1,4 @@
-% Copyright 2009--2012  Ed Bueler
+% Copyright 2009--2014  Ed Bueler
 
 %\documentclass[10pt,hyperref={pdfpagelabels=false}]{beamer}
 \documentclass[10pt]{beamer}
@@ -32,9 +32,7 @@
 \usepackage{hyperref}
 
 
-\title[Numerical modelling]{
-Numerical modelling \\ 
-of ice sheets, streams, and shelves}
+\title{EXTRA SLIDES on Numerical modelling}
 
 \author{Ed Bueler}
 
@@ -46,17 +44,17 @@ University of Alaska, Fairbanks}
 \lecture[1]{Numerical modelling of ice sheets and ice shelves}{lecture-text}
 
 
-\date{September 2012 \\ Karthaus Summer School}
+\date{September 2014 \\ Karthaus Summer School}
 
 
 % optional outline at start of each section
-%\AtBeginSection[]
-%{
-%  \begin{frame}<beamer>
-%    \frametitle{Outline}
-%    \tableofcontents[currentsection,hideallsubsections]
-%  \end{frame}
-%}
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,hideallsubsections]
+  \end{frame}
+}
 
 
 % If you wish to uncover everything in a step-wise fashion, uncomment:
@@ -127,29 +125,20 @@ University of Alaska, Fairbanks}
 
 \begin{document}
 
-\graphicspath{{photos/}{pdffigs/}}
+\graphicspath{{../photos/}{../pdffigs/}}
 
 \begin{frame}
   \maketitle
 \end{frame}
 
-% the major parts are in separate files:
+\input{ps-techskills.tex}
 
-\input{intro.tex}
+\input{ps-oversold.tex}
 
-\input{sia.tex}
-
-\input{masscont.tex}
-
-\input{ssa.tex}
+\input{ps-freebdry.tex}
 
 
-\begin{frame}{The End}
 
-\begin{itemize}
-\item that's the end
-\item \alert{questions?}
-\end{itemize}
-\end{frame}
 
 \end{document}
+
