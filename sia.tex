@@ -307,22 +307,24 @@ and so on
 \small
 	$$\frac{T(t+\Delta t,x) - T(t,x)}{\Delta t} \approx D\,\frac{T(t,x+\Delta x) - 2 T(t,x) + T(t,x-\Delta x)}{\Delta x^2}$$
 \normalsize
-\item the difference between the equation $T_t = D T_{xx}$ and the scheme is $O(\Delta t,\Delta x^2)$ (Morton and Mayers, 2005)\nocite{MortonMayers}
-\item notation: $(t_n,x_j)$ is a point in the time-space grid
-\item notation: $T_j^n \approx T(t_n,x_j)$
-\item let $\nu = D \Delta t / (\Delta x)^2$, so scheme is
-\small
-	$$T_j^{n+1} = \nu T_{j+1}^n + (1 - 2 \nu) T_j^n + \nu T_{j-1}^n$$
-\normalsize
+\item more notation:
+  \begin{itemize}
+  \item[$\circ$] $(t_n,x_j)$ denotes a point in a time-space grid
+  \item[$\circ$] $T_j^n \approx T(t_n,x_j)$
+  \item[$\circ$] $\nu = D \Delta t / (\Delta x)^2$
+  \end{itemize}
 \end{itemize}
+
 \begin{columns}
-\begin{column}{0.55\textwidth}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
-\item scheme has stencil at right \large $\to$ \normalsize
+\item then scheme is
+	$$T_j^{n+1} = \nu T_{j+1}^n + (1 - 2 \nu) T_j^n + \nu T_{j-1}^n$$
+\item stencil \large $\to$ \normalsize
 \end{itemize}
 \end{column}
-\begin{column}{0.45\textwidth}
-\includegraphics[width=0.7\textwidth]{expstencil}
+\begin{column}{0.4\textwidth}
+\hspace{5mm}\includegraphics[width=0.8\textwidth]{expstencil}
 \end{column}
 \end{columns}
 \end{frame}
@@ -331,16 +333,18 @@ and so on
 \begin{frame}{explicit scheme in two space dimensions}
 
 \begin{itemize}
-\item recall heat equation in 2D: $T_t = D(T_{xx} + T_{yy})$
-\item in two spatial variables we write $T_{jk}^n \approx T(t_n,x_j,y_k)$
-\item so the 2D explicit scheme is
+\item a heat equation in 2D: \quad $T_t = D(T_{xx} + T_{yy})$
+\item we write $T_{jk}^n \approx T(t_n,x_j,y_k)$
+\item the 2D explicit scheme is
 \small
 	$$\frac{T_{jk}^{n+1} - T_{jk}^n}{\Delta t} = D\,\left(\frac{T_{j+1,k}^n - 2 T_{jk}^n + T_{j-1,k}^n}{\Delta x^2} + \frac{T_{j,k+1}^n - 2 T_{jk}^n + T_{j,k-1}^n}{\Delta y^2}\right)$$
+\normalsize
+\item space-only stencil below
 \end{itemize}
 
 \bigskip
 \begin{center}
-\includegraphics[width=0.45\textwidth]{exp2dstencil}
+\includegraphics[width=0.4\textwidth]{exp2dstencil}
 \end{center}
 \end{frame}
 
@@ -353,22 +357,17 @@ and so on
 \small
 \begin{itemize}
 \item solves $T_t = D(T_{xx} + T_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
-\item example uses initial condition $T_0(x,y) = e^{-30 r^2}$
-\item code uses ``colon notation'' to remove loops (over space)
+\item example uses gaussian initial condition $T_0(x,y) = e^{-30 r^2}$
+\item uses ``colon notation'' to remove loops
 \item \texttt{>>  heat(1.0,30,30,0.001,20)}
 
-approximates $T$ on $30\times 30$ spatial grid, with $D=1$ and $N=20$ steps of $\Delta t = 0.001$
+approximates $T$ on $30\times 30$ spatial grid, with $D=1$; take $N=20$ steps of $\Delta t = 0.001$ to final time $t = 0.02$
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{the look of success}
 
-\begin{itemize}
-\item solving $T_t = D(T_{xx} + T_{yy})$ on $30\times 30$ grid
-\end{itemize}
-
-\bigskip\bigskip
 \begin{columns}
 \begin{column}{0.5\textwidth}
 initial condition $T(0,x,y)$
@@ -379,7 +378,7 @@ initial condition $T(0,x,y)$
 \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
-approximate solution $T(t,x,y)$ at $t=0.02$ with $\Delta t=0.001$ 
+approximate solution $T(t,x,y)$ at $t=0.02$
 
 \bigskip
 \begin{center}
