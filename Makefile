@@ -13,7 +13,7 @@ figures := iceshelfedge.jpg flowline.png fofv.png \
 	slabfigs.pdf  slabmasscontfig.pdf athabasca_deform.pdf \
 	shelfthk.pdf shelfvel.pdf slabvel.pdf shelfconv.pdf shelfnumsoln.pdf \
 	antinitial.png antfinal.png antvolcompare.pdf antthickchange.png \
-	initialheat.pdf finalheat.pdf stability.pdf instability.pdf slab.pdf \
+	initialheat.pdf finalheat.pdf stability.png instability.png slab.pdf \
 	roughfinal.png roughinitial.png roughtimesteps.pdf ssavel8km.pdf \
 	expstencil.pdf exp2dstencil.pdf diffstencil.pdf mahaffystencil.pdf \
 	heatscaling.pdf
