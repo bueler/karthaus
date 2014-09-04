@@ -357,7 +357,7 @@ and so on
 \small
 \begin{itemize}
 \item solves $T_t = D(T_{xx} + T_{yy})$ on square $-1 < x < 1$, $-1 < y < 1$
-\item example uses gaussian initial condition $T_0(x,y) = e^{-30 r^2}$
+\item example uses gaussian initial condition $T(0,x,y) = e^{-30 r^2}$
 \item uses ``colon notation'' to remove loops
 \item \texttt{>>  heat(1.0,30,30,0.001,20)}
 
@@ -392,32 +392,39 @@ approximate solution $T(t,x,y)$ at $t=0.02$
 \begin{frame}{the look of instability}
 
 \begin{itemize}
-\item both figures are from solving $T_t = D(T_{xx} + T_{yy})$ on the same space grid, but with slightly different time steps
+\item both figures are from solving $T_t = D(T_{xx} + T_{yy})$ on the \emph{same} space grid and the \emph{same} final time
+\item \dots but with slightly different time steps
 \end{itemize}
 
-\bigskip\bigskip
+\medskip
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{center}
 \includegraphics[width=1.0\textwidth]{stability}
-
-%$D=1,\Delta t = 0.00064286,\Delta x = \Delta y = 0.04$ so
-\uncover<2->{$$\frac{D\Delta t}{\Delta x^2}= 0.402$$}
+% >> heat(1,80,80,0.0001,200);
+% $D=1,J=K=80,\Delta t = 0.0001,N=200$
+% so $t_f=0.02,\Delta x = \Delta y = 0.025$ so
+\medskip
+\small
+  $$\Delta t=0.0001 \, \text{ and } \, \frac{D\Delta t}{\Delta x^2}= 0.16$$
 \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
 \includegraphics[width=1.0\textwidth]{instability}
-
-%$D=1,\Delta t = 0.001,\Delta x = \Delta y = 0.04$ so
-\uncover<2->{$$\frac{D\Delta t}{\Delta x^2}= 0.625$$}
+% >> heat(1,80,80,0.0002,100);
+% $D=1,J=K=80,\Delta t = 0.0002,N=100$
+% so $t_f=0.02,\Delta x = \Delta y = 0.025$ so
+\small
+\smallskip
+  $$\Delta t=0.0002 \, \text{ and } \, \frac{D\Delta t}{\Delta x^2}= 0.32$$
 \end{center}
 \end{column}
 \end{columns}
 \end{frame}
 
 
-\begin{frame}{avoid the instability}
+\begin{frame}{understand and avoid the instability}
 \label{slide:maxprinc}
 
 \begin{itemize}
@@ -425,13 +432,13 @@ approximate solution $T(t,x,y)$ at $t=0.02$
 	$$T_j^{n+1} = \nu T_{j+1}^n + (1 - 2 \nu) T_j^n + \nu T_{j-1}^n$$
 \item thus the new value $u_j^{n+1}$ is an \emph{average} of the old values, \emph{if the middle coefficient is positive}:
 	$$1 - 2 \nu \ge 0 \quad \iff \quad  \frac{D\Delta t}{\Delta x^2} \le \frac{1}{2} \quad \iff \quad \Delta t \le \frac{\Delta x^2}{2 D}$$
-\item averaging is always stable because averaged wiggles are always smaller than the original wiggles
-\item \dots so this condition is a sufficient \emph{stability criterion}
-\item so:
+\item averaging is stable because averaged wiggles are smaller than the original wiggles
+\item \emph{the result was unstable because the time step was too big}
 
-\begin{center}
-\emph{the result was unstable because the time step was too big}
-\end{center}
+\item in 2D case with $\Delta x = \Delta y$ the condition is
+	$$\frac{D\Delta t}{\Delta x^2} \le \frac{1}{4}$$
+\vspace{-3mm}
+\item this condition is a sufficient \alert{stability criterion}
 \end{itemize}
 \end{frame}
 
