@@ -26,10 +26,7 @@
 *.mtc
 *.mtc0
 *~
-projects/upwindnotes.pdf
-projects/diffusion.m
-projects/exactshelf.m
-projects/siageneral.m
+projects/2012/upwindnotes.pdf
 *.slim.m
 pdffigs/*.pdf
 anim/*.png
