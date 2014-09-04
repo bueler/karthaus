@@ -21,6 +21,5 @@ library to solve the same SSA problem as in the Matlab codes.
 Please look in `petsc/` only after becoming reasonably familiar
 with the Matlab versions.
 
-This is the 2014 version.  Materials from years 2009, 2010, 2012 can be
-recovered from this repo's history, or from the Karthaus website above for
-just the slides.
+This is the 2014 version.  If needed, materials from years 2009, 2010, 2012
+can be recovered from this repo's history.
