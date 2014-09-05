@@ -133,7 +133,6 @@ H_t = M + \Div \left(\Gamma H^{n+2} |\grad h|^{n-1} \grad h \right) \label{sia}
 \subsection{analogy w heat equation}
 
 \begin{frame}{heat equation (as analogy for SIA)}
-\label{slide:heatcompare}
 
 \begin{columns}
 \begin{column}{0.75\textwidth}
@@ -299,7 +298,6 @@ and so on
 
 
 \begin{frame}{explicit scheme for heat equation}
-\label{slide:explicit}
 
 \begin{itemize}
 \item consider 1D heat equation $T_t = D T_{xx}$
@@ -350,7 +348,6 @@ and so on
 
 
 \begin{frame}{implementation}
-\label{slide:heatmatlab}
 
 \minput{heat}
 
@@ -425,7 +422,6 @@ approximate solution $T(t,x,y)$ at $t=0.02$
 
 
 \begin{frame}{understand and avoid the instability}
-\label{slide:maxprinc}
 
 \begin{itemize}
 \item recall 1D explicit scheme had the form 
@@ -539,11 +535,14 @@ in stencil at right:
 
 \begin{frame}{verification of numerical ice flow codes}
 \begin{itemize}
-\item how do we make sure an \emph{implemented} numerical scheme is correct?
+\item STOP! \quad the code on the last slide is complicated!
+
+\bigskip
+\item<2-> how do we make sure an \emph{implemented} numerical scheme is correct?
   \begin{itemize}
-  \item<1->[$\circ$] \emph{technique} 1: don't make any mistakes
-  \item<2->[$\circ$] \emph{technique} 2: compare your model with others, and hope that the outliers are the ones with errors \only<2>{$=$ \alert{intercomparison}}
-  \item<3>[$\circ$] \emph{technique} 3: compare your model to an exact solution, and actually measure the numerical error \only<3>{$=$ \alert{verification}}
+  \item<3->[\emph{technique} 1] don't make any mistakes
+  \item<4->[\emph{technique} 2] compare your model with others, and hope that the outliers are the ones with errors \only<4>{$=$ \alert{intercomparison}}
+  \item<5>[\emph{technique} 3] compare your model to an exact solution, and actually measure the numerical error \only<5>{$=$ \alert{verification}}
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -553,24 +552,24 @@ in stencil at right:
 \begin{itemize}
 \item<1-> yeah, BUT where do you get exact solutions for ice flow models!?
   \begin{itemize}
-  \item[$\circ$] textbook: van der Veen (2013)
+  \item[$\circ$] textbook with several SIA solutions: van der Veen (2013)
   \item[$\circ$] similarity solutions to SIA (Halfar 1983; Bueler et al 2005)
   \item[$\circ$] flowline SSA solutions (B\"o\dh varsson, 1955; van der Veen, 1983; Bueler, 2014)
   \item[$\circ$] cross-flow SSA solution (Schoof, 2006)
-  \item[$\circ$] flowline Blatter solutions (Glowinski and Rappaz 2003)
   \item[$\circ$] flowline Stokes solutions for constant viscosity (Balise and Raymond 1985)
   \end{itemize}
 
-\item<2-> if desperate, ``manufacture'' an exact solution
+\item<1-> if desperate, ``manufacture'' an exact solution
   \begin{itemize}
   \item[$\circ$] to thermo-coupled SIA (Bueler et al 2007)
+  \item[$\circ$] to flowline Blatter (Glowinski and Rappaz 2003)
   \item[$\circ$] to the Glen-law Stokes equations (Sargent and Fastook 2010; Jouvet and Rappaz 2011; Leng et al 2014)
   \end{itemize}
 
 \smallskip
-\item<3> Ed says:
+\item<2> Ed says:
 \begin{center}
-\emph{not having an exact solution means you don't understand the continuum model well enough}
+\emph{not having an exact solution is a sign that you don't understand the continuum model well enough}
 \end{center}
 \end{itemize}
 \end{frame}
@@ -656,7 +655,6 @@ where
 
 
 \begin{frame}{Halfar solution to the SIA: the movie}
-\label{slide:plothalfar}
 
 \animategraphics[autoplay,loop,height=7.0cm]{4}{../anim/halfar}{0}{26}
 
@@ -669,28 +667,15 @@ frames from $t=4$ months to $t = 10^6$ years, equal spaced in \emph{exponential}
 \begin{frame}{Halfar solution to the SIA: the formula}
 
 \begin{itemize}
-\item for $n=3$ the solution formula is:
+\item for $n=3$:
   $$H(t,r) = H_0 \left(\frac{t_0}{t}\right)^{1/9} \left[1 - \left(\left(\frac{t_0}{t}\right)^{1/18} \frac{r}{R_0}\right)^{4/3}\right]^{3/7}$$
+where $H_0$, $R_0$ are center height and ice cap radius at $t=t_0$
 \item the ``characteristic time'' is
   $$t_0 = \frac{1}{18 \Gamma} \left(\frac{7}{4}\right)^3 \frac{R_0^4}{H_0^{7}}$$
-if $H_0$, $R_0$ are central height and ice cap radius at $t=t_0$
-\item you choose $H_0$ and $R_0$ and then determine $t_0$
-\item it is a simple formula to use for verification!
+(e.g.~choose $H_0$ and $R_0$; this determines $t_0$)
+\item it is an easy formula to use for verification!
+\item code \texttt{verifysia.m} (not shown) uses it
 \end{itemize}
-\end{frame}
-
-
-\begin{frame}{is the Halfar solution \emph{good for any modeling}?}
-
-\begin{itemize}
-\item John Nye and others (2000)\nocite{NyeIcarus2000} compared different flow laws for the South Polar Cap on Mars
-\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters by comparing the long-time behavior of the corresponding Halfar solutions
-\item conclusions:
-  \begin{quote}
-  \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
-  \end{quote}
-\end{itemize}
-
 \end{frame}
 
 
@@ -721,29 +706,30 @@ $H$ is continuous \\ but $\grad h$ is singular
 \end{frame}
 \end{comment}
 
+
 \begin{frame}
   \frametitle{computing diffusivity in SIA}
 
 \begin{itemize}
 \item for numerical stability we compute $D = \Gamma H^{n+2} |\grad h|^{n-1}$ on the staggered grid
-\item various schemes proposed \small (Mahaffy, 1976\nocite{Mahaffy}; van der Veen 1999\nocite{vanderVeen}; Hindmarsh and Payne 1996\nocite{HindmarshPayne})
+\item various schemes proposed (see Hindmarsh and Payne 1996)
 \item all schemes involve
   \begin{itemize}
   \item[$\circ$] averaging $H$
   \item[$\circ$] differencing $h$
-  \item[$\circ$] in a ``balanced'' way, for better accuracy,
+  \item[$\circ$] in a ``balanced'' way (for better accuracy)
   \end{itemize}
-to get the diffusivity on staggered grid
+to get diffusivity on staggered grid
 \end{itemize}
 
 \begin{columns}
-\begin{column}{0.65\textwidth}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
-\item Mahaffy stencil \large $\to$ \normalsize
+\item Mahaffy scheme \large $\to$ \normalsize
 \end{itemize}
 \end{column}
 
-\begin{column}{0.35\textwidth}
+\begin{column}{0.4\textwidth}
   \includegraphics[width=1.0\textwidth]{mahaffystencil}
 \end{column}
 \end{columns}
@@ -755,33 +741,38 @@ to get the diffusivity on staggered grid
 
 \minputtiny{siaflat}
 
+\vspace{-2mm}
+\begin{itemize}
+\item solves the $M=0$, $b=0$ case of SIA \quad \small (general case later) \normalsize
+\item calls \texttt{diffusion.m} at each major time step
+\end{itemize}
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{verifying SIA code vs Halfar}
-\label{slide:verifysia}
 
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \scriptsize
+\vspace{-5mm}
 \begin{verbatim}
-octave:40> verifysia(20)
-average abs error            = 22.310
-maximum abs error            = 227.849
-octave:41> verifysia(40)
-average abs error            = 9.490
-maximum abs error            = 241.470
-octave:42> verifysia(80)
-average abs error            = 2.800
-maximum abs error            = 155.796
-octave:43> verifysia(160)
-average abs error            = 1.059
-maximum abs error            = 109.466
+>> verifysia(20)
+average abs error    = 22.310
+maximum abs error    = 227.849
+>> verifysia(40)
+average abs error    = 9.490
+maximum abs error    = 241.470
+>> verifysia(80)
+average abs error    = 2.800
+maximum abs error    = 155.796
+>> verifysia(160)
+average abs error    = 1.059
+maximum abs error    = 109.466
 \end{verbatim}
 \normalsize
 
-\includegraphics[width=0.8\textwidth]{siaerror}
+\includegraphics[width=0.9\textwidth]{siaerror}
 \end{column}
 
 \begin{column}{0.4\textwidth}
@@ -796,49 +787,78 @@ maximum abs error            = 109.466
 
 \includegraphics[width=1.0\textwidth]{eismintone}
 
-\scriptsize \emph{figure 2 in Huybrechts et al.~(1996)}\nocite{EISMINT96}
+\scriptsize \emph{figure 2 in EISMINT I paper (1996)}
 \end{column}
 \end{columns}
 \end{frame}
 
 
-\begin{frame}{demonstrate robustness}
+\begin{frame}{is the Halfar solution \emph{good for any modeling}?}
 
-see \texttt{roughice.m}, which calls \texttt{siaflat.m} after setting-up the nasty initial state at left:
-\medskip
+\begin{itemize}
+\item John Nye and others (2000)\nocite{NyeIcarus2000} compared different flow laws for the South Polar Cap on Mars
+\item they evaluated $\text{CO}_2$ ice and $\text{H}_2\text{O}$ ice softness parameters by comparing the long-time behavior of the corresponding Halfar solutions
+\item conclusions:
+  \begin{quote}
+  \dots none of the three possible [$\text{CO}_2$] flow laws will allow a 3000-m cap, the thickness suggested by stereogrammetry, to survive for $10^7$ years, indicating that the south polar ice cap is probably not composed of pure $\text{CO}_2$ ice \dots the south polar cap probably consists of water ice, with an unknown admixture of dust.
+  \end{quote}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{robustness comes from adaptivity}
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
+\begin{itemize}
+\item \texttt{roughice.m} (not shown) sets-up nasty initial state below
+\item then calls \texttt{siaflat.m} for 50 year run
+\item shows adaptive time steps
+\item shows final state ($\searrow$)
+\end{itemize}
+
+\vspace{3mm}
 \includegraphics[width=1.0\textwidth]{roughinitial}
 \end{column}
 \begin{column}{0.5\textwidth}
+\includegraphics[width=0.8\textwidth]{roughtimesteps}
+
+\vspace{5mm}
 \includegraphics[width=1.0\textwidth]{roughfinal}
 \end{column}
 \end{columns}
-
-\begin{center}
-\includegraphics[width=0.4\textwidth]{roughtimesteps}
-\end{center}
 \end{frame}
 
 
 \begin{frame}{model the Antarctic ice sheet}
 
-\normalsize
 \begin{itemize}
-\item with careful-but-small modifications of \texttt{siaflat.m}, which make a good exercise:
+\item we are close to a first model of Antarctic ice sheet
+\item modern view: it's just a \emph{toy} because it's isothermal SIA
+
+\bigskip
+\item work needed, as follows
+\item careful-but-small modifications of \texttt{siaflat.m}:
   \begin{itemize}
   \item[$\circ$] observed accumulation as surface mass balance,
   \item[$\circ$] allow non-flat bed (so $H\ne h$),
-  \item[$\circ$] compute surface slopes correctly where floating, and
-  \item[$\circ$] calve at current calving front location
+  \item[$\circ$] remove (calve) all floating ice,
   \end{itemize}
-here are results from this \emph{toy} Antarctic flow model
-\item a 2000 model year run on a $\Delta x=50$ km grid; runtime a few seconds
+give \texttt{siageneral.m} (not shown)
+\item also write code \texttt{buildant.m} (not shown) which reads NetCDF file from Le Brocq et al (2010) = ALBMAPv1
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{model the Antarctic ice sheet \quad 2}
+
+\begin{itemize}
+\item do 40 ka run on a $\Delta x=50$ km grid
+\item runtime 4 minutes on laptop
+\item initial and final surface elevation below
 \end{itemize}
 
 \bigskip
-
 \begin{columns}
 \begin{column}{0.4\textwidth}
 \includegraphics[height=1.75in]{antinitial}
@@ -847,6 +867,41 @@ here are results from this \emph{toy} Antarctic flow model
 \includegraphics[height=1.75in]{antfinal}
 \end{column}
 \end{columns}
+\end{frame}
+
+
+\begin{frame}{model of the Antarctic ice sheet \quad 3}
+
+\normalsize
+\vspace{-5mm}
+\begin{itemize}
+\item thickness change from beginning to end of 50 km run
+\item \dots it is nearly a map of where flow is fast!
+  \begin{itemize}
+  \item[$\circ$] why?
+  \end{itemize}  
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{antthickchange}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{model of the Antarctic ice sheet \quad 4}
+
+\normalsize
+\begin{itemize}
+\item volume time series from {\color{red} 50 km}, {\color{green} 25 km}, {\color{blue} 20 km} runs
+\item units of $10^6\,\text{km}^3$
+\item conclusion:  look at your results on \emph{multiple grid resolutions}
+\item \dots \emph{before} interpreting your results (e.g.~parameter-dependence)
+\end{itemize}
+
+\bigskip
+\begin{center}
+\includegraphics[width=0.6\textwidth]{antvolcompare}
+\end{center}
 \end{frame}
 
 
