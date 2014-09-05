@@ -74,6 +74,6 @@ mfiles/%.slim.m: mfiles/%.m
 .PHONY: clean
 
 clean:
-	@rm -f *.out *.aux *.log *.bbl *.blg *.snm *.toc *.nav *.vrb \
+	@rm -f *.out *.aux *.log *.bbl *.blg *.snm *.toc *.nav *.vrb *.synctex.gz \
 	       mfiles/*.slim.m pdffigs/*.pdf anim/*.png
 
