@@ -620,23 +620,20 @@ in stencil at right:
 \begin{frame}{similarity solutions}
 
 \begin{itemize}
-\item Green's function of heat equation in 1D is
+\item Green's function of 1D heat equation ($T_t = D T_{xx}$) is
 	$$T(t,x) = C\, t^{-1/2} e^{-x^2/(4Dt)}$$
-\item ``similarity'' variables for 1D heat equation are
+\item ``similarity'' variable is $s = t^{-1/2} x$
+  \begin{itemize}
+  \item[$\circ$] \emph{historical note}:  in 1905 Einstein saw that the average distance traveled by particles in thermal motion scales like $\sqrt{t}$, so $s = t^{-1/2} x$ is an invariant
+
+  \vspace{-2mm}
+  \hfill\includegraphics[width=0.25\textwidth]{brownian}
+  \end{itemize}
+\item similarity solution as scaling:
 	$$s \stackrel{\text{\emph{input scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} x, \qquad T(t,x) \stackrel{\text{\emph{output scaling}}}{\phantom{\Big|}=\phantom{\Big|}} t^{-1/2} \phi(s)$$
+where
+    $$\phi(s) = C e^{-s^2/(4D)}$$
 \end{itemize}
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\begin{itemize}
-\item \emph{historical note}:  in 1905 Einstein saw that the average distance traveled by particles in thermal motion scales like $\sqrt{t}$, so $s = t^{-1/2}x$ is an invariant
-\end{itemize}
-\end{column}
-\begin{column}{0.4\textwidth}
-\begin{center}
-\includegraphics[width=1.0\textwidth]{brownian}
-\end{center}
-\end{column}
-\end{columns}
 
 \end{frame}
 
@@ -649,8 +646,11 @@ in stencil at right:
 \item jump forward to 1981
 \item P.~Halfar found the similarity solution of the SIA in the case of flat bed and no surface mass balance \nocite{Halfar81,Halfar83}
 \item Halfar's 2D solution for Glen flow law with $n=3$ has scalings
-   $$H(t,r)=t^{-1/9} \phi(s), \qquad s = t^{-1/18} r$$
-\item \dots so the diffusion of ice really slows down as the shape flattens out!
+   $$H(t,r)={\color{red} t^{-1/9}} \phi(s), \qquad s = {\color{blue} t^{-1/18}} r$$
+  \begin{center}
+  \includegraphics[width=0.4\textwidth]{halfarscalings}
+  \end{center}
+\item \dots so the diffusion of ice really slows down as time goes on
 \end{itemize}
 \end{frame}
 
