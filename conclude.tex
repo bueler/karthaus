@@ -4,17 +4,20 @@
 \begin{frame}{numerical solution of stress balances: a summary}
 
 \begin{itemize}
-\item stress balance equations (e.g.~SSA or Stokes) determine velocity from geometry and boundary conditions
+\item \alert{stress balance equations}:
   \begin{itemize}
-  \item[$\circ$] nonlinear so iteration is necessary
-  \item[$\circ$] at each iteration a sparse matrix ``inner'' problem is solved \dots give it to a matrix solver software package
+  \item[$\circ$] the non-sliding SIA stress balance is just a formula for velocity (from a vertical integral)
+  \item[$\circ$] the SSA stress balance for ice streams and shelves is a PDE for velocity:
+  $$\left(2 A^{-1/n} H |u_x|^{1/n - 1} u_x\right)_x - C|u|^{m-1}u = \rho g H h_x$$
   \end{itemize}
 
 \bigskip
-\item general principles:
+\item stress balance equations like SSA, Blatter-Pattyn, Stokes:
   \begin{itemize}
-  \item[$\circ$] \alert{modularize your code}
-  \item[$\circ$] \alert{test the parts}
+  \item[$\circ$] are equations which determine velocity from geometry and boundary conditions
+  \item[$\circ$] are \alert{nonlinear}, so iteration is necessary
+  \item[$\circ$] require solving a sparse matrix ``inner'' problem at each iteration
+  \item[$\circ$] which require a matrix-solver software package
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -23,15 +26,27 @@
 \begin{frame}{the mass continuity equation: a summary}
 
 \begin{itemize}
-\item the \emph{mass continuity equation} is
-  $$H_t = M - \nabla \cdot (\mathbf{u} H)$$
-\item the numerical nature of this equation depends on the stress balance:
+\item the \alert{mass continuity equation} is
+  \begin{equation}
+  H_t = M - \nabla \cdot \left(\bar{\mathbf{U}} H\right)  \tag{$\ast$}
+  \end{equation}
+\item $\mathbf{q} = \bar{\mathbf{U}} H$ is the \emph{map-plane ice flux}
+\item the character/nature of ($\ast$) depends on the stress balance:
   \begin{itemize}
-  \item[$\circ$] the equation is a diffusion for frozen bed, large scale flows (i.e.~SIA)
-  \item[$\circ$] it is \emph{not} very diffusive for membrane stresses and no basal resistance (e.g.~SSA for ice shelves)
-  \item[$\circ$] it is diffusive for ice streams (but how much?)
-  \item[$\circ$] there is \emph{not} much helpful theory on this transport problem
-  \item[$\circ$] \dots maybe you will help find this theory!
+  \item[$\circ$] it is \alert{diffusive} for \underline{non-sliding, large scale flows}
+    \begin{itemize}
+    \item using the SIA stress balance makes it exactly a diffusion: $\mathbf{q} = - D \grad h$
+    \item with other stress balances it is nearly a diffusion
+    \end{itemize}
+  \item[$\circ$] it is \alert{not very diffusive} for \underline{ice shelves}
+    \begin{itemize}
+    \item use SSA or other membrane stress balance
+    \end{itemize}
+  \item[$\circ$] \underline{ice streams} are an intermediate case
+    \begin{itemize}
+    \item use SSA or other membrane stress balance
+    \end{itemize}
+  \item[$\circ$] there is not much helpful theory on this transport problem
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -40,6 +55,18 @@
 \begin{frame}{The End}
 
 \begin{itemize}
+\item general principles
+  \begin{itemize}
+  \item[$\circ$] \alert{return often to the continuum model}
+  \item[$\circ$] \alert{modularize your code}
+  \item[$\circ$] \alert{test the parts}:
+    \begin{itemize}
+    \item is the component robust?
+    \item does it show convergence?
+    \end{itemize}
+  \end{itemize}
+
+\bigskip
 \item that's the end
 \item \alert{questions?}
 \end{itemize}
