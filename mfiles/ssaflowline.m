@@ -22,8 +22,7 @@ function [u,u0] = ssaflowline(p,J,H,b,ug,initchoice)
 
 if nargin ~= 6, error('exactly 6 input arguments required'), end
 
-dx = p.L / J;
-x = (0:dx:p.L)';
+dx = p.L / J;  x = (0:dx:p.L)';
 xstag = (dx/2:dx:p.L+dx/2)';  % yes, it goes past end
 
 % create parts of PDE problem to solve; see flowline.m
@@ -36,17 +35,14 @@ beta = p.rho * p.g * H .* hx;  % driving stress becomes right-hand side
 gamma = ( 0.25 * p.A^(1/p.n) * (1 - p.rho/p.rhow) *...
           p.rho * p.g * H(end) )^p.n;
 
-u0 = ssainit(p,x,beta,gamma,initchoice);
-u = u0;
+u0 = ssainit(p,x,beta,gamma,initchoice);  u = u0;
 
 % "outer" iteration for solution of nonlinear equation;
 %   "Picard" iteration
 Hstag = stagav(H);
 tol = 1.0e-14;  % m s-1; = 0.000316 mm a-1 velocity error
 eps_reg = (1.0 / p.secpera) / p.L;  % strain rate of 1 m/a over length of shelf
-maxdiff = Inf;
-W = zeros(J+1,1);
-iter = 0;
+maxdiff = Inf;  W = zeros(J+1,1);  iter = 0;
 while maxdiff > tol
   % find coefficient W(x) on staggered grid using "old" u
   uxstag = stagslope(dx,u);
@@ -63,6 +59,8 @@ while maxdiff > tol
   fprintf('.')
 end
 fprintf('\nSSA solver did %d Picard iterations on dx = %.3f km grid\n',iter,dx/1000.0)
+
+%STRIPFROMHERE <- only relevant to what is shown in slides
 
   function fav = stagav(f)
   % average regular grid values onto staggered grid

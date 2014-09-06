@@ -1,0 +1,46 @@
+
+\section{conclusions}
+
+\begin{frame}{numerical solution of stress balances: a summary}
+
+\begin{itemize}
+\item stress balance equations (e.g.~SSA or Stokes) determine velocity from geometry and boundary conditions
+  \begin{itemize}
+  \item[$\circ$] nonlinear so iteration is necessary
+  \item[$\circ$] at each iteration a sparse matrix ``inner'' problem is solved \dots give it to a matrix solver software package
+  \end{itemize}
+
+\bigskip
+\item general principles:
+  \begin{itemize}
+  \item[$\circ$] \alert{modularize your code}
+  \item[$\circ$] \alert{test the parts}
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{the mass continuity equation: a summary}
+
+\begin{itemize}
+\item the \emph{mass continuity equation} is
+  $$H_t = M - \nabla \cdot (\mathbf{u} H)$$
+\item the numerical nature of this equation depends on the stress balance:
+  \begin{itemize}
+  \item[$\circ$] the equation is a diffusion for frozen bed, large scale flows (i.e.~SIA)
+  \item[$\circ$] it is \emph{not} very diffusive for membrane stresses and no basal resistance (e.g.~SSA for ice shelves)
+  \item[$\circ$] it is diffusive for ice streams (but how much?)
+  \item[$\circ$] there is \emph{not} much helpful theory on this transport problem
+  \item[$\circ$] \dots maybe you will help find this theory!
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{The End}
+
+\begin{itemize}
+\item that's the end
+\item \alert{questions?}
+\end{itemize}
+\end{frame}
