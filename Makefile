@@ -1,4 +1,4 @@
-# Copyright 2009--2012  Ed Bueler
+# Copyright 2009--2014  Ed Bueler
 
 all: slides.pdf
 
