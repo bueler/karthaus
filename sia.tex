@@ -535,9 +535,7 @@ in stencil at right:
 
 \begin{frame}{verification of numerical ice flow codes}
 \begin{itemize}
-\item STOP! \quad the code on the last slide is complicated!
-
-\bigskip
+\item<1> STOP! \quad the code on the last slide is complicated!
 \item<2-> how do we make sure an \emph{implemented} numerical scheme is correct?
   \begin{itemize}
   \item<3->[\emph{technique} 1] don't make any mistakes
@@ -811,10 +809,10 @@ maximum abs error    = 109.466
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{itemize}
-\item \texttt{roughice.m} (not shown) sets-up nasty initial state below
+\item \texttt{roughice.m} (not shown) sets-up nasty initial state (below)
 \item then calls \texttt{siaflat.m} for 50 year run
-\item shows adaptive time steps
-\item shows final state ($\searrow$)
+\item adaptive time steps (right)
+\item final state (below right)
 \end{itemize}
 
 \vspace{3mm}
@@ -834,17 +832,21 @@ maximum abs error    = 109.466
 
 \begin{itemize}
 \item we are close to a first model of Antarctic ice sheet
-\item modern view: it's just a \emph{toy} because it's isothermal SIA
+  \begin{itemize}
+  \item[$\circ$] it's just a toy because it's isothermal SIA
+  \item[$\circ$] \dots\, but more work needed, as follows
+  \end{itemize}
 
 \bigskip
-\item work needed, as follows
 \item careful-but-small modifications of \texttt{siaflat.m}:
   \begin{itemize}
   \item[$\circ$] observed accumulation as surface mass balance,
   \item[$\circ$] allow non-flat bed (so $H\ne h$),
   \item[$\circ$] remove (calve) all floating ice,
   \end{itemize}
-give \texttt{siageneral.m} (not shown)
+gives \texttt{siageneral.m} (not shown)
+
+\bigskip
 \item also write code \texttt{buildant.m} (not shown) which reads NetCDF file from Le Brocq et al (2010) = ALBMAPv1
 \end{itemize}
 \end{frame}
@@ -873,17 +875,17 @@ give \texttt{siageneral.m} (not shown)
 \begin{frame}{model of the Antarctic ice sheet \quad 3}
 
 \normalsize
-\vspace{-5mm}
+\vspace{-2mm}
 \begin{itemize}
 \item thickness change from beginning to end of 50 km run
-\item \dots it is nearly a map of where flow is fast!
+\item \dots it's nearly a map of where flow is fast!
   \begin{itemize}
   \item[$\circ$] why?
   \end{itemize}  
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=0.7\textwidth]{antthickchange}
+\includegraphics[width=0.8\textwidth]{antthickchange}
 \end{center}
 \end{frame}
 
@@ -895,7 +897,7 @@ give \texttt{siageneral.m} (not shown)
 \item volume time series from {\color{red} 50 km}, {\color{green} 25 km}, {\color{blue} 20 km} runs
 \item units of $10^6\,\text{km}^3$
 \item conclusion:  look at your results on \emph{multiple grid resolutions}
-\item \dots \emph{before} interpreting your results (e.g.~parameter-dependence)
+\item \dots \emph{before} interpreting your results (e.g.~for their parameter-dependence)
 \end{itemize}
 
 \bigskip

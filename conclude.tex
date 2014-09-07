@@ -17,7 +17,7 @@
   \item[$\circ$] are equations which determine velocity from geometry and boundary conditions
   \item[$\circ$] are \alert{nonlinear}, so iteration is necessary
   \item[$\circ$] require solving a sparse matrix ``inner'' problem at each iteration
-  \item[$\circ$] which require a matrix-solver software package
+  \item[$\circ$] which requires a matrix-solver software package
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -26,11 +26,13 @@
 \begin{frame}{the mass continuity equation: a summary}
 
 \begin{itemize}
-\item the \alert{mass continuity equation} is
+\item the \alert{mass continuity equation}\footnote{there is not much helpful theory on this transport problem because it is not hyperbolic and you have to handle the free boundary in an \emph{ad hoc} way} is
   \begin{equation}
   H_t = M - \nabla \cdot \left(\bar{\mathbf{U}} H\right)  \tag{$\ast$}
   \end{equation}
 \item $\mathbf{q} = \bar{\mathbf{U}} H$ is the \emph{map-plane ice flux}
+
+\medskip
 \item the character/nature of ($\ast$) depends on the stress balance:
   \begin{itemize}
   \item[$\circ$] it is \alert{diffusive} for \underline{non-sliding, large scale flows}
@@ -46,7 +48,6 @@
     \begin{itemize}
     \item use SSA or other membrane stress balance
     \end{itemize}
-  \item[$\circ$] there is not much helpful theory on this transport problem
   \end{itemize}
 \end{itemize}
 \end{frame}

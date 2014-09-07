@@ -132,25 +132,31 @@ scope: I will cover these
 \end{itemize}
 \end{frame}
 
+
 \begin{frame}{ice in glaciers is a \emph{fluid} \quad 2}
 
 \begin{itemize}
-\item we will assume ice is incompressible
+\item we will assume ice is constant density
+  \begin{itemize}
+  \item[$\circ$] so ice flow is incompressible
+  \end{itemize}
+
+\medskip
 \item if ice fluid were also
   \begin{itemize}
   \item[$\circ$] faster-moving than it actually is, and
   \item[$\circ$] linearly-viscous
   \end{itemize}
   then ice flow would be a ``typical'' fluid like liquid water
-\item \dots and one would use the Navier-Stokes equations:
+\item \dots\, and one would use the Navier-Stokes equations:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 \rho \left(\mathbf{u}_t + \mathbf{u}\cdot\nabla \mathbf{u}\right) &= -\nabla p + \nabla \cdot \tau_{ij} + \rho \mathbf{g} &&\text{\emph{stress balance}} \\
 2 \nu \mathbf{D}_{ij} &= \tau_{ij} &&\text{\emph{linear flow law}}
 \end{align*}
 
-\bigskip
-\item this is the main \emph{continuum model} for fluid dynamics
+\smallskip
+\item this is the main continuum model for fluid dynamics
 \item stress balance equation is ``$m a = F$''
 \end{itemize}
 \end{frame}
@@ -205,7 +211,7 @@ scope: I will cover these
 \item so the standard ``full'' model is power-law ($n=3$) \alert{Stokes}:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
-0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho\, \mathbf{g} &&\text{\emph{force balance}} \\
+0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho\, \mathbf{g} &&\text{\emph{stress balance}} \\
 \mathbf{D}_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{Glen flow law}}
 \end{align*}
 
@@ -246,12 +252,12 @@ expect that from a glaciologist}
 \item recall the power-law Stokes model:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
-0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho\, \mathbf{g} &&\text{\emph{force balance}} \\
+0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho\, \mathbf{g} &&\text{\emph{stress balance}} \\
 \mathbf{D}_{ij} &= A \tau^2 \tau_{ij} &&\text{\emph{Glen flow law}}
 \end{align*}
 
 \bigskip
-\item now work in a $x,z$ \alert{plane}
+\item now work in the\, $x,z$ plane
   \begin{itemize}
   \item[$\circ$] like the centerline of a glacier
   \item[$\circ$] or in a cross-flow plane
@@ -259,7 +265,7 @@ expect that from a glaciologist}
 
 \item notation on next slide:
   \begin{itemize}
-  \item[$\circ$] $x,z$ subscripts are partial derivatives
+  \item[$\circ$] subscripts ``$x$'' and ``$z$'' are partial derivatives
   \item[$\circ$] $\tau_{13}$ is the ``vertical'' shear stress
   \item[$\circ$] $\tau_{11}$ and $\tau_{33}=-\tau_{11}$ are (deviatoric) longitudinal stresses 
   \end{itemize}
@@ -342,8 +348,8 @@ u(z) &= u_0 + 2 A (\rho g \sin\theta)^3 \int_0^z (H-z')^3\,dz' \\
 \end{align*}
 \end{itemize}
 
-\vspace{-15mm}
-\includegraphics[width=0.5\textwidth]{slabshear}
+\vspace{-5mm}
+\includegraphics[width=0.35\textwidth]{slabshear}
 \end{frame}
 
 
@@ -418,11 +424,11 @@ Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Sa
 \begin{itemize}
 \item from slab-on-slope velocity formula in $u_0=0$ case,
 \begin{align*}
-\bar u H &= \int_0^H \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)\,dz \\
+\bar U H &= \int_0^H \frac{1}{2} A (\rho g \sin\theta)^3  \left(H^4 - (H-z)^4\right)\,dz \\
 	&= \frac{2}{5} A (\rho g \sin\theta)^3 H^5
 \end{align*}
 \item note $\sin \theta \approx \tan\theta = - h_x$
-\item combine with mass continuity $H_t = M - \left(\bar u H\right)_x$ to get:
+\item combine with mass continuity $H_t = M - \left(\bar U H\right)_x$ to get:
   $$H_t = M + \left(\frac{2}{5} (\rho g)^5 A H^5 |h_x|^2 h_x\right)_x$$
 
 \medskip
