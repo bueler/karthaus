@@ -12,6 +12,5 @@ test: ssaflowline
 	mpiexec -n 1 ./ssaflowline -da_grid_x 20001
 	mpiexec -n 4 ./ssaflowline -da_grid_x 20001
 	mpiexec -n 4 ./ssaflowline -da_grid_x 20001 -ssa_guess 2
-	mpiexec -n 4 ./ssaflowline -da_grid_x 20001 -snes_mf_operator \
-	    -mat_mffd_type ds -snes_ls basic -ssa_picard
+	mpiexec -n 4 ./ssaflowline -da_grid_x 20001 -snes_mf_operator -ssa_picard
 
