@@ -1,13 +1,11 @@
 all: jacobiannotes.pdf
 
-# requires link for ice_bib.bib
+# requires link for ice-bib.bib
 jacobiannotes.pdf: jacobiannotes.tex
 	pdflatex jacobiannotes.tex
 	bibtex jacobiannotes
 	pdflatex jacobiannotes.tex
 	pdflatex jacobiannotes.tex
-
-#### utilities
 
 .PHONY : clean
 

@@ -38,20 +38,24 @@
 
 These notes document the numerical choices made in the code \texttt{ssaflowline.c}.  This code, and these choices, should be compared to those in the Matlab/Octave codes \texttt{flowline.m}, \texttt{ssaflowline.m}, and \texttt{testshelf.m} in directory \texttt{mfiles/}, which are described in detail in the lecture.
 
-\subsection*{Discrete residual}   The equation we solve is the no-basal-friction ($C=0$) version of the flow-line SSA stated in the lectures:
+\subsection*{Continuum problem}   The problem is to solve the SSA stress balance, decoupled from the mass continuity equation, for the velocity in the ice shelf.  This PDE problem\footnote{Actually the differential equation is a two-point boundary value problem for an ODE.  In many ways it is ``too simple''; see the last subsection.  But we treat it as a PDE as we are considering methods that generalize easily to true PDEs.} applies on the interval $0<x<L$ where $x=0$ is the location of the grounding line and $x=L$ is the location of the calving front.
+
+The equation is the no-basal-friction ($C=0$) version of the flow-line SSA stated in the lectures:
 \begin{equation}
-  \left(2 B H |u_x|^{p-2} u_x\right)_x - \frac{1}{2} \rho g (1-r) \left(H^2\right)_x = 0.  \label{ssa}
+  \left(2 B H |u_x|^{p-2} u_x\right)_x - \frac{1}{2} \rho g (1-r) \left(H^2\right)_x = 0,  \label{ssa}
 \end{equation}
-The solution of this equation $u(x)$ is the velocity in the ice shelf.  This PDE\footnote{Actually the differential equation is a two-point boundary value problem for an ODE.  In many ways it is ``too simple''; see the last subsection.  But we treat it as a PDE as we are considering methods that generalize easily to true PDEs.} applies on the interval $0<x<L$ where $x=0$ is the location of the grounding line and $x=L$ is the location of the calving front.  It has these boundary conditions:
+where the thickness is a fixed function $H=H(x)$ and the velocity solution is $u(x)$.  Note that $p=1+1/n$, $B=A^{-1/n}$, $\rho$, and $r=\rho/\rho_w$ are positive constants.  
+
+Equation \eqref{ssa} is solved with these boundary conditions:
 \begin{equation}
-u\big|_{x=0} = u_g, \qquad\qquad \left[2 B H |u_x|^{p-2} u_x - \frac{1}{2}\rho g (1-r) H^2\right]_{x=L} = 0,
+u\big|_{x=0} = u_g, \qquad\qquad \left[2 B H |u_x|^{p-2} u_x - \frac{1}{2}\rho g (1-r) H^2\right]_{x=L} = 0
 \end{equation}
-where the thickness is a fixed function $H=H(x)$.  Note that $n$, $p=1+1/n$, $A$, $B=A^{-1/n}$, $\rho$, $\rho_w$, $r=\rho/\rho_w$, $u_g$, and $L$ are all positive constants.  The second boundary condition can be rewritten in the form we actually use,
+where $u_g$ is a positive constants.  The second boundary condition can be rewritten in the form we actually use,
 \begin{equation}
 u_x\big|_{x=L} = \gamma \qquad \text{where} \qquad \gamma = \left(\frac{\rho g (1-r)}{4B} H(L)\right)^n. \tag{2b} \label{neumann}
 \end{equation}
 
-We have clearly stated the continuum problem.  In addition to choosing a discretization scheme, the first goal is to construct the \emph{residual}, the amount by which a candidate solution to the discrete problem does not solve the discrete equations.  That is, instead of immediately formulating a scheme for solving the discrete equations, we first address the simpler job of merely measuring how wrong is any candidate (guess) for the solution.
+\subsection*{Discrete residual}   After choosing a discretization scheme, the first goal is to construct the \emph{residual}, which is the amount by which a candidate solution to the discrete problem does not solve the discrete equations.  That is, instead of immediately formulating a scheme for solving the discrete equations, we first address the simpler job of merely measuring how wrong is a given candidate for the solution.
 
 We will discretize the problem by finite differences, on an equally-spaced grid of $M$ points $x_0,x_1,\dots,x_{M-1}$.  Let $\Delta x = L / (M-1)$ and $x_i = i \Delta x$.  The unknowns $U_i$ in the discrete problem (below) approximate the corresponding exact values on the grid $u(x_i)$, and form a vector $\bU = (U_0,\dots,U_{M-1})$.  So we now write the discretized PDE \eqref{ssa} and its boundary conditions as $M$ nonlinear equations in $M$ real unknowns:
 \begin{align}
@@ -75,8 +79,8 @@ Some comments about equations (3) and \eqref{visc} are appropriate:\begin{itemiz
 \item The $i=1$ case in equation \eqref{resone} is not quite in the general form \eqref{resi} because, for greater symmetry of the Jacobian matrix (below), the known value $u(x_0)=u_g$ at the left neighbor is used directly.
 \item The $i=M-1$ case \eqref{resend} comes from introducing a ``virtual'' unknown $U_{M}$ and then approximating the derivative of the solution at the calving front by a centered difference formula:
   $$u_x(L) = u_x(x_{M-1}) \approx \frac{U_M - U_{M-2}}{2\Delta x}.$$
-Both the calving front boundary condition \eqref{neumann} and the PDE itself \eqref{ssa} are enforced at $x=x_{M-1}$, which allows elimination (by-hand) of the virtual $U_M$ \cite{MortonMayers}.
-\item The function $\eta(Z)$ is a viscosity, up to a scalar factor.  This viscosity is regularized in equation \eqref{visc} by a positive constant $\eps>0$, with value equal to the strain rate of a $1$ m/a velocity change over the full length $L$ of the ice shelf (200 km), so $\eps \approx 1.6 \times 10^{-13}\,\text{s}^{-1}$.   No division by zero can, therefore, occur in evaluating the viscosity, which is always positive and finite.
+Both the calving front boundary condition \eqref{neumann} and the PDE itself \eqref{ssa} are enforced at $x=x_{M-1}$, which allows elimination (by-hand) of $U_M$ \cite{MortonMayers}.
+\item The function $\eta(Z)$ is a viscosity, up to a scalar factor.  This viscosity is regularized in equation \eqref{visc} by a positive constant $\eps>0$.  For the default value of $\eps$ we choose the strain rate of a $1$ m/a velocity change over the full length $L$ of the ice shelf (200 km), so $\eps \approx 5 \times 10^{-6}\,\text{a}^{-1} = 1.6 \times 10^{-13}\,\text{s}^{-1}$.   No division by zero can, therefore, occur in evaluating the viscosity, which is always positive and finite.
 \end{itemize}
 
 \subsection*{Newton's method and the Jacobian matrix}   In equations (3) we have written the discrete problem in the abstract form
@@ -276,7 +280,7 @@ on a 1 m grid ($M=2\times 10^5$ points with length $L=200$ km) returned a numeri
 
 \subsection*{Acknowledgements}  Help from Jed Brown was central to building this example.
 
-\bibliography{ice_bib}
+\bibliography{ice-bib}
 \bibliographystyle{siam}
 
 \end{document}
