@@ -1,36 +1,44 @@
 static const char help[] = 
 "\nComputes the velocity from the SSA model for ice, in a flow-line case.\n\
-See notes/notes.pdf and slides.pdf and mfiles/{flowline.m,ssaflowline.m,testshelf.m}\n\
-for the problem being solved.\n\
+See ../notes/notes.pdf and ../slides.pdf and\n\
+../mfiles/{flowline.m,ssaflowline.m,testshelf.m} for the Matlab/Octave version\n\
+of the same problem.\n\
 \n\
-This code is based on examples src/snes/examples/tutorials/{ex5.c,ex5.c}.\n\
 It works in PETSc 3.5.2.\n\
+Compare examples src/snes/examples/tutorials/{ex5.c,ex33.c}.\n\
 \n\
 Program usage:  mpiexec -n <procs> ./ssaflowline [-help] [all PETSc options]\n\
 \n\
 Examples:\n\
-(0) see all SSA-related options, and default values of constants:\n\
+*  see all SSA-related options, and default values of constants:\n\
       ./ssaflowline -help |grep ssa_\n\
-(1) use defaults (Newton-Krylov w analytical Jacobian and M=21 grid points):\n\
+*  use defaults (Newton-Krylov w analytical Jacobian and M=21 grid points):\n\
       ./ssaflowline\n\
-(2) to see a useful amount of info on PETSc objects, and run in parallel:\n\
+*  see info on PETSc objects, and run in parallel:\n\
       mpiexec -n 2 ./ssaflowline -snes_view -snes_monitor -ksp_converged_reason\n\
-(3) finer grid and Picard iterations: slower than Newton!\n\
-      ./ssaflowline -da_grid_x 1001 -ssa_picard\n\
-(4) finite difference Jacobian (FIXME: I think there is scaling problem with fd):\n\
-      ./ssaflowline -fd -snes_monitor\n\
-(5) use exact solution as initial guess:\n\
-      ./ssaflowline -ssa_guess 2 -snes_monitor\n\
-(6) ask PETSc to check our analytical Jacobian in M=6 case (ignore all but the\n\
+*  much finer grid\n\
+      ./ssaflowline -snes_monitor -da_grid_x 20001\n\
+*  finer grid and Picard iterations: slower than Newton!\n\
+      ./ssaflowline -snes_monitor -da_grid_x 20001 -ssa_picard\n\
+*  finite difference Jacobian:\n\
+      ./ssaflowline -snes_monitor -snes_fd\n\
+*  use exact solution as initial guess:\n\
+      ./ssaflowline -snes_monitor -ssa_guess 2\n\
+*  ask PETSc to check our analytical Jacobian in M=6 case (ignore all but the\n\
           first displayed case):\n\
       ./ssaflowline -da_grid_x 6 -mat_fd_type ds -snes_type test\n\
-(7) with X graphics:\n\
-      ./ssaflowline -ssa_show -snes_monitor_solution -draw_pause 1\n\
-(8) main point (FIXME): compare performance using analytical jacobian and matrix-free\n\
-          with Picard-as-preconditioner:\n\
-      mpiexec -n 4 ./ssaflowline -da_grid_x 20000\n\
-      mpiexec -n 4 ./ssaflowline -da_grid_x 20000 -snes_mf_operator \\ \n\
-          -mat_mffd_type ds -snes_ls basic -ssa_picard \n\
+*  use X graphics to show velocity during iteration:\n\
+      ./ssaflowline -snes_monitor_solution -draw_pause 1\n\
+*  use X graphics to show thickness and exact solution:\n\
+      ./ssaflowline -ssa_show -draw_pause 2\n\
+*  extreme accuracy on 10 cm grid:\n\
+      ./ssaflowline -snes_monitor -da_grid_x 2000001 -ssa_epsilon 1.0e-8\n\
+*  major idea: compare performance using analytical Jacobian, straight Picard\n\
+          iteration, and matrix-free with Picard-as-preconditioner\n\
+          (all on 1 m grid):\n\
+      time ./ssaflowline -snes_monitor -da_grid_x 200001\n\
+      time ./ssaflowline -snes_monitor -da_grid_x 200001 -ssa_picard \n\
+      time ./ssaflowline -snes_monitor -da_grid_x 200001 -ssa_picard -snes_mf_operator \n\
 \n";
 
 #include "petscdmda.h"
@@ -64,20 +72,16 @@ typedef struct {
 
 
 /* declare the user-written routines ... */
-//static PetscErrorCode FillThicknessAndExactSoln(DM,AppCtx*);
-//static PetscErrorCode FormInitialGuess(DM,AppCtx*,Vec);
 extern PetscErrorCode FillThicknessAndExactSoln(DM,AppCtx*);
 extern PetscErrorCode FormInitialGuess(DM,AppCtx*,Vec);
 
 //static PetscErrorCode FormFunctionLocal(DMDALocalInfo*,PetscScalar*,PetscScalar*,AppCtx*);
-extern PetscErrorCode FormFunctionLocal(DMDALocalInfo*,PetscScalar**,PetscScalar**,AppCtx*);
+extern PetscErrorCode FormFunctionLocal(DMDALocalInfo*,PetscScalar*,PetscScalar*,AppCtx*);
 
 /* ... including two versions of "analytical" Jacobian; these functions are only
    evaluated if *not* using one of the methods -fd, -snes_fd, -snes_mf */
-//static PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo*,PetscScalar*,Mat,AppCtx*);
-//static PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo*,PetscScalar*,Mat,AppCtx*);
-extern PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo*,PetscScalar**,Mat,Mat,AppCtx*);
-extern PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo*,PetscScalar**,Mat,Mat,AppCtx*);
+extern PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo*,PetscScalar*,Mat,Mat,AppCtx*);
+extern PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo*,PetscScalar*,Mat,Mat,AppCtx*);
 
 
 #undef __FUNCT__
@@ -98,8 +102,7 @@ int main(int argc,char **argv)
                                                   use -draw_pause N for N sec delay */
                          matview = PETSC_FALSE;/* dump preconditioner matrix */
   SNESConvergedReason    reason;               /* Check convergence */
-  PetscBool              fd_naive = PETSC_FALSE,
-                         picard = PETSC_FALSE,
+  PetscBool              picard = PETSC_FALSE,
                          eps_set = PETSC_FALSE;
 
   PetscInitialize(&argc,&argv,(char *)0,help);
@@ -157,7 +160,7 @@ int main(int argc,char **argv)
                              show,&show,NULL);CHKERRQ(ierr);
     ierr = PetscOptionsBool("-ssa_mat_view","put preconditioner matrix in Matlab form to stdout","",
                              matview,&matview,NULL);CHKERRQ(ierr);
-    ierr = PetscOptionsInt(  "-ssa_guess","initial guess: 1=(linear; default), 2=(exact soln)","",
+    ierr = PetscOptionsInt( "-ssa_guess","initial guess: 1=(linear; default), 2=(exact soln)","",
                              guess,&guess,NULL);CHKERRQ(ierr);
   }
   ierr = PetscOptionsEnd();CHKERRQ(ierr);
@@ -191,18 +194,10 @@ int main(int argc,char **argv)
   ierr = VecDuplicate(u,&user.viscosity);CHKERRQ(ierr);
 
   ierr = DMDASNESSetFunctionLocal(da,INSERT_VALUES,(DMDASNESFunction)FormFunctionLocal,&user);CHKERRQ(ierr);
-
-  ierr = PetscOptionsBool("-fd",
-           "use naive finite difference evaluation of Jacobian","",
-           fd_naive,&fd_naive,NULL);CHKERRQ(ierr);
-  if (!fd_naive) {
-    if (picard) {
-      //ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormPicardMatrixLocal);CHKERRQ(ierr);
-      ierr = DMDASNESSetJacobianLocal(da,(DMDASNESJacobian)FormPicardMatrixLocal,&user);CHKERRQ(ierr);
-    } else {
-      //ierr = DMDASetLocalJacobian(da,(DMDALocalFunction1)FormTrueJacobianMatrixLocal);CHKERRQ(ierr);
-      ierr = DMDASNESSetJacobianLocal(da,(DMDASNESJacobian)FormTrueJacobianMatrixLocal,&user);CHKERRQ(ierr);
-    }
+  if (picard) {
+    ierr = DMDASNESSetJacobianLocal(da,(DMDASNESJacobian)FormPicardMatrixLocal,&user);CHKERRQ(ierr);
+  } else {
+    ierr = DMDASNESSetJacobianLocal(da,(DMDASNESJacobian)FormTrueJacobianMatrixLocal,&user);CHKERRQ(ierr);
   }
 
   ierr = SNESCreate(PETSC_COMM_WORLD,&snes);CHKERRQ(ierr);
@@ -213,8 +208,8 @@ int main(int argc,char **argv)
                      PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,PETSC_IGNORE,
                      PETSC_IGNORE,PETSC_IGNORE);
                      CHKERRQ(ierr);
-  ierr = PetscPrintf(PETSC_COMM_WORLD,"  grid of Mx=%d points and dx=%.3f km\n",
-                     Mx,(user.L/(Mx-1))/1000.0);CHKERRQ(ierr);
+  ierr = PetscPrintf(PETSC_COMM_WORLD,"  grid of Mx=%d points and dx=%.3f m\n",
+                     Mx,user.L/(Mx-1));CHKERRQ(ierr);
 
   /* We use a particular formula for the thickness (user.H).  This formula has the
      property that our numerical velocity solution (u) should converge to a
@@ -246,6 +241,8 @@ int main(int argc,char **argv)
     ierr = VecScale(user.uexact,user.secpera); CHKERRQ(ierr);
     ierr = VecView(user.uexact,PETSC_VIEWER_DRAW_WORLD); CHKERRQ(ierr);
     ierr = VecScale(user.uexact,1.0 / user.secpera); CHKERRQ(ierr);
+
+    ierr = PetscDrawSetTitle(draw,""); CHKERRQ(ierr);  // clear title
   }
 
   /* Evaluate initial guess.  The user needs to initialize the solution vector
@@ -317,8 +314,7 @@ static inline PetscScalar GetViscosityFromStrainRate(PetscScalar dudx, PetscScal
 
 #undef __FUNCT__
 #define __FUNCT__ "FillThicknessAndExactSoln"
-/*  Compute the right thickness H = H(x).  See lecture notes for analysis
-    leading to exact ice shelf shape. */
+/*  Compute the right thickness H = H(x).  See lecture notes for exact solution. */
 PetscErrorCode FillThicknessAndExactSoln(DM da, AppCtx *user)
 {
   PetscErrorCode ierr;
@@ -446,7 +442,6 @@ PetscErrorCode FormFunctionLocal(DMDALocalInfo *info,PetscScalar *u,PetscScalar 
   Vec            localH;
 
   PetscFunctionBegin;
-  /* ierr = PetscPrintf(PETSC_COMM_WORLD,"FormFunctionLocal() called\n"); CHKERRQ(ierr); */
 
   ierr = DMGetLocalVector(info->da,&localH);CHKERRQ(ierr);
   ierr = DMGlobalToLocalBegin(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
@@ -493,7 +488,7 @@ The result of this routine can be used as a preconditioner to a finite-
 difference matrix-free approach *or* directly as an approximation to the Jacobian.
 The former happens with options
   -ssa_picard -snes_mf_operator */
-PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo *info,PetscScalar *u, Mat pic,AppCtx *user)
+PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo *info,PetscScalar *u,Mat picpre,Mat pic,AppCtx *user)
 {
   PetscErrorCode ierr;
   PetscInt       i, Mx;
@@ -504,7 +499,6 @@ PetscErrorCode FormPicardMatrixLocal(DMDALocalInfo *info,PetscScalar *u, Mat pic
   Vec            localH;
 
   PetscFunctionBegin;
-  /*DEBUG: ierr = PetscPrintf(PETSC_COMM_WORLD,"FormPicardMatrixLocal() called\n"); CHKERRQ(ierr); */
 
   ierr = DMGetLocalVector(info->da,&localH);CHKERRQ(ierr);
   ierr = DMGlobalToLocalBegin(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
@@ -589,7 +583,7 @@ static inline PetscScalar GetOmega(PetscScalar Z, PetscScalar dx, PetscScalar p,
 #undef __FUNCT__
 #define __FUNCT__ "FormTrueJacobianMatrixLocal"
 /* FormTrueJacobianMatrixLocal - Evaluates analytical Jacobian matrix. */
-PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo *info,PetscScalar *u, Mat jac,AppCtx *user)
+PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo *info,PetscScalar *u,Mat jacpre,Mat jac,AppCtx *user)
 {
   PetscErrorCode ierr;
   PetscInt       i, Mx;
@@ -600,7 +594,6 @@ PetscErrorCode FormTrueJacobianMatrixLocal(DMDALocalInfo *info,PetscScalar *u, M
   Vec            localH;
 
   PetscFunctionBegin;
-  /*DEBUG: ierr = PetscPrintf(PETSC_COMM_WORLD,"FormTrueJacobianMatrixLocal() called\n"); CHKERRQ(ierr); */
 
   ierr = DMGetLocalVector(info->da,&localH);CHKERRQ(ierr);
   ierr = DMGlobalToLocalBegin(info->da,user->H,INSERT_VALUES,localH); CHKERRQ(ierr);
