@@ -221,19 +221,17 @@ With these additions there are three more computational paradigms to try; we con
 
 So I did runs that looked like this:
 \begin{Verbatim}
-./ssaflowline -snes_monitor -snes_rtol 1e-12 -ksp_rtol 1e-12 -da_grid_x M
+./ssaflowline -snes_rtol 1e-12 -ksp_rtol 1e-12 -ssa_epsilon 1e-10 -da_grid_x M
 \end{Verbatim}
-for values $M=10,100,10^3,10^4,10^5$ and in all runs the \texttt{SNES} object reported convergence.  These are single process runs; parallelization is not yet the issue.  The $M=10^5$ run only takes 1.2 seconds on my laptop, so raw performance on this 1D problem is also not an issue!
-
-The verification results from these runs in Figure \ref{fig:numerr} show that once we reach $M=10^4$ we are getting results correct to about 6 digits, relative to the exact solution.  The 2 m grid with $M=10^5$ gives no more accuracy in this sense than the 20 m grid with $M=10^4$.
+for $M=10,100,10^3,10^4,10^5,10^6$.  In all runs the \texttt{SNES} object reported convergence.  These are single process runs; parallelization is not yet the issue.  These runs together only took 15 seconds on my laptop, so raw performance on this 1D problem is also not an issue!  Note that with $M=10^6$ the grid has spacing 20 cm on a 200 km-long ice shelf.  The verification results from these runs are shown in Figure \ref{fig:numerr}.  This is excellent evidence that we are correctly solving the equations.
 
 Figure \ref{fig:quadconv} gives the evidence for quadratic---more properly superlinear---convergence of the ``outer'' nonlinear iteration managed by the \texttt{SNES} object.  That is, Newton is working.  Note that if the residual norm was decaying exponentially in iteration number (= ``linear convergence'' \cite{BurdenFaires}), $\|\bbF(\bU_n)\| \sim \alpha^n$ for $\alpha < 1$, then Figure \ref{fig:quadconv} would show straight lines for each $M$.  But in all cases the residual norm decays at an increasing rate, until we reach the level controlled by linear iteration tolerance, rounding error, and condition number of the discrete nonlinear problem.  Thus we have probably written the correct Jacobian!
 
 \begin{figure}[ht] 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{numerr}
+\includegraphics[width=0.7\textwidth]{numerr}
 \end{center}
-\caption{Verification:  Grid refinement ($M=10,100,10^3,10^4,10^5$) produces reduction in numerical error, relative to exact solution, and measured by comparing the maximum velocity error anywhere on the grid to the largest velocity.}
+\caption{Verification:  Grid refinement ($M=10^{1:6}$) produces reduction in numerical error, relative to exact solution, and measured by comparing the maximum velocity error anywhere on the grid to the largest velocity.  The red line fits the $M=10^{2:5}$ data as $O(\Delta x^{1.989})$.}
 \label{fig:numerr}
 \end{figure}
 
@@ -241,7 +239,7 @@ Figure \ref{fig:quadconv} gives the evidence for quadratic---more properly super
 \begin{center}
 \includegraphics[width=0.5\textwidth]{quadconv}
 \end{center}
-\caption{Evidence of quadratic, or at least super-linear, convergence:  The residual norm decays faster than linearly with iteration number (i.e.~faster than $(\text{residual norm})\sim \alpha^n$ where $n$ is the iteration count).  Note that on the coarsest grid ($M=10$) we see the most rapid convergence to level $10^{-14}$ smaller than the initial residual norm.}
+\caption{Evidence of quadratic, or at least super-linear, convergence:  The residual norm decays faster than linearly with iteration number (i.e.~faster than $(\text{residual norm})\sim \alpha^n$ where $n$ is the iteration count).  On the coarsest grid ($M=10$) we see the most rapid decay.  Note the residual norm decreases by 14 orders of magnitude.}
 \label{fig:quadconv}
 \end{figure}
 
@@ -249,20 +247,20 @@ Our code runs just fine on many processors.  For example,
 \begin{Verbatim}
     $ mpiexec -n 10 ./ssaflowline -da_grid_x 10000
 \end{Verbatim}
-on ten processes computes the a solution with the same accuracy as on one ($2.2284\times 10^{-6}$ versus $2.2284\times 10^{-6}$ relative maximum error).  But are we getting a benefit from this parallelism?
+on ten processes computes the solution with the same accuracy as on one processor.  But are we getting a benefit from this parallelism?
 
-For a large-scale problem there are several measures of parallel computational performance which we could now be interested in.  One might measure the number of linear iterations, the number of floating-point operations, or the actual (``wall clock'') time needed to solve a large problem in parallel.  For real problems we want to see performance which will scale up to apply to models covering large parts of realistic ice sheets at high spatial resolution.  This surely reflects the main goal of using a toolkit like PETSc for ice sheet modeling.  An example for ice sheet modeling is in \cite{BBssasliding}; see figure 24.
+For a large-scale problem there are several measures of parallel computational performance which we could use.  One might measure the number of linear iterations, the number of floating-point operations, or the actual (``wall clock'') time needed to solve a large problem in parallel.  Ultimately we want to see performance which scales up to models covering large parts of realistic ice sheets at high spatial resolution, which is the main goal of using a toolkit like PETSc for ice sheet modeling.  An example for ice sheet modeling is in \cite{BBssasliding}; see figure 24.
 
-The time has come to admit, however, that the 1D ice shelf problem addressed here in these notes is \emph{too simple}.  Actually measuring computational performance in this example does not illustrate what happens to 2D and 3D problems, for these reasons:\begin{enumerate}
-\item The matrices here are tridiagonal, which means that a default preconditioner (ILU) is both exact \emph{and} fast on one process.  The default block-Jacobi-plus-ILU-on-blocks choice in parallel is inexact, and thus much less fast because actual iterations must occur, on more than one process.  Having more than one process is therefore disadvantageous on this simple problem because the preconditioned-KSP no longer solves in just one iteration.  (In other words, PETSc is ``wise'' and reverts to the obvious best choice for a diagonally-dominant tridiagonal problem!)
+The time has come to admit, however, that the 1D ice shelf problem in the current notes is \emph{too simple}.  Actually measuring computational performance in this example does not illustrate what happens to 2D and 3D problems, for these reasons:\begin{enumerate}
+\item The matrices here are tridiagonal, which means that a default preconditioner (ILU) is both exact \emph{and} fast on one process.  The default block-Jacobi-plus-ILU-on-blocks choice in parallel is inexact, and thus much less fast because actual iterations must occur, on more than one process.  Having more than one process is therefore disadvantageous on this simple problem because the preconditioned-KSP no longer solves in just one iteration.  (In other words, PETSc is ``wise'' and reverts to the obvious best choice for solving a diagonally-dominant tridiagonal problem.)
 \item The domain is one dimensional but the modeled physical process, namely the resolution of stresses in an ice shelf, is long range.  Dividing a roughly-square, 2D ice shelf region among 100 processes requires effects to be communicated across (through) 10 processes.  But here in 1D the effect must ``domino'' through all 100 processes if we choose to use that many.
 \end{enumerate}
 
-Finally we point out a basic, positive benefit of our efforts here: compiled C code runs a lot faster than interpreted Octave, as expected.  This run
+Finally we point out a basic, positive benefit of our efforts here: compiled C code runs a lot faster than interpreted Matlab/Octave, as expected.  This run
 \begin{Verbatim}
-    $ ./ssaflowline -da_grid_x 200000
+    $ ./ssaflowline -da_grid_x 2000000 -snes_monitor -ssa_epsilon 1e-10
 \end{Verbatim}
-on a 1 m grid ($M=2\times 10^5$ points with length $L=200$ km) returned a numerical velocity field that was correct to a relative error of $2\times 10^6$.  It completed in 6 Newton iterations and about 2 wall clock seconds.  By contrast, the $M=4000$ case for the Octave code \texttt{testshelf.m} took 16 seconds and returned an answer correct to $5 \times 10^6$.  The fact that our code uses PETSc is probably not very important in this regard.
+on a 10 cm grid ($M=2\times 10^6$ points with length $L=2 \times 10^5$ m) returned a numerical velocity field that was correct to a relative error of $4\times 10^{-12}$.  It completed in 6 Newton iterations and about 17 wall clock seconds.  By contrast, the $M=4000$ case for the Octave code \texttt{testshelf.m}, using a 50 m grid, took 25 seconds for a relative error of $2 \times 10^{-6}$.
 
 \subsection*{Acknowledgements}  Help from Jed Brown was central to building this example.
 
