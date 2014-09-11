@@ -853,19 +853,19 @@ As a last resort for numerical verification, one can ``manufacture'' exact solut
 
 \exer{13}{Some output from \texttt{verifysia.m} has been suppressed in the text, including a map-plane view of the numerical ice thickness error.  Run the program to see this error map.  Near the grounded margin of an ice sheet this error is much larger than elsewhere.  Why?  Would a higher-order or Stokes model for an ice sheet with an advancing margin have significantly smaller thickness error, on the same grid and supposing we knew a relevant exact solution?}
 
-\exer{14}{Derive the surface kinematical equation \eqref{surfkine} from the mass continuity \eqref{masscont} and basal kinematical \eqref{basekine} equations.  Note that the Leibniz rule for differentiating integrals, mentioned in the text, is
+\exer{14}{Derive the surface kinematical equation \eqref{surfkine} from the mass continuity \eqref{masscont} and basal kinematical \eqref{basekine} equations.  You will use the incompressibility of ice, equation \eqref{incompressible}.  Note that the Leibniz rule for differentiating integrals, mentioned in the text, is
   $$\frac{d}{dx}\left(\int_{g(x)}^{f(x)} h(x,y)\,dy\right) = f'(x) h(x,f(x)) - g'(x) h(x,g(x)) + \int_{g(x)}^{f(x)} h_x(x,y)\,dy.$$}
 
-\exer{15}{Let $C_s = A (\rho g (1-r)/4)^n$ and assume $x_g=0$ is the location of the grounding line.  Derive the two parts of the van der Veen exact ice shelf solution, namely
+\exer{15}{Let $C_s = A (\rho g (1-r)/4)^n$ where $r=\rho/\rho_w$.  Assume $x_g=0$ is the location of the grounding line.  Derive the two parts of the van der Veen exact ice shelf solution, namely
 \begin{align*}
   u &= \left[ u_g^{n+1} + (C_s/M_0) \left((M_0 x + u_g H_g)^{n+1} - (u_g H_g)^{n+1}\right) \right]^{1/(n+1)}, \quad H = (M_0 x + u_g H_g) / u,
 \end{align*}
-Start from equation \eqref{ssafloat}, and use the fact $(H^2)_x = 2 H H_x$ to generate the first integral of \eqref{ssafloat}.  Also use boundary condition \eqref{calvingstress}.  On the other hand, note that the mass continuity equation $M_0=(uH)_x$ can be integrated to give the formula $uH = M_0 (x-x_g) + u_g H_g$ for the flux.  Find $u(x)$ first, then $H(x)$ is in terms of $u(x)$ as above.  These exact solutions are from \cite{vanderVeen83}.  They are used in code \texttt{exactshelf.m}.}
+Start from equation \eqref{ssafloat}, and use the fact $(H^2)_x = 2 H H_x$ to generate the first integral of \eqref{ssafloat}.  Also use boundary condition \eqref{calvingstress}.  Get an equation $u_x = C_s H^n$ or equivalent.  On the other hand, note that the mass continuity equation $M_0=(uH)_x$ can be integrated to give the formula $uH = M_0 (x-x_g) + u_g H_g$ for the flux.  Use this expression for $uH$ to find $u(x)$ first, and then write $H(x)$ in terms of $u(x)$ as above.  These exact solutions are from \cite{vanderVeen83}.  They are used in code \texttt{exactshelf.m}.}
 
 \exer{16}{Modify the code \texttt{ssaflowline.m} to solve the ice stream SSA equation \eqref{ssa}.  For boundary conditions it would be reasonable to have fixed velocity at the upstream end, but keep the calving front boundary condition at the downstream end.  I.e.~consider the case where the calving front is at the point where the ice stream reaches flotation.  (See also \cite{Bodvardsson,Bueler2014exactmarine}.)}
 
 \exer{17}{Derive the viscosity form of the flow law \eqref{viscosityflowlaw} from \eqref{flowlaw}, in detail.}
 
-\exer{18}{Derive the hydrostatic \eqref{stresshydrostatic} and Blatter-Pattyn \eqref{stressblatter} equations, in detail.}
+\exer{18}{Derive the hydrostatic \eqref{stresshydrostatic} equation, in detail.}
 
 \end{document}
