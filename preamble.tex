@@ -16,8 +16,8 @@ slogans: I will
   \begin{itemize}
   \item \alert{focus on approximating ice flow}
   \item \alert{provide numerical codes that actually work}
-  \item always care about the continuum model
-  \item provide multiple entry points
+  \item \alert{always care about the continuum model}
+  \item \alert{provide multiple entry points}
   \end{itemize}
 \medskip
 
@@ -64,34 +64,6 @@ scope: I will cover these
 \end{frame}
 \end{comment}
 
-\begin{frame}{notation} 
-
-\begin{center}
-  \includegraphics[width=0.9\textwidth]{flowline}
-
-\tiny \emph{figure modified from} Schoof (2007)\nocite{SchoofMarine1}
-\end{center}
-
-\scriptsize
-  \begin{itemize}
-  \item coordinates $t,x,y,z$  (with $z$ vertical, positive upward)
-  \item subscripts for partial derivatives $u_x = \partial u/\partial x$
-  \item $H=$ ice thickness
-  \item $h=$ ice surface elevation
-  \item $b=$ bedrock surface elevation
-  \item $T=$ temperature
-  \item $\mathbf{u}=(u,v,w)=$ ice velocity
-  \item $\rho=$ density of ice
-  %\item $\rho_w=$ density of ocean water
-  \item $g=$ acceleration of gravity
-  %\item $n=3$ Glen flow law exponent $=3$
-  \item $A=A(T)=$ ice softness in Glen law ($\mathbf{D}_{ij} = A(T) \tau^{n-1} \tau_{ij}$)
-  \item \alert{see printed notes for notation}
-  \item \alert{please ask about notation!}  (stupid questions impossible)
-  \end{itemize}
-
-\end{frame}
-
 
 \begin{frame}{Matlab/Octave codes}
 
@@ -114,6 +86,33 @@ scope: I will cover these
 \end{frame}
 
 
+\begin{frame}{notation} 
+
+\begin{center}
+  \includegraphics[width=0.9\textwidth]{flowline}
+\tiny \emph{figure modified from} Schoof (2007)\nocite{SchoofMarine1}
+\end{center}
+
+\scriptsize
+  \begin{itemize}
+  \item coordinates $t,x,y,z$  (with $z$ vertical, positive upward)
+  \item subscripts for partial derivatives $u_x = \partial u/\partial x$
+  \item $H=$ ice thickness
+  \item $h=$ ice surface elevation
+  \item $b=$ bedrock surface elevation
+  \item $T=$ temperature
+  \item $\mathbf{u}=(u,v,w)=$ ice velocity
+  \item $\rho=$ density of ice
+  %\item $\rho_w=$ density of ocean water
+  \item $g=$ acceleration of gravity
+  %\item $n=3$ Glen flow law exponent $=3$
+  \item $A=A(T)=$ ice softness in Glen law ($\mathbf{D}_{ij} = A(T) \tau^{n-1} \tau_{ij}$)
+  \item \alert{see printed notes for notation}
+  \item \alert{please ask about notation!}  (stupid questions impossible)
+  \end{itemize}
+\end{frame}
+
+
 \section[introduction]{introduction: ice flow as viewed from outside glaciology}
 
 \subsection{ice flow equations}
@@ -122,12 +121,18 @@ scope: I will cover these
 
 \begin{itemize}
 \item<1-> what's a fluid?
+  \begin{itemize}
+  \item[$\circ$]<2> an idealization
+  \item[$\circ$]<2> arbitrarily-small parts can still be divided
+  \item[$\circ$]<2> no numerical simulation can track all parts
+  \end{itemize}
 
 \bigskip\bigskip
 \item<2> at minimum, we describe fluids by
   \begin{itemize}
   \item[$\circ$] a \emph{density field}\quad $\rho(t,x,y,z)$
   \item[$\circ$] a vector \emph{velocity field}\quad $\mathbf{u}(t,x,y,z)$
+  \item[$\circ$] and some description of stress in each part
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -189,7 +194,7 @@ scope: I will cover these
 \begin{frame}{ice is a slow, shear-thinning fluid}
 
 \begin{itemize}
-\item but \emph{our} fluid is
+\item the ice fluid is
 
 \smallskip
   \begin{tabular}{lc}
@@ -249,7 +254,7 @@ expect that from a glaciologist}
 \begin{frame}{plane flow Stokes}
 
 \begin{itemize}
-\item recall the power-law Stokes model:
+\item again, the power-law Stokes model:
 \begin{align*}
 \nabla \cdot \mathbf{u} &= 0 &&\text{\emph{incompressibility}} \\
 0 &= - \nabla p + \nabla \cdot \tau_{ij} + \rho\, \mathbf{g} &&\text{\emph{stress balance}} \\
@@ -433,6 +438,6 @@ Velocity profile of the Athabasca Glacier, Canada, derived from inclinometry (Sa
 
 \medskip
 \item this is rough explanation of ``shallow ice approximation''
-\item \dots which will be our first numerically-solved ice flow model!
+\item \dots our first ice sheet model
 \end{itemize}
 \end{frame}
