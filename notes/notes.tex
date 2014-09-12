@@ -829,13 +829,13 @@ As a last resort for numerical verification, one can ``manufacture'' exact solut
 
 \exer{5}{Show that when written as a formula for $T_j^{n+1}$, scheme \eqref{implicit1D} has only positive coefficients.  Using \cite{MortonMayers} or other source, as needed, explain why this shows it is unconditionally stable.}
 
-\exer{6}{\emph{This multi-part exercise concerns the numerical treatment of ``$\Div\left(D\,\grad\right)$''.} 
+\exer{6}{\emph{This multi-part exercise concerns the numerical treatment of ``$\Div\left(D\,\grad\right)$'' in equation} \eqref{heat}. 
 \renewcommand{\labelenumi}{(\alph{enumi})}
 \begin{enumerate}
 \item Write down the obvious centered $O(\Delta t)+O(\Delta x^2)$ explicit finite difference method for the equation $u_t = D_0 u_{xx} + E_0 u_x$, assuming $D_0>0$ and $E_0$ are constant.  Solve the scheme for the unknown $u_j^{n+1}$. 
-\item Stability for the method derived in (a) will occur if the $u_j^{n+1}$ is computed from a linear combination of the older values which has all positive coefficients.  If $|E_0| \gg D_0$, what does this stability assertion say about $\Delta x$?
+\item Stability for the method derived in (a) will occur if $u_j^{n+1}$ is computed from a linear combination of the older values which has all positive (at least, nonnegative) coefficients.  If $|E_0| \gg D_0$, what does this stability assertion say about $\Delta x$?
 \item Show that if $D=D(x,y)$ and $u=u(x,y)$ then $\Div \left(D\, \grad u\right) = D \grad^2 u + \grad D \cdot \grad u$.
-\item Why do we use the staggered grid for ``$\Div\left(D\,\grad\right)$,'' instead of expanding by the product rule as in part (c)?
+\item Why do we use the staggered grid for ``$\Div\left(D\,\grad\right)$,'' instead of expanding by the product rule as in part (c)?  Looking at reference \cite{MortonMayers}, or similar, may help you formulate your answer.
 \end{enumerate}
 }
 
