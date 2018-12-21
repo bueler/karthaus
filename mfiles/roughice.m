@@ -21,7 +21,7 @@ title('initial surface')
 fprintf('initial ice volume:   %.6e km^3\n',sum(sum(H0))*dx*dy/1e9)
 fprintf('initial maximum driving stress:   %.6e Pa\n',getmaxtaud(J,K,dx,dy,H0))
 tfyears = 50;
-[H,dtlist] = siaflat(Lx,Ly,J,K,H0,0.2*secpera,tfyears*secpera);
+[H,dtlist] = siaflat(Lx,Ly,J,K,H0,0.4*secpera,tfyears*secpera);
 fprintf('minimum time step = %.6f a,  maximum time step = %.6f a\n',...
    min(dtlist)/secpera,max(dtlist)/secpera)
 fprintf('final ice volume (at t = %.2f a):   %.6e km^3\n',tfyears,sum(sum(H))*dx*dy/1e9)
