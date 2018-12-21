@@ -35,4 +35,4 @@ for n=1:N
 end
 
 % show solution
-surf(x,y,T),  shading('interp'),  xlabel x,  ylabel y
+surf(x,y,T),  colormap('jet'),  shading('interp'),  xlabel x,  ylabel y
